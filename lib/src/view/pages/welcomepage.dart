@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:app_receitas_mobile/src/view/components/spacing.dart';
+import 'package:app_receitas_mobile/src/view/pages/loginpage.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:app_receitas_mobile/src/view/components/globalbutton.dart';
@@ -14,7 +16,7 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  var colores = Colores();
+  
   late PageController pageController;
   late Timer _timer;
   List<Widget> scrollPages = [];
@@ -26,11 +28,11 @@ class _WelcomePageState extends State<WelcomePage> {
     scrollPages = [
       WelcomeCard(
         image: "assets/images/Eating healthy food-cuate.png",
-        text: "Encontre Receitas mais Saudáveis",
+        text: "Descubra Novos Sabores",
       ),
       WelcomeCard(
         image: "assets/images/healthy food vs fast food-cuate.png",
-        text: "Descubra Novos Sabores",
+        text: "Encontre Receitas mais Saudáveis",
       ),
       WelcomeCard(
         image: "assets/images/Deconstructed food-amico.png",
@@ -69,7 +71,11 @@ class _WelcomePageState extends State<WelcomePage> {
     var aspectRatio = size.width / size.height;
 
     return Scaffold(
-      backgroundColor: colores.primaryGreen,
+      backgroundColor: primaryGreen,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        toolbarHeight: 0,
+      ),
       body: SafeArea(
         child: LayoutPage(
           body: Column(
@@ -90,13 +96,12 @@ class _WelcomePageState extends State<WelcomePage> {
                 controller: pageController,
                 count: scrollPages.length,
                 effect: ScaleEffect(
-                  dotWidth: size.width * 0.01,
-                  dotHeight: size.width * 0.03 / aspectRatio,
-                  activeDotColor: colores.primaryWite,
-                  dotColor: Colors.white38
-                ),
+                    dotWidth: size.width * 0.01,
+                    dotHeight: size.width * 0.02 / aspectRatio,
+                    activeDotColor: primaryWite,
+                    dotColor: Colors.white38),
               ),
-              SizedBox(height: size.height * 0.03),
+              Spacing(value: .03),
               GlobalButton(
                 textButton: "Seguinte",
                 onClick: () {
@@ -111,10 +116,23 @@ class _WelcomePageState extends State<WelcomePage> {
                     // Implementar a lógica para quando chegar na última página
                   }
                 },
-                background: colores.primaryWite,
-                textColor: colores.primaryAmber,
+                background: primaryWite,
+                textColor: primaryAmber,
               ),
-              SizedBox(height: size.height * 0.03),
+             Spacing(value: .01),
+              GlobalButton(
+                textButton: "Pular",
+                onClick: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoginPage(),
+                      ));
+                },
+                background: primaryAmber,
+                textColor: primaryWite,
+              ),
+             Spacing(value: .01),
             ],
           ),
         ),

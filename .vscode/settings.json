@@ -1,0 +1,4 @@
+{
+  "dart.hotReloadOnSave": "all",
+  "dart.flutterHotReloadOnSave": "all"
+}
