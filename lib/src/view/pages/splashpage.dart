@@ -1,4 +1,4 @@
-import 'package:app_receitas_mobile/src/view/pages/welcomepage.dart';
+import 'package:app_receitas_mobile/src/utils/auth/authrouterpage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +17,7 @@ class _SplashPageState extends State<SplashPage> {
       const Duration(seconds: 3),
       () {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const WelcomePage(),
+          builder: (context) => const AuthRouterPage(),
         ));
       },
     );

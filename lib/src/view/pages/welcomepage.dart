@@ -16,7 +16,6 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  
   late PageController pageController;
   late Timer _timer;
   List<Widget> scrollPages = [];
@@ -24,6 +23,7 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
+   
     pageController = PageController(initialPage: 0);
     scrollPages = [
       WelcomeCard(
@@ -119,7 +119,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 background: primaryWite,
                 textColor: primaryAmber,
               ),
-             Spacing(value: .01),
+              Spacing(value: .01),
               GlobalButton(
                 textButton: "Pular",
                 onClick: () {
@@ -132,7 +132,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 background: primaryAmber,
                 textColor: primaryWite,
               ),
-             Spacing(value: .01),
+              Spacing(value: .01),
             ],
           ),
         ),

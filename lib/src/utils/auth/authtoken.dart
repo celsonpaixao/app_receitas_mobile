@@ -1,8 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-AuthToken() async {
+Future<bool> AuthToken() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  if (sharedPreferences.getString("token") != null) {
+  if (sharedPreferences.getString("auth_token") != null) {
     return true;
   } else {
     return false;
