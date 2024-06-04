@@ -1,3 +1,4 @@
+import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/validator/inputvalidators.dart';
 import 'package:app_receitas_mobile/src/view/components/globalinput.dart';
 import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
@@ -5,6 +6,7 @@ import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/pages/loginpage.dart';
 import 'package:flutter/material.dart';
 
+import '../../controller/userController.dart';
 import '../components/globalbutton.dart';
 import '../styles/colores.dart';
 import '../styles/texts.dart';
@@ -27,6 +29,34 @@ class _JoinUsPageState extends State<JoinUsPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final UserController userController = UserController();
+
+  Future<void> _registernewuser() async {
+    UserModel user = new UserModel(
+        first_name: _firstNameController.text,
+        last_aame: _lastNameController.text,
+        email: _emailController.text,
+        password: _passwordController.text);
+    if (_formKey.currentState!.validate()) {
+      try {
+        var response = await userController.JoinUsUser(
+            user, _confirmPasswordController.text);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(backgroundColor: Colors.green, content: Text(response)),
+        );
+        // Navegar para a página inicial após o login bem-sucedido
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      } catch (e) {
+        String msg = e.toString();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(backgroundColor: Colors.red, content: Text(msg)),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,8 +142,9 @@ class _JoinUsPageState extends State<JoinUsPage> {
                             : Icons.visibility_outlined,
                       ),
                     ),
-                    validator: (value) => InputValidator.validateConfirmPassword(
-                        _passwordController.text, value),
+                    validator: (value) =>
+                        InputValidator.validateConfirmPassword(
+                            _passwordController.text, value),
                   ),
                   Spacing(value: .02),
                   GestureDetector(
@@ -132,16 +163,7 @@ class _JoinUsPageState extends State<JoinUsPage> {
                   Spacing(value: .02),
                   GlobalButton(
                     textButton: "Cadastrar",
-                    onClick: () {
-                      if (_formKey.currentState!.validate()) {
-                        // Processar o cadastro
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: Colors.green,
-                              content: Text('Cadastro efetuado com sucesso!')),
-                        );
-                      }
-                    },
+                    onClick: _registernewuser,
                     background: primaryAmber,
                     textColor: primaryWite,
                   ),

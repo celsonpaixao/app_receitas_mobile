@@ -25,40 +25,32 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final UserController userController = UserController();
 
-  Future<void> _authenticateAndStoreToken() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        final token = await userController.LoginUser(
-          _emailController.text,
-          _passwordController.text,
-        );
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('auth_token', token);
-        print('Token armazenado com sucesso: $token');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(backgroundColor: Colors.green, content: Text('Sucesso!!')),
-        );
-        // Navegar para a página inicial após o login bem-sucedido
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-      } catch (e) {
-        String msg = "";
-        if (e.toString() == "Exception: Exception: This user does not exist") {
-          msg = "Não Existe nenhum usuário com este email !!";
-        }
-        if (e.toString() == "Exception: Exception: Incorrect password") {
-          msg = "A password está incorreta!!";
-        } else {
-          msg = e.toString();
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(backgroundColor: Colors.red, content: Text(msg)),
-        );
-      }
+ Future<void> _authenticateAndStoreToken() async {
+  if (_formKey.currentState!.validate()) {
+    try {
+      final token = await userController.LoginUser(
+        _emailController.text,
+        _passwordController.text,
+      );
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth_token', token);
+      print('Token armazenado com sucesso: $token');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(backgroundColor: Colors.green, content: Text('Sucesso!!')),
+      );
+      // Navegar para a página inicial após o login bem-sucedido
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    } catch (e) {
+      String msg = e.toString();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(backgroundColor: Colors.red, content: Text(msg)),
+      );
     }
   }
+}
 
 
   @override
