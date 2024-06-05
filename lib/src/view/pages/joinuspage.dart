@@ -1,3 +1,4 @@
+import 'package:app_receitas_mobile/src/DTO/DTOresponse.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/validator/inputvalidators.dart';
 import 'package:app_receitas_mobile/src/view/components/globalinput.dart';
@@ -32,44 +33,44 @@ class _JoinUsPageState extends State<JoinUsPage> {
   final UserController userController = UserController();
 
   Future<void> _registernewuser() async {
-    UserModel user = UserModel(
-      first_name: _firstNameController.text,
-      last_name: _lastNameController.text,
-      email: _emailController.text,
-      password: _passwordController.text,
+  UserModel user = UserModel(
+    firstName: _firstNameController.text,
+    lastName: _lastNameController.text,
+    email: _emailController.text,
+    password: _passwordController.text,
+  );
+
+  if (_formKey.currentState!.validate()) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: GlobalProgress(),
+        );
+      },
     );
-    if (_formKey.currentState!.validate()) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return Center(
-            child: GlobalProgress(),
-          );
-        },
+
+    DTOresponse response = await userController.JoinUsUser(user, _confirmPasswordController.text);
+
+    Navigator.of(context).pop();
+
+    if (response.success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(backgroundColor: Colors.green, content: Text(response.message)),
       );
-      try {
-        var response = await userController.JoinUsUser(
-            user, _confirmPasswordController.text);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(backgroundColor: Colors.green, content: Text(response)),
-        );
-        // Navegar para a página de login após o registro bem-sucedido
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
-        );
-      } catch (e) {
-        String msg = e.toString();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(backgroundColor: Colors.red, content: Text(msg)),
-        );
-      } finally {
-        // Fechar o indicador de progresso
-        Navigator.of(context).pop();
-      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(backgroundColor: Colors.red, content: Text(response.message)),
+      );
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

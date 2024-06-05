@@ -1,3 +1,4 @@
+import 'package:app_receitas_mobile/src/DTO/DTOresponse.dart';
 import 'package:app_receitas_mobile/src/controller/userController.dart';
 import 'package:app_receitas_mobile/src/utils/validator/inputvalidators.dart';
 import 'package:app_receitas_mobile/src/view/components/globalbutton.dart';
@@ -39,22 +40,23 @@ class _LoginPageState extends State<LoginPage> {
         },
       );
 
-      try {
-        final token = await userController.LoginUser(
-          _emailController.text,
-          _passwordController.text,
-        );
+      DTOresponse response = await userController.LoginUser(
+        _emailController.text,
+        _passwordController.text,
+      );
 
+      
+      Navigator.of(context).pop();
+
+      if (response.success) {
         // Armazenar o token
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('auth_token', token);
-        print('Token armazenado com sucesso: $token');
-
-        // Fechar o diálogo
-        Navigator.of(context).pop();
+        await prefs.setString('auth_token', response.token!);
+        print('Token armazenado com sucesso: ${response.token}');
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(backgroundColor: Colors.green, content: Text('Sucesso!!')),
+          SnackBar(
+              backgroundColor: Colors.green, content: Text(response.message)),
         );
 
         // Navegar para a página inicial após o login bem-sucedido
@@ -62,13 +64,10 @@ class _LoginPageState extends State<LoginPage> {
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );
-      } catch (e) {
-        // Fechar o diálogo
-        Navigator.of(context).pop();
-
-        String msg = e.toString();
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(backgroundColor: Colors.red, content: Text(msg)),
+          SnackBar(
+              backgroundColor: Colors.red, content: Text(response.message)),
         );
       }
     }

@@ -1,8 +1,10 @@
+import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
 import 'package:app_receitas_mobile/src/view/components/globalbutton.dart';
 import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
 import 'package:app_receitas_mobile/src/view/pages/loginpage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,6 +15,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  var user; // Inicialize user com um valor padrão
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  void _loadUser() async {
+    var decodedUser = await decodeUser();
+    setState(() {
+      user = decodedUser;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Future<bool> logout() async {
@@ -20,7 +37,6 @@ class _HomePageState extends State<HomePage> {
           await SharedPreferences.getInstance();
       await sharedPreferences.clear();
 
-      // Navegar para a página de login após o logout
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -33,7 +49,19 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("HomePage"),
+        backgroundColor: primaryAmber,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        surfaceTintColor: primaryAmber,
+        title: Text(
+          user.firstName != null
+              ? "Olá... ${user.firstName} ☺️"
+              : "Carregando...!",
+          style: TextStyle(
+            color: primaryWite,
+            fontWeight: FontWeight.bold,
+            fontSize: 25
+          ),
+        ),
       ),
       body: LayoutPage(
         body: Column(
