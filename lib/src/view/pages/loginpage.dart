@@ -2,6 +2,7 @@ import 'package:app_receitas_mobile/src/controller/userController.dart';
 import 'package:app_receitas_mobile/src/utils/validator/inputvalidators.dart';
 import 'package:app_receitas_mobile/src/view/components/globalbutton.dart';
 import 'package:app_receitas_mobile/src/view/components/globalinput.dart';
+import 'package:app_receitas_mobile/src/view/components/globalprogress.dart';
 import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/pages/homepage.dart';
@@ -25,33 +26,53 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final UserController userController = UserController();
 
- Future<void> _authenticateAndStoreToken() async {
-  if (_formKey.currentState!.validate()) {
-    try {
-      final token = await userController.LoginUser(
-        _emailController.text,
-        _passwordController.text,
+  Future<void> _authenticateAndStoreToken() async {
+    if (_formKey.currentState!.validate()) {
+      // Mostrar o indicador de progresso
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: GlobalProgress(),
+          );
+        },
       );
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('auth_token', token);
-      print('Token armazenado com sucesso: $token');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(backgroundColor: Colors.green, content: Text('Sucesso!!')),
-      );
-      // Navegar para a página inicial após o login bem-sucedido
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
-    } catch (e) {
-      String msg = e.toString();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(backgroundColor: Colors.red, content: Text(msg)),
-      );
+
+      try {
+        final token = await userController.LoginUser(
+          _emailController.text,
+          _passwordController.text,
+        );
+
+        // Armazenar o token
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token);
+        print('Token armazenado com sucesso: $token');
+
+        // Fechar o diálogo
+        Navigator.of(context).pop();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(backgroundColor: Colors.green, content: Text('Sucesso!!')),
+        );
+
+        // Navegar para a página inicial após o login bem-sucedido
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } catch (e) {
+        // Fechar o diálogo
+        Navigator.of(context).pop();
+
+        String msg = e.toString();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(backgroundColor: Colors.red, content: Text(msg)),
+        );
+      }
     }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {

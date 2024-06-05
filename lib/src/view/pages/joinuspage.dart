@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 
 import '../../controller/userController.dart';
 import '../components/globalbutton.dart';
+import '../components/globalprogress.dart';
 import '../styles/colores.dart';
 import '../styles/texts.dart';
-// Import validators
 
 class JoinUsPage extends StatefulWidget {
   const JoinUsPage({super.key});
@@ -32,19 +32,29 @@ class _JoinUsPageState extends State<JoinUsPage> {
   final UserController userController = UserController();
 
   Future<void> _registernewuser() async {
-    UserModel user = new UserModel(
-        first_name: _firstNameController.text,
-        last_aame: _lastNameController.text,
-        email: _emailController.text,
-        password: _passwordController.text);
+    UserModel user = UserModel(
+      first_name: _firstNameController.text,
+      last_name: _lastNameController.text,
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
     if (_formKey.currentState!.validate()) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: GlobalProgress(),
+          );
+        },
+      );
       try {
         var response = await userController.JoinUsUser(
             user, _confirmPasswordController.text);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(backgroundColor: Colors.green, content: Text(response)),
         );
-        // Navegar para a página inicial após o login bem-sucedido
+        // Navegar para a página de login após o registro bem-sucedido
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => LoginPage()),
@@ -54,6 +64,9 @@ class _JoinUsPageState extends State<JoinUsPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(backgroundColor: Colors.red, content: Text(msg)),
         );
+      } finally {
+        // Fechar o indicador de progresso
+        Navigator.of(context).pop();
       }
     }
   }

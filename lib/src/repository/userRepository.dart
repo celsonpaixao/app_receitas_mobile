@@ -42,37 +42,35 @@ class UserRespository {
     }
   }
 
-  Future<String> RegisterUser(
-    UserModel user,
-    String confitm_password,
-  ) async {
+  Future<String> RegisterUser(UserModel user, String confirmPassword) async {
     var url = Uri.parse(
-        "$baseurl/api/User/register_user?confirmpassword=$confitm_password");
+        "$baseurl/api/User/register_user?confirmpassword=$confirmPassword");
 
-     try {
-      final response = await http.post(
-        url,
-        headers: <String, String>{
-          'Content-Type': ' multipart/form-data',
-        },
-        body: jsonEncode(<String, String>{
-          'First_Name': user.first_name,
-          'Last_Name': user.last_aame,
-          'Email': user.email,
-          'Password': user.password,
-          
-        }),
-      );
+    try {
+      var request = http.MultipartRequest('POST', url)
+        ..fields['First_Name'] = user.first_name
+        ..fields['Last_Name'] = user.last_name
+        ..fields['Email'] = user.email
+        ..fields['Password'] = user.password;
 
-      print('Resposta recebida: ${response.statusCode}');
+      // Configurar cabeçalho Content-Type
+      request.headers['Content-Type'] = 'multipart/form-data';
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
+      // Enviar a solicitação
+      final response = await request.send();
+
+      // Ler a resposta
+      final responseBody = await http.Response.fromStream(response);
+
+      print('Resposta recebida: ${responseBody.statusCode}');
+
+      if (responseBody.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(responseBody.body);
         final String message = data['response']['message'];
         return message;
       } else {
-        final responseBody = jsonDecode(response.body);
-        String errorMessage = responseBody.toString();
+        final Map<String, dynamic> errorData = jsonDecode(responseBody.body);
+        String errorMessage = errorData.toString();
         throw Exception(errorMessage);
       }
     } catch (e) {
