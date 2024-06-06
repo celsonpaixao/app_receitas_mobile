@@ -1,11 +1,14 @@
+import 'package:app_receitas_mobile/src/model/userModel.dart';
+import 'package:app_receitas_mobile/src/repository/categoryRepository.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
-import 'package:app_receitas_mobile/src/view/components/globalbutton.dart';
-import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
+import 'package:app_receitas_mobile/src/view/components/globalsearchinput.dart';
+import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/pages/loginpage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../model/categoryModel.dart';
+import '../components/tabcategorys.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -15,18 +18,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var user; // Inicialize user com um valor padrão
+  UserModel? user;
+  List<CategoryModel> categories = [];
 
   @override
   void initState() {
     super.initState();
     _loadUser();
+    _loadCategory();
   }
 
   void _loadUser() async {
-    var decodedUser = await decodeUser();
+    UserModel decodedUser = await decodeUser();
     setState(() {
       user = decodedUser;
+    });
+  }
+
+  void _loadCategory() async {
+    List<CategoryModel> getCategories =
+        await CategoryRepository().getCategorys();
+    setState(() {
+      categories = getCategories;
     });
   }
 
@@ -48,33 +61,62 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: primaryAmber,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        surfaceTintColor: primaryAmber,
-        title: Text(
-          user.firstName != null
-              ? "Olá... ${user.firstName} ☺️"
-              : "Carregando...!",
-          style: TextStyle(
-            color: primaryWite,
-            fontWeight: FontWeight.bold,
-            fontSize: 25
+        appBar: AppBar(
+          backgroundColor: primaryAmber,
+          toolbarHeight: 150,
+          flexibleSpace: Container(
+            alignment: Alignment.topRight,
+            child: Image.asset("assets/images/appbarover.png"),
+          ),
+          surfaceTintColor: primaryAmber,
+          title: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                user != null && user!.firstName.isNotEmpty
+                    ? "Olá... ${user!.firstName} ☺️"
+                    : "Carregando...!",
+                style: TextStyle(
+                  color: primaryWite,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                ),
+              ),
+              Spacing(value: .02),
+              GlobalSearchInput(),
+            ],
           ),
         ),
-      ),
-      body: LayoutPage(
-        body: Column(
-          children: [
-            GlobalButton(
-              textButton: "Sair",
-              onClick: logout,
-              background: primaryAmber,
-              textColor: primaryWite,
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              pinned: true,
+              floating: true,
+              expandedHeight: 160,
+              flexibleSpace: FlexibleSpaceBar(
+                title: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user != null && user!.firstName.isNotEmpty
+                          ? "Olá... ${user!.firstName} ☺️"
+                          : "Carregando...!",
+                      style: TextStyle(
+                        color: primaryWite,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25,
+                      ),
+                    ),
+                    Spacing(value: .02),
+                    GlobalSearchInput(),
+                  ],
+                ),
+               
+              ),
             )
           ],
-        ),
-      ),
-    );
+        ));
   }
 }
