@@ -1,5 +1,6 @@
 import 'package:app_receitas_mobile/src/utils/auth/authtoken.dart';
 import 'package:app_receitas_mobile/src/view/pages/welcomepage.dart';
+import 'package:app_receitas_mobile/src/view/routerpages.dart';
 import 'package:flutter/material.dart';
 
 import '../../view/pages/homepage.dart';
@@ -20,7 +21,7 @@ class _AuthRouterPageState extends State<AuthRouterPage> {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => HomePage(),
+              builder: (context) => RouterPage(),
             ));
       } else {
         Navigator.pushReplacement(

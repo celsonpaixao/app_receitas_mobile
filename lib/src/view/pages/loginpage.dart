@@ -6,8 +6,8 @@ import 'package:app_receitas_mobile/src/view/components/globalinput.dart';
 import 'package:app_receitas_mobile/src/view/components/globalprogress.dart';
 import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
-import 'package:app_receitas_mobile/src/view/pages/homepage.dart';
 import 'package:app_receitas_mobile/src/view/pages/joinuspage.dart';
+import 'package:app_receitas_mobile/src/view/routerpages.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
         // Navegar para a página inicial após o login bem-sucedido
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => RouterPage()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

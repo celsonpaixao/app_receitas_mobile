@@ -14,12 +14,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'DishDash',
       theme: ThemeData(
         useMaterial3: true,
+        scaffoldBackgroundColor: primaryWite,
         appBarTheme: AppBarTheme(
-            systemOverlayStyle: SystemUiOverlayStyle.dark,
-            surfaceTintColor: primaryAmber),
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          surfaceTintColor: primaryAmber,
+          
+        ),
       ),
       home: AuthRouterPage(),
     );

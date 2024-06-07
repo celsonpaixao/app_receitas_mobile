@@ -1,4 +1,3 @@
-import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/repository/categoryRepository.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
 import 'package:app_receitas_mobile/src/view/components/globalsearchinput.dart';
@@ -18,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  UserModel? user;
+  UserToken? user;
   List<CategoryModel> categories = [];
 
   @override
@@ -29,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _loadUser() async {
-    UserModel decodedUser = await decodeUser();
+    UserToken decodedUser = await decodeUser();
     setState(() {
       user = decodedUser;
     });
@@ -61,62 +60,37 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: primaryAmber,
-          toolbarHeight: 150,
-          flexibleSpace: Container(
-            alignment: Alignment.topRight,
-            child: Image.asset("assets/images/appbarover.png"),
-          ),
-          surfaceTintColor: primaryAmber,
-          title: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                user != null && user!.firstName.isNotEmpty
-                    ? "Olá... ${user!.firstName} ☺️"
-                    : "Carregando...!",
-                style: TextStyle(
-                  color: primaryWite,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
-                ),
-              ),
-              Spacing(value: .02),
-              GlobalSearchInput(),
-            ],
-          ),
+      backgroundColor: primaryWite,
+      appBar: AppBar(
+        backgroundColor: primaryAmber,
+        toolbarHeight: 150,
+        flexibleSpace: Container(
+          alignment: Alignment.topRight,
+          child: Image.asset("assets/images/appbarover.png"),
         ),
-        body: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              pinned: true,
-              floating: true,
-              expandedHeight: 160,
-              flexibleSpace: FlexibleSpaceBar(
-                title: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      user != null && user!.firstName.isNotEmpty
-                          ? "Olá... ${user!.firstName} ☺️"
-                          : "Carregando...!",
-                      style: TextStyle(
-                        color: primaryWite,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25,
-                      ),
-                    ),
-                    Spacing(value: .02),
-                    GlobalSearchInput(),
-                  ],
-                ),
-               
+        surfaceTintColor: primaryAmber,
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              user != null && user!.firstName.isNotEmpty
+                  ? "Olá... ${user!.firstName} ☺️"
+                  : "Carregando...!",
+              style: TextStyle(
+                color: primaryWite,
+                fontWeight: FontWeight.bold,
+                fontSize: 25,
               ),
-            )
+            ),
+            Spacing(value: .02),
+            GlobalSearchInput(),
           ],
-        ));
+        ),
+      ),
+      body: Container(
+        child: TabCategory(),
+      ),
+    );
   }
 }

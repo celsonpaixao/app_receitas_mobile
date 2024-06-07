@@ -8,10 +8,13 @@ class GlobalSearchInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      keyboardType: TextInputType.text,
-      cursorColor: primaryWite,
-      decoration: InputDecoration(
+    return SizedBox(
+      // height: 35,
+      child: TextField(
+        keyboardType: TextInputType.text,
+        cursorColor: primaryWite,
+        scrollPadding: EdgeInsets.all(0),
+        decoration: InputDecoration(
           filled: true,
           fillColor: primaryWite.withOpacity(.2),
           focusedBorder: OutlineInputBorder(
@@ -22,16 +25,22 @@ class GlobalSearchInput extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(color: primaryWite),
           ),
-          contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          contentPadding: EdgeInsets.all(0),
           hintText: "Procurar Receita...!",
           hintStyle: TextStyle(
-              color: primaryWite, fontWeight: FontWeight.normal, fontSize: 14),
+            color: primaryWite,
+            fontWeight: FontWeight.normal,
+            fontSize: 13,
+          ),
           prefixIcon: Icon(
             Icons.search_rounded,
             color: primaryWite,
+            size: 20,
           ),
-          suffix: sufixIcon),
-      onChanged: onchange,
+          suffix: sufixIcon,
+        ),
+        onChanged: onchange,
+      ),
     );
   }
 }
