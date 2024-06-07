@@ -1,23 +1,22 @@
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
 
-class GlobalInput extends StatelessWidget {
+class GlobalMultTextInput extends StatelessWidget {
   final String hintText;
   final Widget? prefixIcon;
   final Widget? sufixIcon;
   final TextEditingController? controller;
-  final bool ispassword;
+
   final TextInputType? type;
   final void Function(String)? onchange;
   final String? Function(String? value)? validator;
 
-  const GlobalInput({
+  const GlobalMultTextInput({
     super.key,
     required this.hintText,
     this.prefixIcon,
     this.sufixIcon,
     this.controller,
-    required this.ispassword,
     this.onchange,
     this.type,
     this.validator,
@@ -30,14 +29,14 @@ class GlobalInput extends StatelessWidget {
       onChanged: onchange,
       validator: validator,
       keyboardType: type,
-      maxLines: 1,
-      obscureText: ispassword,
+      minLines: 3,
+      maxLines: 5,
+      obscureText: false,
       cursorColor: primaryAmber,
       style: TextStyle(
         color: primaryAmber,
       ),
       decoration: InputDecoration(
-        
           contentPadding: EdgeInsets.symmetric(
             vertical: 7,
             horizontal: 10,

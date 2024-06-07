@@ -2,10 +2,8 @@ import 'package:app_receitas_mobile/src/repository/categoryRepository.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
 import 'package:app_receitas_mobile/src/view/components/globalsearchinput.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
-import 'package:app_receitas_mobile/src/view/pages/loginpage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../model/categoryModel.dart';
 import '../components/tabcategorys.dart';
 
@@ -44,20 +42,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Future<bool> logout() async {
-      SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
-      await sharedPreferences.clear();
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoginPage(),
-        ),
-      );
-
-      return true;
-    }
 
     return Scaffold(
       backgroundColor: primaryWite,

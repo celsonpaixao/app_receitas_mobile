@@ -1,3 +1,4 @@
+import 'package:app_receitas_mobile/src/view/pages/sendrecipepgae.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
 
@@ -10,9 +11,18 @@ class ButtonAddRecipe extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       backgroundColor: primaryAmber,
-     
-      child: Icon(Icons.add, color: primaryWite,),
-      onPressed: () {},
+      shape: CircleBorder(),
+      child: Icon(
+        Icons.add,
+        color: primaryWite,
+      ),
+      onPressed: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SendRecipePage(),
+            ));
+      },
     );
   }
 }

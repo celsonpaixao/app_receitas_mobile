@@ -1,3 +1,4 @@
+import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
 import 'package:flutter/material.dart';
 
 class ListRecipePage extends StatefulWidget {
@@ -11,7 +12,11 @@ class _ListRecipePageState extends State<ListRecipePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text("Liste Recipe Page")),
+      body: LayoutPage(
+        body: Center(
+          child: Text("Liste Recipe Page"),
+        ),
+      ),
     );
   }
 }

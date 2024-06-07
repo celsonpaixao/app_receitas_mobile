@@ -6,9 +6,18 @@ class LayoutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 24, vertical: 5),
-      child: body,
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode focusScopeNode = FocusScope.of(context);
+
+        if (!focusScopeNode.hasPrimaryFocus) {
+          focusScopeNode.unfocus();
+        }
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 24, vertical: 5),
+        child: body,
+      ),
     );
   }
 }

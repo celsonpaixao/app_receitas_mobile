@@ -11,7 +11,7 @@ class GlobalProgress extends StatelessWidget {
       width: 100,
       height: 100,
       child: LoadingIndicator(
-        indicatorType: Indicator.ballTrianglePathColoredFilled,
+        indicatorType: Indicator.ballScaleMultiple,
         colors: [Colors.amber, primaryAmber, secundaryAmber],
         strokeWidth: 1,
         backgroundColor: Colors.transparent,

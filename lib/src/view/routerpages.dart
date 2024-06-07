@@ -1,10 +1,10 @@
+import 'package:app_receitas_mobile/src/view/components/buttonaddrecipe.dart';
 import 'package:app_receitas_mobile/src/view/pages/favoritespage.dart';
 import 'package:app_receitas_mobile/src/view/pages/homepage.dart';
 import 'package:app_receitas_mobile/src/view/pages/listrecipepage.dart';
 import 'package:app_receitas_mobile/src/view/pages/profilepage.dart';
 import 'package:flutter/material.dart';
 
-import 'components/buttonaddrecipe.dart';
 import 'styles/colores.dart';
 
 class RouterPage extends StatefulWidget {
@@ -16,101 +16,61 @@ class RouterPage extends StatefulWidget {
 
 class _RouterPageState extends State<RouterPage> {
   int currentTab = 0;
-  final pages = [HomePage(), ListRecipePage(), FavoritesPage(), ProfilePage()];
   final PageStorageBucket bucket = PageStorageBucket();
-  Widget currentPage = HomePage();
+
+  final List<Widget> pages = [
+    HomePage(),
+    ListRecipePage(),
+    Container(), // Placeholder for the FAB
+    FavoritesPage(),
+    ProfilePage()
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageStorage(bucket: bucket, child: currentPage),
+      body: PageStorage(
+        bucket: bucket,
+        child: IndexedStack(
+          index: currentTab,
+          children: pages,
+        ),
+      ),
       extendBody: true,
+      floatingActionButton: ButtonAddRecipe(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
-        color: primaryWite,
+        color: primaryAmber,
         elevation: 0,
-        // shape: CircularNotchedRectangle(),
+        shape: CircularNotchedRectangle(),
         notchMargin: 10,
         child: Container(
-          height: 40,
+          height: 60,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              MaterialButton(
-                minWidth: 40,
-                hoverColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onPressed: () {
-                  setState(() {
-                    currentPage = HomePage();
-                    currentTab = 0;
-                  });
-                },
-                child: Icon(
-                  Icons.home_rounded,
-                  color: currentTab == 0 ? primaryAmber : Colors.black26,
-                ),
-              ),
-              MaterialButton(
-                minWidth: 40,
-                hoverColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onPressed: () {
-                  setState(() {
-                    currentPage = ListRecipePage();
-                    currentTab = 1;
-                  });
-                },
-                child: Icon(
-                  Icons.list_rounded,
-                  color: currentTab == 1 ? primaryAmber : Colors.black26,
-                ),
-              ),
-              MaterialButton(
-                minWidth: 50,
-                height: 50,
-                hoverColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                color: primaryAmber,
-                shape: CircleBorder(),
-                onPressed: () {},
-                child: Icon(
-                  Icons.add,
-                  color: primaryWite,
-                ),
-              ),
-              MaterialButton(
-                minWidth: 40,
-                hoverColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onPressed: () {
-                  setState(() {
-                    currentPage = FavoritesPage();
-                    currentTab = 3;
-                  });
-                },
-                child: Icon(
-                  Icons.favorite,
-                  color: currentTab == 3 ? primaryAmber : Colors.black26,
-                ),
-              ),
-              MaterialButton(
-                minWidth: 40,
-                hoverColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onPressed: () {
-                  setState(() {
-                    currentPage = ProfilePage();
-                    currentTab = 4;
-                  });
-                },
-                child: Icon(
-                  Icons.person,
-                  color: currentTab == 4 ? primaryAmber : Colors.black26,
-                ),
-              )
+              _buildTabItem(icon: Icons.home_rounded, index: 0),
+              _buildTabItem(icon: Icons.list_rounded, index: 1),
+              SizedBox(width: 40), // Space for the floating action button
+              _buildTabItem(icon: Icons.favorite, index: 3),
+              _buildTabItem(icon: Icons.person, index: 4),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTabItem({required IconData icon, required int index}) {
+    return IconButton(
+      onPressed: () {
+        setState(() {
+          currentTab = index;
+        });
+      },
+      icon: Icon(
+        icon,
+        color: currentTab == index ? primaryWite : Colors.black26,
       ),
     );
   }

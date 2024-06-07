@@ -3,7 +3,6 @@ import 'package:app_receitas_mobile/src/view/pages/welcomepage.dart';
 import 'package:app_receitas_mobile/src/view/routerpages.dart';
 import 'package:flutter/material.dart';
 
-import '../../view/pages/homepage.dart';
 
 class AuthRouterPage extends StatefulWidget {
   const AuthRouterPage({super.key});
