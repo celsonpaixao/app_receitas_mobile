@@ -9,13 +9,14 @@ class GlobalShimmer extends StatelessWidget {
   final double shimmer_heigth;
   final double horizontal_padding;
   final double vertical_padding;
+  final Axis direction;
   const GlobalShimmer({
     super.key,
     required this.acount,
     required this.shimmer_width,
     required this.shimmer_heigth,
     required this.horizontal_padding,
-    required this.vertical_padding, required this.border,
+    required this.vertical_padding, required this.border, required this.direction,
   });
 
   @override
@@ -24,6 +25,7 @@ class GlobalShimmer extends StatelessWidget {
       baseColor: Colors.grey.shade300,
       highlightColor: Colors.grey.shade200,
       child: ListView.builder(
+        scrollDirection: direction,
         itemCount: acount, // Apenas para simular vários itens
         itemBuilder: (context, index) {
           return Padding(

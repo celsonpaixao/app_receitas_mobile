@@ -113,6 +113,7 @@ class ShimmerCategory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlobalShimmer(
+      direction: Axis.vertical,
       acount: 5,
       horizontal_padding: 8,
       vertical_padding: 4,

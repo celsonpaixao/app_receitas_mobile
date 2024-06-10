@@ -1,5 +1,6 @@
 import 'package:app_receitas_mobile/src/controller/recipeController.dart';
 import 'package:app_receitas_mobile/src/view/components/globalprogress.dart';
+import 'package:app_receitas_mobile/src/view/components/globalshimmer.dart';
 import 'package:app_receitas_mobile/src/view/components/minicardrecipe.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
@@ -33,23 +34,42 @@ class _TabViewAllRecipeState extends State<TabViewAllRecipe>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: primaryWite,
+        backgroundColor: primaryWite,
         body: recipes.isEmpty
-            ? Center(child: GlobalProgress())
+            ? MiniCardRecipeShimmer()
             : Expanded(
-              child: ListView.builder(
+                child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: recipes.length,
                   itemBuilder: (context, index) {
                     var item = recipes[index];
-                   
+
                     return Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       child: MiniCardRecipe(item: item),
                     );
                   },
                 ),
-            ));
+              ));
   }
 }
 
+class MiniCardRecipeShimmer extends StatelessWidget {
+  const MiniCardRecipeShimmer({
+    
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GlobalShimmer(
+      direction: Axis.horizontal,
+      acount: 5,
+      shimmer_width: 200,
+      shimmer_heigth: 60,
+      horizontal_padding: 16,
+      vertical_padding: 10,
+      border: 8,
+    );
+  }
+}
