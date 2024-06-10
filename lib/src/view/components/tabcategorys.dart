@@ -84,7 +84,7 @@ class _TabCategoryState extends State<TabCategory>
                       ...categories
                           .map(
                             (category) => TabViewRecipeByCategory(
-                                id_category: category.id!),
+                                idCategory: category.id!),
                           )
                           .toList(),
                     ],

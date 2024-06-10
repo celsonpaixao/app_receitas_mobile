@@ -3,11 +3,13 @@ import 'package:app_receitas_mobile/src/view/components/getingredientsrecipedete
 import 'package:app_receitas_mobile/src/view/components/getmaterialsrecipedeteilhs.dart';
 import 'package:app_receitas_mobile/src/view/components/getratingsforrecipes.dart';
 import 'package:app_receitas_mobile/src/view/components/globalbaclbutton.dart';
+import 'package:app_receitas_mobile/src/view/components/globalsendrating.dart';
 import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/auth/tokendecod.dart';
 import '../components/getcategoryrecipedetelhs.dart';
 
 class DetalheRecipePage extends StatefulWidget {
@@ -20,6 +22,21 @@ class DetalheRecipePage extends StatefulWidget {
 
 class _DetalheRecipePageState extends State<DetalheRecipePage> {
   bool _isExpanded = false;
+  final TextEditingController messagecontroller = TextEditingController();
+  UserToken? user;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  void _loadUser() async {
+    UserToken decodedUser = await decodeUser();
+    setState(() {
+      user = decodedUser;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -164,8 +181,25 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                         ),
                       ),
                       Divider(
-                        thickness: 2,
+                        thickness: 1,
                         color: primaryGrey,
+                      ),
+                      Spacing(value: 0.02),
+                      GlobalSendRating(
+                        userId: user?.id != null
+                            ? int.parse(user!.id.toString())
+                            : 0, // Conversão explícita para int
+                        recipeId: widget.recipe.id ??
+                            0, // Forneça um valor padrão se recipe.id puder ser null
+                        messagecontroller: messagecontroller,
+                      ),
+                      Spacing(value: 0.03),
+                      Text(
+                        "Avaliações:",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
                       ),
                       GetRatingsForRecipe(widget: widget),
                     ],

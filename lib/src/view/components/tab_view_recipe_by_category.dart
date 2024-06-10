@@ -2,16 +2,17 @@ import 'package:app_receitas_mobile/src/view/components/globalshimmer.dart';
 import 'package:app_receitas_mobile/src/view/components/minicardrecipe.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
-
 import '../../controller/recipeController.dart';
 import '../../model/recipeModel.dart';
 
 class TabViewRecipeByCategory extends StatefulWidget {
-  final int id_category;
-  const TabViewRecipeByCategory({super.key, required this.id_category});
+  final int idCategory;
+
+  const TabViewRecipeByCategory({Key? key, required this.idCategory})
+      : super(key: key);
 
   @override
-  State<TabViewRecipeByCategory> createState() =>
+  _TabViewRecipeByCategoryState createState() =>
       _TabViewRecipeByCategoryState();
 }
 
@@ -21,12 +22,12 @@ class _TabViewRecipeByCategoryState extends State<TabViewRecipeByCategory> {
   @override
   void initState() {
     super.initState();
-    _loadRecipe();
+    _loadRecipes();
   }
 
-  void _loadRecipe() async {
-    List<RecipeModel> getRecipes =
-        await RecipeController().getRecipeByCategory(widget.id_category);
+  Future<void> _loadRecipes() async {
+    final getRecipes =
+        await RecipeController().getRecipeByCategory(widget.idCategory);
     setState(() {
       recipes = getRecipes;
     });
@@ -36,45 +37,33 @@ class _TabViewRecipeByCategoryState extends State<TabViewRecipeByCategory> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: primaryWhite,
-      body: recipes.isEmpty
-          ? GridView.builder(
-              scrollDirection: Axis.vertical,
-              itemCount: 6,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 0,
-                  mainAxisSpacing: 5,
-                  childAspectRatio: .70),
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-                  child: GlobalShimmer(
-                    shimmerWidth: 190,
-                    shimmerHeight: 100,
-                    border: 8,
-                  ),
-                );
-              },
-            )
-          : GridView.builder(
-              scrollDirection: Axis.vertical,
-              itemCount: recipes.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 0,
-                  mainAxisSpacing: 5,
-                  childAspectRatio: .70),
-              itemBuilder: (context, index) {
-                var item = recipes[index];
-
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-                  child: MiniCardRecipe(item: item),
-                );
-              },
-            ),
+      body: GridView.builder(
+        scrollDirection: Axis.vertical,
+        itemCount: recipes.isEmpty ? 6 : recipes.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 0,
+          mainAxisSpacing: 5,
+          childAspectRatio: .65,
+        ),
+        itemBuilder: (context, index) {
+          if (recipes.isEmpty) {
+            return const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+              child: GlobalShimmer(
+                shimmerWidth: 190,
+                shimmerHeight: 100,
+                border: 8,
+              ),
+            );
+          } else {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+              child: MiniCardRecipe(item: recipes[index]),
+            );
+          }
+        },
+      ),
     );
   }
 }
