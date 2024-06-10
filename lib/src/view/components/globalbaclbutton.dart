@@ -13,7 +13,7 @@ class Globalbackbutton extends StatelessWidget {
       style: ButtonStyle(
         maximumSize: MaterialStatePropertyAll(Size(40, 40)),
         backgroundColor: MaterialStatePropertyAll(
-          primaryWite.withOpacity(.5),
+          primaryWhite.withOpacity(.5),
         ),
       ),
       onPressed: () {

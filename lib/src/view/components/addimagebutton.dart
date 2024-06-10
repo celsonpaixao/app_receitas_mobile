@@ -5,7 +5,8 @@ import '../styles/colores.dart';
 class AddImageButton extends StatelessWidget {
   final void Function()? onclicked;
   const AddImageButton({
-    super.key, this.onclicked,
+    super.key,
+    this.onclicked,
   });
 
   @override
@@ -14,7 +15,7 @@ class AddImageButton extends StatelessWidget {
       style: ButtonStyle(
         maximumSize: MaterialStatePropertyAll(Size(40, 40)),
         backgroundColor: MaterialStatePropertyAll(
-          primaryWite.withOpacity(.5),
+          primaryWhite.withOpacity(.5),
         ),
       ),
       onPressed: onclicked,

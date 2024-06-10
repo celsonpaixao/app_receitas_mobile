@@ -45,7 +45,6 @@ class _LoginPageState extends State<LoginPage> {
         _passwordController.text,
       );
 
-      
       Navigator.of(context).pop();
 
       if (response.success) {
@@ -76,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: primaryWite,
+      backgroundColor: primaryWhite,
       body: SafeArea(
         child: LayoutPage(
           body: SingleChildScrollView(
@@ -150,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                     textButton: "Entrar",
                     onClick: _authenticateAndStoreToken,
                     background: primaryAmber,
-                    textColor: primaryWite,
+                    textColor: primaryWhite,
                   ),
                 ],
               ),

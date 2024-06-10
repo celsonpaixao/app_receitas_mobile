@@ -42,10 +42,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
-      backgroundColor: primaryWite,
+      backgroundColor: primaryWhite,
       appBar: AppBar(
         backgroundColor: primaryAmber,
         toolbarHeight: 150,
@@ -63,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                   ? "Olá... ${user!.firstName} ☺️"
                   : "Carregando...!",
               style: TextStyle(
-                color: primaryWite,
+                color: primaryWhite,
                 fontWeight: FontWeight.bold,
                 fontSize: 25,
               ),

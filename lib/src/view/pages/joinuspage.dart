@@ -33,44 +33,46 @@ class _JoinUsPageState extends State<JoinUsPage> {
   final UserController userController = UserController();
 
   Future<void> _registernewuser() async {
-  UserModel user = UserModel(
-    firstName: _firstNameController.text,
-    lastName: _lastNameController.text,
-    email: _emailController.text,
-    password: _passwordController.text,
-  );
-
-  if (_formKey.currentState!.validate()) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Center(
-          child: GlobalProgress(),
-        );
-      },
+    UserModel user = UserModel(
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      email: _emailController.text,
+      password: _passwordController.text,
     );
 
-    DTOresponse response = await userController.JoinUsUser(user, _confirmPasswordController.text);
+    if (_formKey.currentState!.validate()) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: GlobalProgress(),
+          );
+        },
+      );
 
-    Navigator.of(context).pop();
+      DTOresponse response = await userController.JoinUsUser(
+          user, _confirmPasswordController.text);
 
-    if (response.success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(backgroundColor: Colors.green, content: Text(response.message)),
-      );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(backgroundColor: Colors.red, content: Text(response.message)),
-      );
+      Navigator.of(context).pop();
+
+      if (response.success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              backgroundColor: Colors.green, content: Text(response.message)),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              backgroundColor: Colors.red, content: Text(response.message)),
+        );
+      }
     }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +181,7 @@ class _JoinUsPageState extends State<JoinUsPage> {
                     textButton: "Cadastrar",
                     onClick: _registernewuser,
                     background: primaryAmber,
-                    textColor: primaryWite,
+                    textColor: primaryWhite,
                   ),
                 ],
               ),

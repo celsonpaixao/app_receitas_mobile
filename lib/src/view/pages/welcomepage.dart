@@ -23,7 +23,7 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
-   
+
     pageController = PageController(initialPage: 0);
     scrollPages = [
       WelcomeCard(
@@ -98,7 +98,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 effect: ScaleEffect(
                     dotWidth: size.width * 0.01,
                     dotHeight: size.width * 0.02 / aspectRatio,
-                    activeDotColor: primaryWite,
+                    activeDotColor: primaryWhite,
                     dotColor: Colors.white38),
               ),
               Spacing(value: .03),
@@ -116,7 +116,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     // Implementar a lógica para quando chegar na última página
                   }
                 },
-                background: primaryWite,
+                background: primaryWhite,
                 textColor: primaryAmber,
               ),
               Spacing(value: .01),
@@ -130,7 +130,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       ));
                 },
                 background: primaryAmber,
-                textColor: primaryWite,
+                textColor: primaryWhite,
               ),
               Spacing(value: .01),
             ],

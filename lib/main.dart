@@ -18,11 +18,10 @@ class MyApp extends StatelessWidget {
       title: 'DishDash',
       theme: ThemeData(
         useMaterial3: true,
-        scaffoldBackgroundColor: primaryWite,
+        scaffoldBackgroundColor: primaryWhite,
         appBarTheme: AppBarTheme(
           systemOverlayStyle: SystemUiOverlayStyle.dark,
           surfaceTintColor: primaryAmber,
-          
         ),
       ),
       home: AuthRouterPage(),

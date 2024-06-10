@@ -8,7 +8,6 @@ class WelcomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       child: Column(
         children: [
@@ -23,7 +22,7 @@ class WelcomeCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 36,
               fontWeight: FontWeight.bold,
-              color: primaryWite,
+              color: primaryWhite,
             ),
           ),
         ],

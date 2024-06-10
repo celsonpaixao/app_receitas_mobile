@@ -59,4 +59,17 @@ class RecipeModel {
     }
     return data;
   }
+
+  double? calculateAverageRating() {
+    if (avaliacoes == null || avaliacoes!.isEmpty) {
+      return null; // Retorna null se não houver avaliações
+    }
+
+    double totalRating = 0.0;
+    for (var avaliacao in avaliacoes!) {
+      totalRating += avaliacao.value ?? 0.0;
+    }
+
+    return totalRating / avaliacoes!.length;
+  }
 }

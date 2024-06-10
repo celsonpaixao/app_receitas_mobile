@@ -12,29 +12,29 @@ class GlobalSearchInput extends StatelessWidget {
       // height: 35,
       child: TextField(
         keyboardType: TextInputType.text,
-        cursorColor: primaryWite,
+        cursorColor: primaryWhite,
         scrollPadding: EdgeInsets.all(0),
         decoration: InputDecoration(
           filled: true,
-          fillColor: primaryWite.withOpacity(.2),
+          fillColor: primaryWhite.withOpacity(.2),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: primaryWite),
+            borderSide: BorderSide(color: primaryWhite),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: primaryWite),
+            borderSide: BorderSide(color: primaryWhite),
           ),
           contentPadding: EdgeInsets.all(0),
           hintText: "Procurar Receita...!",
           hintStyle: TextStyle(
-            color: primaryWite,
+            color: primaryWhite,
             fontWeight: FontWeight.normal,
             fontSize: 13,
           ),
           prefixIcon: Icon(
             Icons.search_rounded,
-            color: primaryWite,
+            color: primaryWhite,
             size: 20,
           ),
           suffix: sufixIcon,

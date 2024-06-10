@@ -70,15 +70,13 @@ class _SendRecipePageState extends State<SendRecipePage> {
               Spacing(value: .03),
               Text(
                 "Categoria",
-                style: TextStyle(
-                  color: primaryAmber
-                ),
+                style: TextStyle(color: primaryAmber),
               ),
-               Spacing(value: .009),
+              Spacing(value: .009),
               SelectCategory(
                 CategorysIds: _Id_CategorysController,
               ),
-               Spacing(value: .02),
+              Spacing(value: .02),
               GlobalButton(
                 textButton: "Publicar",
                 onClick: () {
@@ -90,7 +88,7 @@ class _SendRecipePageState extends State<SendRecipePage> {
                   );
                 },
                 background: primaryAmber,
-                textColor: primaryWite,
+                textColor: primaryWhite,
               )
             ],
           ),

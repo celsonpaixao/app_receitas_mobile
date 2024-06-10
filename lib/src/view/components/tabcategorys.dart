@@ -1,5 +1,6 @@
 import 'package:app_receitas_mobile/src/controller/categoryController.dart';
 import 'package:app_receitas_mobile/src/view/components/tab_view_all_recipe.dart';
+import 'package:app_receitas_mobile/src/view/components/tab_view_recipe_by_category.dart';
 import 'package:flutter/material.dart';
 import '../../model/categoryModel.dart';
 import '../styles/colores.dart';
@@ -40,7 +41,7 @@ class _TabCategoryState extends State<TabCategory>
       body: Column(
         children: [
           Material(
-            color: primaryWite,
+            color: primaryWhite,
             child: categories.isNotEmpty
                 ? TabBar(
                     controller: _tabController,
@@ -81,13 +82,10 @@ class _TabCategoryState extends State<TabCategory>
                             ],
                           )),
                       ...categories
-                          .map((category) => Container(
-                                padding: EdgeInsets.all(16.0),
-                                child: Text(
-                                  'Conteúdo da categoria: ${category.name}',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ))
+                          .map(
+                            (category) => TabViewRecipeByCategory(
+                                id_category: category.id!),
+                          )
                           .toList(),
                     ],
                   )

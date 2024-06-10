@@ -1,8 +1,6 @@
-import 'dart:math';
 
 import 'package:app_receitas_mobile/src/view/components/globalshimmer.dart';
 import 'package:flutter/material.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../../controller/categoryController.dart';
 import '../../model/categoryModel.dart';
@@ -68,8 +66,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                       label: Text(
                         item.name!,
                         style: TextStyle(
-                          color:
-                              item.isSelected ? primaryWite : primaryAmber,
+                          color: item.isSelected ? primaryWhite : primaryAmber,
                           fontWeight: item.isSelected
                               ? FontWeight.bold
                               : FontWeight.normal,
@@ -81,8 +78,8 @@ class _SelectCategoryState extends State<SelectCategory> {
                         color: primaryAmber, // Cor da borda
                       ),
                       selectedColor: primaryAmber,
-                      checkmarkColor: primaryWite,
-                      backgroundColor: primaryWite,
+                      checkmarkColor: primaryWhite,
+                      backgroundColor: primaryWhite,
                       onSelected: (bool selected) {
                         setState(() {
                           item.isSelected = selected;
@@ -92,7 +89,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                           } else {
                             widget.CategorysIds.remove(item.id);
                           }
-                  
+
                           print(widget.CategorysIds.toList());
                         });
                       },
@@ -112,14 +109,21 @@ class ShimmerCategory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GlobalShimmer(
-      direction: Axis.vertical,
-      acount: 5,
-      horizontal_padding: 8,
-      vertical_padding: 4,
-      shimmer_heigth: 50,
-      shimmer_width: 50,
-      border: 4,
+    return ListView.builder(
+      itemCount: 5,
+      scrollDirection: Axis.vertical,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+          child: SizedBox(
+            child: GlobalShimmer(
+              shimmerWidth: 0,
+              shimmerHeight: 40,
+              border: 8,
+            ),
+          ),
+        );
+      },
     );
   }
 }

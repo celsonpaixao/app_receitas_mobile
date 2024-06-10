@@ -8,12 +8,13 @@ class RatingModel {
 
   RatingModel({this.id, this.value, this.message, this.user});
 
-  RatingModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    value = json['value'];
-    message = json['message'];
-    user = json['user'] != null ? new UserModel.fromJson(json['user']) : null;
-  }
+RatingModel.fromJson(Map<String, dynamic> json) {
+  id = json['id'];
+  value = json['value']?.toDouble(); // Convertendo para double
+  message = json['message'];
+  user = json['user'] != null ? UserModel.fromJson(json['user']) : null;
+}
+
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();

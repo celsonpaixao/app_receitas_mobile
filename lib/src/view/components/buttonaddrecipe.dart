@@ -14,7 +14,7 @@ class ButtonAddRecipe extends StatelessWidget {
       shape: CircleBorder(),
       child: Icon(
         Icons.add,
-        color: primaryWite,
+        color: primaryWhite,
       ),
       onPressed: () {
         Navigator.push(

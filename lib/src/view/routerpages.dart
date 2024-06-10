@@ -70,7 +70,7 @@ class _RouterPageState extends State<RouterPage> {
       },
       icon: Icon(
         icon,
-        color: currentTab == index ? primaryWite : Colors.black26,
+        color: currentTab == index ? primaryWhite : Colors.black26,
       ),
     );
   }
