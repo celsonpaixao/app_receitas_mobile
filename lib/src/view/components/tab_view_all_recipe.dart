@@ -1,7 +1,9 @@
 import 'package:app_receitas_mobile/src/controller/recipeController.dart';
 import 'package:app_receitas_mobile/src/view/components/globalshimmer.dart';
 import 'package:app_receitas_mobile/src/view/components/minicardrecipe.dart';
+import 'package:app_receitas_mobile/src/view/pages/listrecipepage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../model/recipeModel.dart';
@@ -36,20 +38,51 @@ class _TabViewAllRecipeState extends State<TabViewAllRecipe>
       backgroundColor: primaryWhite,
       body: recipes.isEmpty
           ? MiniCardRecipeShimmer()
-          : Expanded(
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: recipes.length,
-                itemBuilder: (context, index) {
-                  var item = recipes[index];
-
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
-                    child: MiniCardRecipe(item: item),
-                  );
-                },
-              ),
+          : Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Receitas  recentes",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                              builder: (context) => ListRecipePage(),
+                            ));
+                      },
+                      child: Text(
+                        "Ver mais",
+                        style: TextStyle(
+                          color: primaryGrey,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: recipes.length,
+                    itemBuilder: (context, index) {
+                      var item = recipes[index];
+                      
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                            right: 10, left: 5, top: 5, bottom: 5),
+                        child: MiniCardRecipe(item: item),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
     );
   }

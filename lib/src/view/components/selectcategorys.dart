@@ -8,7 +8,8 @@ import '../styles/colores.dart';
 
 class SelectCategory extends StatefulWidget {
   final List<int> CategorysIds;
-  const SelectCategory({Key? key, required this.CategorysIds});
+    final String? Function(String? value) validator; // Correção aqui
+  const SelectCategory({Key? key, required this.CategorysIds, required this.validator});
 
   @override
   State<SelectCategory> createState() => _SelectCategoryState();

@@ -57,10 +57,10 @@ class _GlobalSendRatingState extends State<GlobalSendRating> {
                 ),
               );
               // Limpar o campo de mensagem após envio
-              // widget.messagecontroller.clear();
-              // setState(() {
-              //   _setRating = 0.0;
-              // });
+              widget.messagecontroller.clear();
+              setState(() {
+                _setRating = 0.0;
+              });
             },
             icon: const Icon(Icons.send),
           ),

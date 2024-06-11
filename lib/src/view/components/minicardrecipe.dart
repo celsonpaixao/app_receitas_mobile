@@ -52,7 +52,8 @@ class MiniCardRecipe extends StatelessWidget {
                   color: primaryAmber,
                   image: DecorationImage(
                     image: NetworkImage(
-                        "$baseUrl/api_receita/${item.imageURL ?? ''}"),
+                      "$baseUrl/${item.imageURL}",
+                    ),
                     fit: BoxFit.cover,
                   ),
                 ),

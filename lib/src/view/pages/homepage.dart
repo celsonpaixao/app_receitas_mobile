@@ -1,7 +1,7 @@
 import 'package:app_receitas_mobile/src/repository/categoryRepository.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
-import 'package:app_receitas_mobile/src/view/components/globalsearchinput.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
+import 'package:app_receitas_mobile/src/view/pages/listrecipepage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
 import '../../model/categoryModel.dart';
@@ -67,7 +67,39 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Spacing(value: .02),
-            GlobalSearchInput(),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ListRecipePage(),
+                    ));
+              },
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: 50,
+                decoration: BoxDecoration(
+                    color: primaryWhite.withOpacity(.3),
+                    border: Border.all(color: primaryWhite),
+                    borderRadius: BorderRadius.circular(9)),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.search,
+                        color: primaryWhite,
+                        size: 25,
+                      ),
+                      Text(
+                        "Procurar Receita...!",
+                        style: TextStyle(color: primaryWhite, fontSize: 14),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),

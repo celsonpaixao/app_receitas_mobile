@@ -1,4 +1,5 @@
 import 'package:app_receitas_mobile/src/model/recipeModel.dart';
+import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
 import 'package:app_receitas_mobile/src/view/components/getingredientsrecipedeteihs.dart';
 import 'package:app_receitas_mobile/src/view/components/getmaterialsrecipedeteilhs.dart';
 import 'package:app_receitas_mobile/src/view/components/getratingsforrecipes.dart';
@@ -51,7 +52,10 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                   automaticallyImplyLeading: false,
                   flexibleSpace: FlexibleSpaceBar(
                     background: Container(
-                      color: primaryAmber,
+                      decoration: BoxDecoration(
+                        color: primaryAmber,
+                        image: DecorationImage(image: NetworkImage("$baseUrl/${widget.recipe.imageURL}"))
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.only(top: 60, left: 16),
                         child: Align(

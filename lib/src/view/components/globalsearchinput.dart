@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 
 class GlobalSearchInput extends StatelessWidget {
   final Widget? sufixIcon;
+  final TextEditingController? controller;
   final void Function(String)? onchange;
-  const GlobalSearchInput({super.key, this.sufixIcon, this.onchange});
+  const GlobalSearchInput(
+      {super.key, this.sufixIcon, this.onchange, this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +16,7 @@ class GlobalSearchInput extends StatelessWidget {
         keyboardType: TextInputType.text,
         cursorColor: primaryWhite,
         scrollPadding: EdgeInsets.all(0),
+        controller: controller,
         decoration: InputDecoration(
           filled: true,
           fillColor: primaryWhite.withOpacity(.2),
