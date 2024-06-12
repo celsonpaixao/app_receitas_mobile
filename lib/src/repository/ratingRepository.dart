@@ -8,7 +8,10 @@ class RatingRepository {
   static final String baseUrl = baseUrl;
 
   Future<DTOresponse> publicaRating(
-      int userId, int recipeId, RatingModel rating) async {
+    int userId,
+    int recipeId,
+    RatingModel rating,
+  ) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final String? token = sharedPreferences.getString("auth_token");
 
@@ -26,13 +29,17 @@ class RatingRepository {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
         },
-        body: jsonEncode(rating.toJson()),
+        body: {
+          "value": rating.value,
+          "message": rating.message
+        },
       );
 
       print(response.body);
 
       if (response.statusCode == 200) {
         var message = json.decode(response.body)['message'];
+        print(message);
         return DTOresponse(success: true, message: message);
       } else {
         return DTOresponse(success: false, message: 'Failed to publish rating');

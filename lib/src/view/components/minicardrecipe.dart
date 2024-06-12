@@ -1,5 +1,6 @@
 import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
 import 'package:app_receitas_mobile/src/view/components/globalrating.dart';
+import 'package:app_receitas_mobile/src/view/components/globlafavoritebutton.dart';
 import 'package:app_receitas_mobile/src/view/pages/detalhe_recipepage.dart';
 import 'package:flutter/material.dart';
 
@@ -45,6 +46,7 @@ class MiniCardRecipe extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
+                alignment: Alignment.topRight,
                 width: 160,
                 height: MediaQuery.of(context).size.height <= 1080 ? 100 : 125,
                 decoration: BoxDecoration(
@@ -55,6 +57,13 @@ class MiniCardRecipe extends StatelessWidget {
                       "$baseUrl/${item.imageURL}",
                     ),
                     fit: BoxFit.cover,
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GlobalFavoriteButton(
+                    userId: 3,
+                    recipeId: item.id!,
                   ),
                 ),
               ),
@@ -85,9 +94,11 @@ class MiniCardRecipe extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      averageRating.toString(),
+                      averageRating.toStringAsFixed(2),
                       style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.height <= 1080 ? 14 : 16,
+                        fontSize: MediaQuery.of(context).size.height <= 1080
+                            ? 14
+                            : 16,
                         fontWeight: FontWeight.bold,
                         color: primaryGrey,
                       ),
@@ -95,7 +106,8 @@ class MiniCardRecipe extends StatelessWidget {
                     GlobalRating(
                       count: 1,
                       value: averageRating,
-                      sizeStar: MediaQuery.of(context).size.height <= 1080 ? 15 : 25,
+                      sizeStar:
+                          MediaQuery.of(context).size.height <= 1080 ? 15 : 25,
                     ),
                   ],
                 ),

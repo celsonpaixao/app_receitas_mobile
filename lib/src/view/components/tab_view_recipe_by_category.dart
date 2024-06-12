@@ -2,7 +2,6 @@ import 'package:app_receitas_mobile/src/view/components/globalshimmer.dart';
 import 'package:app_receitas_mobile/src/view/components/minicardrecipe.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import '../../controller/recipeController.dart';
 import '../../model/recipeModel.dart';
 

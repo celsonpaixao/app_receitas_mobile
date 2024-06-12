@@ -1,5 +1,6 @@
 import 'package:app_receitas_mobile/src/repository/categoryRepository.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
+import 'package:app_receitas_mobile/src/view/components/globalappbar.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/pages/listrecipepage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
@@ -44,14 +45,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: primaryWhite,
-      appBar: AppBar(
-        backgroundColor: primaryAmber,
-        toolbarHeight: 150,
-        flexibleSpace: Container(
-          alignment: Alignment.topRight,
-          child: Image.asset("assets/images/appbarover.png"),
-        ),
-        surfaceTintColor: primaryAmber,
+      appBar: GlobalAppBar(
+        height: 150,
         title: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,

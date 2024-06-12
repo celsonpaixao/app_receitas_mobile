@@ -1,4 +1,5 @@
 import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
+import 'package:app_receitas_mobile/src/view/components/globalappbar.dart';
 import 'package:app_receitas_mobile/src/view/components/globalsearchinput.dart';
 import 'package:app_receitas_mobile/src/view/components/globalshimmer.dart';
 import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
@@ -59,20 +60,11 @@ class _ListRecipePageState extends State<ListRecipePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: primaryAmber,
-        toolbarHeight: 100,
-        leadingWidth: 25,
-        automaticallyImplyLeading: false,
-         flexibleSpace: Container(
-          alignment: Alignment.topRight,
-          child: Image.asset("assets/images/appbarover.png"),
-        ),
+      appBar: GlobalAppBar(
         title: GlobalSearchInput(
           controller: searchController,
         ),
-        systemOverlayStyle:
-            SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+        height: 100,
       ),
       body: LayoutPage(
         body: filteredRecipes.isEmpty
@@ -114,10 +106,11 @@ class _ListRecipePageState extends State<ListRecipePage> {
                               width: 80,
                               height: 80,
                               decoration: BoxDecoration(
-                                color: primaryAmber,
-                                borderRadius: BorderRadius.circular(6),
-                                image: DecorationImage(image: NetworkImage("$baseUrl/${item.imageURL}"))
-                              ),
+                                  color: primaryAmber,
+                                  borderRadius: BorderRadius.circular(6),
+                                  image: DecorationImage(
+                                      image: NetworkImage(
+                                          "$baseUrl/${item.imageURL}"))),
                             ),
                             title: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,

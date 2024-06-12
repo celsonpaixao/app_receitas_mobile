@@ -5,10 +5,12 @@ import 'package:app_receitas_mobile/src/view/components/getmaterialsrecipedeteil
 import 'package:app_receitas_mobile/src/view/components/getratingsforrecipes.dart';
 import 'package:app_receitas_mobile/src/view/components/globalbaclbutton.dart';
 import 'package:app_receitas_mobile/src/view/components/globalsendrating.dart';
+import 'package:app_receitas_mobile/src/view/components/globlafavoritebutton.dart';
 import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../utils/auth/tokendecod.dart';
 import '../components/getcategoryrecipedetelhs.dart';
@@ -53,14 +55,33 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                   flexibleSpace: FlexibleSpaceBar(
                     background: Container(
                       decoration: BoxDecoration(
-                        color: primaryAmber,
-                        image: DecorationImage(image: NetworkImage("$baseUrl/${widget.recipe.imageURL}"))
-                      ),
+                          color: primaryAmber,
+                          image: DecorationImage(
+                              image: NetworkImage(
+                                  "$baseUrl/${widget.recipe.imageURL}"))),
                       child: Padding(
                         padding: const EdgeInsets.only(top: 60, left: 16),
                         child: Align(
                           alignment: Alignment.topLeft,
-                          child: Globalbackbutton(),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Globalbackbutton(),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: GlobalFavoriteButton(
+                                      userId: 3,
+                                      recipeId: widget.recipe.id!,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),

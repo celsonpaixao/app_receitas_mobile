@@ -1,6 +1,8 @@
 import 'package:app_receitas_mobile/src/controller/ratingController.dart';
 import 'package:app_receitas_mobile/src/model/ratingModel.dart';
+import 'package:app_receitas_mobile/src/repository/ratingRepository.dart';
 import 'package:app_receitas_mobile/src/view/components/globalmulttextinpu.dart';
+import 'package:app_receitas_mobile/src/view/components/globalprogress.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -23,6 +25,32 @@ class GlobalSendRating extends StatefulWidget {
 
 class _GlobalSendRatingState extends State<GlobalSendRating> {
   double _setRating = 0.0;
+  Future<void> _pulichRating() async {
+  //  showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: (BuildContext context) {
+  //         return Center(
+  //           child: GlobalProgress(),
+  //         );
+  //       },
+  //     );
+    await RatingRepository().publicaRating(
+      widget.userId,
+      widget.recipeId,
+      RatingModel(
+        value: _setRating,
+        message: widget.messagecontroller.text,
+      ),
+    );
+
+    // Navigator.of(context).pop();
+    // Limpar o campo de mensagem após envio
+    widget.messagecontroller.clear();
+    setState(() {
+      _setRating = 0.0;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,21 +75,7 @@ class _GlobalSendRatingState extends State<GlobalSendRating> {
           hintText: "O que achou desta receita?",
           controller: widget.messagecontroller,
           sufixIcon: IconButton(
-            onPressed: () async {
-              await RatingController().publicRating(
-                widget.userId,
-                widget.recipeId,
-                RatingModel(
-                  value: _setRating,
-                  message: widget.messagecontroller.text,
-                ),
-              );
-              // Limpar o campo de mensagem após envio
-              widget.messagecontroller.clear();
-              setState(() {
-                _setRating = 0.0;
-              });
-            },
+            onPressed: _pulichRating,
             icon: const Icon(Icons.send),
           ),
         ),

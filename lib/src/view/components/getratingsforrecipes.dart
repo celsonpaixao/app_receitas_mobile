@@ -1,4 +1,5 @@
 
+import 'package:app_receitas_mobile/src/view/components/globalrating.dart';
 import 'package:app_receitas_mobile/src/view/pages/detalhe_recipepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -31,22 +32,7 @@ class GetRatingsForRecipe extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                RatingBar.builder(
-                  initialRating: item?.value?.toDouble() ?? 0,
-                  minRating: 0,
-                  direction: Axis.horizontal,
-                  itemCount: 5,
-                  itemSize: 20,
-                  itemPadding:
-                      EdgeInsets.symmetric(horizontal: 1.0),
-                  itemBuilder: (context, _) => Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
-                  onRatingUpdate: (rating) {
-                    // Handle rating update
-                  },
-                ),
+               GlobalRating(count: 5, value: item?.value?.toDouble() ?? 0, sizeStar: 25)
               ],
             ),
             subtitle: Text(item?.message ?? ""),
