@@ -64,6 +64,10 @@ class _ListRecipePageState extends State<ListRecipePage> {
         toolbarHeight: 100,
         leadingWidth: 25,
         automaticallyImplyLeading: false,
+         flexibleSpace: Container(
+          alignment: Alignment.topRight,
+          child: Image.asset("assets/images/appbarover.png"),
+        ),
         title: GlobalSearchInput(
           controller: searchController,
         ),
