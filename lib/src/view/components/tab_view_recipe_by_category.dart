@@ -2,6 +2,7 @@ import 'package:app_receitas_mobile/src/view/components/globalshimmer.dart';
 import 'package:app_receitas_mobile/src/view/components/minicardrecipe.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import '../../controller/recipeController.dart';
 import '../../model/recipeModel.dart';
 
@@ -40,11 +41,12 @@ class _TabViewRecipeByCategoryState extends State<TabViewRecipeByCategory> {
       body: GridView.builder(
         scrollDirection: Axis.vertical,
         itemCount: recipes.isEmpty ? 6 : recipes.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 0,
           mainAxisSpacing: 5,
-          childAspectRatio: .65,
+          childAspectRatio:
+              MediaQuery.of(context).size.height <= 1080 ? .75 : .65,
         ),
         itemBuilder: (context, index) {
           if (recipes.isEmpty) {

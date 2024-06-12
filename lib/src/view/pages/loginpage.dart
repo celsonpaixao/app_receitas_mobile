@@ -89,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
                   Image.asset(
                     "assets/images/Login-cuate.png",
                     width: 300,
-                    height: 300,
+                     height: MediaQuery.of(context).size.height<= 1080? 240:  300,
                   ),
                   GlobalInput(
                     controller: _emailController,

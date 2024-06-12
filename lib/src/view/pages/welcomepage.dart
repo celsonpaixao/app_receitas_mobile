@@ -78,64 +78,62 @@ class _WelcomePageState extends State<WelcomePage> {
       ),
       body: SafeArea(
         child: LayoutPage(
-          body: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SizedBox(height: size.height * 0.05),
-                SizedBox(
-                  height: size.height * 0.7,
-                  child: PageView.builder(
-                    controller: pageController,
-                    itemCount: scrollPages.length,
-                    itemBuilder: (context, index) {
-                      return scrollPages[index];
-                    },
-                  ),
-                ),
-                SmoothPageIndicator(
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Spacing(value: .009),
+              SizedBox(
+                height: size.height * .7,
+                child: PageView.builder(
                   controller: pageController,
-                  count: scrollPages.length,
-                  effect: ScaleEffect(
-                      dotWidth: size.width * 0.01,
-                      dotHeight: size.width * 0.02 / aspectRatio,
-                      activeDotColor: primaryWhite,
-                      dotColor: Colors.white38),
-                ),
-                Spacing(value: .03),
-                GlobalButton(
-                  textButton: "Seguinte",
-                  onClick: () {
-                    int nextPage = pageController.page!.toInt() + 1;
-                    if (nextPage < scrollPages.length) {
-                      pageController.animateToPage(
-                        nextPage,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    } else {
-                      // Implementar a lógica para quando chegar na última página
-                    }
+                  itemCount: scrollPages.length,
+                  itemBuilder: (context, index) {
+                    return scrollPages[index];
                   },
-                  background: primaryWhite,
-                  textColor: primaryAmber,
                 ),
-                Spacing(value: .01),
-                GlobalButton(
-                  textButton: "Pular",
-                  onClick: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginPage(),
-                        ));
-                  },
-                  background: primaryAmber,
-                  textColor: primaryWhite,
-                ),
-                Spacing(value: .01),
-              ],
-            ),
+              ),
+              SmoothPageIndicator(
+                controller: pageController,
+                count: scrollPages.length,
+                effect: ScaleEffect(
+                    dotWidth: size.width * 0.01,
+                    dotHeight: size.width * 0.02 / aspectRatio,
+                    activeDotColor: primaryWhite,
+                    dotColor: Colors.white38),
+              ),
+              Spacing(value: .03),
+              GlobalButton(
+                textButton: "Seguinte",
+                onClick: () {
+                  int nextPage = pageController.page!.toInt() + 1;
+                  if (nextPage < scrollPages.length) {
+                    pageController.animateToPage(
+                      nextPage,
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  } else {
+                    // Implementar a lógica para quando chegar na última página
+                  }
+                },
+                background: primaryWhite,
+                textColor: primaryAmber,
+              ),
+              Spacing(value: .01),
+              GlobalButton(
+                textButton: "Pular",
+                onClick: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoginPage(),
+                      ));
+                },
+                background: primaryAmber,
+                textColor: primaryWhite,
+              ),
+              Spacing(value: .01),
+            ],
           ),
         ),
       ),

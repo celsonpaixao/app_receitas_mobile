@@ -25,7 +25,7 @@ class MiniCardRecipe extends StatelessWidget {
       },
       child: Container(
         width: 200,
-        height: 260,
+        height: MediaQuery.of(context).size.height <= 1080 ? 260 : 200,
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(6),
@@ -46,7 +46,7 @@ class MiniCardRecipe extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Container(
                 width: 160,
-                height: 125,
+                height: MediaQuery.of(context).size.height <= 1080 ? 100 : 125,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(3),
                   color: primaryAmber,
@@ -64,16 +64,17 @@ class MiniCardRecipe extends StatelessWidget {
                 item.title ?? '',
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize:
+                      MediaQuery.of(context).size.height <= 1080 ? 15 : 14,
                 ),
               ),
               subtitle: Text(
                 item.description ?? '',
-                style: const TextStyle(color: Colors.black54, fontSize: 11),
-                maxLines: 2,
+                style: TextStyle(color: Colors.black54, fontSize: 11),
+                maxLines: MediaQuery.of(context).size.height <= 1080 ? 1 : 2,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -86,7 +87,7 @@ class MiniCardRecipe extends StatelessWidget {
                     Text(
                       averageRating.toString(),
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: MediaQuery.of(context).size.height <= 1080 ? 14 : 16,
                         fontWeight: FontWeight.bold,
                         color: primaryGrey,
                       ),
@@ -94,7 +95,7 @@ class MiniCardRecipe extends StatelessWidget {
                     GlobalRating(
                       count: 1,
                       value: averageRating,
-                      sizeStar: 25,
+                      sizeStar: MediaQuery.of(context).size.height <= 1080 ? 15 : 25,
                     ),
                   ],
                 ),

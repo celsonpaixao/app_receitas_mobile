@@ -14,7 +14,7 @@ class WelcomeCard extends StatelessWidget {
           Image.asset(
             image,
             width: 350,
-            height: 350,
+            height: MediaQuery.of(context).size.height<= 1080? 300:  350,
           ),
           Text(
             text,
