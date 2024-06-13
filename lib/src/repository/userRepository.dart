@@ -49,7 +49,9 @@ class UserRespository {
   }
 
   Future<DTOresponse> RegisterUser(
-      UserModel user, String confirmPassword) async {
+    UserModel user,
+    String confirmPassword,
+  ) async {
     var url = Uri.parse(
         "$baseurl/api/User/register_user?firstName=${user.firstName}&lastName=${user.lastName}&email=${user.email}&password=${user.password}&confirmPassword=$confirmPassword");
 

@@ -1,8 +1,10 @@
+import 'package:app_receitas_mobile/src/view/components/addimagebutton.dart';
 import 'package:app_receitas_mobile/src/view/components/buttonaddrecipe.dart';
 import 'package:app_receitas_mobile/src/view/pages/favoritespage.dart';
 import 'package:app_receitas_mobile/src/view/pages/homepage.dart';
 import 'package:app_receitas_mobile/src/view/pages/listrecipepage.dart';
 import 'package:app_receitas_mobile/src/view/pages/profilepage.dart';
+import 'package:app_receitas_mobile/src/view/pages/sendrecipepgae.dart';
 import 'package:flutter/material.dart';
 
 import 'styles/colores.dart';
@@ -37,13 +39,9 @@ class _RouterPageState extends State<RouterPage> {
         ),
       ),
       extendBody: true,
-      floatingActionButton: ButtonAddRecipe(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
         color: primaryAmber,
         elevation: 0,
-        shape: CircularNotchedRectangle(),
-        notchMargin: 10,
         child: Container(
           height: 60,
           child: Row(
@@ -51,7 +49,24 @@ class _RouterPageState extends State<RouterPage> {
             children: [
               _buildTabItem(icon: Icons.home_rounded, index: 0),
               _buildTabItem(icon: Icons.list_rounded, index: 1),
-              SizedBox(width: 40), // Space for the floating action button
+
+              MaterialButton(
+                color: primaryWhite,
+                elevation: 0,
+                shape: CircleBorder(),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SendRecipePage(),
+                      ));
+                },
+                child: Icon(
+                  Icons.add,
+                  color: primaryAmber,
+                ),
+              ),
+              // Space for the floating action button
               _buildTabItem(icon: Icons.favorite, index: 3),
               _buildTabItem(icon: Icons.person, index: 4),
             ],

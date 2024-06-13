@@ -44,8 +44,7 @@ class _TabViewRecipeByCategoryState extends State<TabViewRecipeByCategory> {
           crossAxisCount: 2,
           crossAxisSpacing: 0,
           mainAxisSpacing: 5,
-          childAspectRatio:
-              MediaQuery.of(context).size.height <= 1080 ? .75 : .65,
+          childAspectRatio: .65,
         ),
         itemBuilder: (context, index) {
           if (recipes.isEmpty) {

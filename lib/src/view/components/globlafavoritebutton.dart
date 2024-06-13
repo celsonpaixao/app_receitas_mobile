@@ -1,5 +1,6 @@
 import 'package:app_receitas_mobile/src/controller/favoriteController.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class GlobalFavoriteButton extends StatefulWidget {
   final int userId;
@@ -16,13 +17,14 @@ class GlobalFavoriteButton extends StatefulWidget {
 }
 
 class _GlobalFavoriteButtonState extends State<GlobalFavoriteButton> {
-  FavoriteController controller = FavoriteController();
-  bool isFavorite = false;
+  late final FavoriteController controller;
+    bool isFavorite = false;
   bool isAddingToFavorites = false;
 
   @override
   void initState() {
     super.initState();
+    controller = Get.find<FavoriteController>();
     _checkIfRecipeIsFavorite();
   }
 
@@ -38,7 +40,7 @@ class _GlobalFavoriteButtonState extends State<GlobalFavoriteButton> {
     setState(() {
       isAddingToFavorites = true;
     });
-    
+
     try {
       if (isFavorite) {
         await controller.removeRecipeinFavorite(widget.userId, widget.recipeId);

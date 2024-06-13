@@ -22,6 +22,8 @@ class RatingRepository {
     final url = Uri.parse(
         "$baseUrl/api/Rating/public_avaliaction?id_receita=$recipeId&id_user=$userId");
 
+    print(url);
+
     try {
       final response = await http.post(
         url,
@@ -29,10 +31,7 @@ class RatingRepository {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
         },
-        body: {
-          "value": rating.value,
-          "message": rating.message
-        },
+        body: {"value": rating.value, "message": rating.message},
       );
 
       print(response.body);

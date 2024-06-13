@@ -76,7 +76,7 @@ class _TabCategoryState extends State<TabCategory>
                           child: Column(
                             children: [
                               SizedBox(
-                                height: MediaQuery.of(context).size.height <= 1080 ? 250 : 270,
+                                height:  280,
                                 child: TabViewAllRecipe(),
                               ),
                             ],

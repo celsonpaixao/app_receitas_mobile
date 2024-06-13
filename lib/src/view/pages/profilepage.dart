@@ -1,4 +1,7 @@
+import 'package:app_receitas_mobile/src/view/components/globalbutton.dart';
+import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
 import 'package:app_receitas_mobile/src/view/pages/loginpage.dart';
+import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,8 +30,15 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text("Profile Page"),
+      body: LayoutPage(
+        body: Center(
+          child: GlobalButton(
+            textButton: "Sair",
+            onClick: logout,
+            background: primaryAmber,
+            textColor: primaryWhite,
+          ),
+        ),
       ),
     );
   }

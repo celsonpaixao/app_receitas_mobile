@@ -15,7 +15,7 @@ class UserToken {
     required this.lastName,
     required this.email,
     required this.imageURL,
-    this.password, // Adicione uma senha padrão ou nula se necessário
+    this.password, 
   });
 }
 

@@ -5,6 +5,7 @@ import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/pages/listrecipepage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../model/categoryModel.dart';
 import '../components/tabcategorys.dart';
 
@@ -16,29 +17,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  UserToken? user;
+  late final UserToken user;
   List<CategoryModel> categories = [];
 
   @override
   void initState() {
     super.initState();
-    _loadUser();
+    user = Get.find<UserToken>();
     _loadCategory();
   }
 
-  void _loadUser() async {
-    UserToken decodedUser = await decodeUser();
-    setState(() {
-      user = decodedUser;
-    });
-  }
-
   void _loadCategory() async {
-    List<CategoryModel> getCategories =
-        await CategoryRepository().getCategorys();
-    setState(() {
-      categories = getCategories;
-    });
+    try {
+      List<CategoryModel> getCategories =
+          await CategoryRepository().getCategorys();
+      setState(() {
+        categories = getCategories;
+      });
+    } catch (e) {
+      print('Error loading categories: $e');
+    }
   }
 
   @override
@@ -52,8 +50,8 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              user != null && user!.firstName.isNotEmpty
-                  ? "Olá... ${user!.firstName} ☺️"
+              user.firstName.isNotEmpty
+                  ? "Olá... ${user.firstName} ☺️"
                   : "Carregando...!",
               style: TextStyle(
                 color: primaryWhite,
@@ -98,9 +96,9 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: Container(
-        child: TabCategory(),
-      ),
+      body: categories.isEmpty
+          ? Center(child: CircularProgressIndicator())
+          : TabCategory(),
     );
   }
 }

@@ -11,6 +11,7 @@ class GlobalAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: primaryAmber,
+      automaticallyImplyLeading: false,
       toolbarHeight: height,
       flexibleSpace: Container(
         alignment: Alignment.topRight,
