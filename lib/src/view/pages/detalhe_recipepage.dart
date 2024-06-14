@@ -1,4 +1,5 @@
 import 'package:app_receitas_mobile/src/model/recipeModel.dart';
+import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
 import 'package:app_receitas_mobile/src/view/components/getingredientsrecipedeteihs.dart';
 import 'package:app_receitas_mobile/src/view/components/getmaterialsrecipedeteilhs.dart';
@@ -10,7 +11,7 @@ import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 import '../../utils/auth/tokendecod.dart';
 import '../components/getcategoryrecipedetelhs.dart';
@@ -26,19 +27,25 @@ class DetalheRecipePage extends StatefulWidget {
 class _DetalheRecipePageState extends State<DetalheRecipePage> {
   bool _isExpanded = false;
   final TextEditingController messagecontroller = TextEditingController();
-  UserToken? user;
+  UserModel? user;
+  late final TokenDecod tokenDecod;
 
   @override
   void initState() {
     super.initState();
-    _loadUser();
+    _initializeUser();
   }
 
-  void _loadUser() async {
-    UserToken decodedUser = await decodeUser();
-    setState(() {
-      user = decodedUser;
-    });
+  Future<void> _initializeUser() async {
+    tokenDecod = Provider.of<TokenDecod>(context, listen: false);
+    try {
+      final decodedUser = await tokenDecod.decodeUser();
+      setState(() {
+        user = decodedUser;
+      });
+    } catch (e) {
+      print('Error loading user: $e');
+    }
   }
 
   @override
@@ -55,10 +62,14 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                   flexibleSpace: FlexibleSpaceBar(
                     background: Container(
                       decoration: BoxDecoration(
-                          color: primaryAmber,
-                          image: DecorationImage(
-                              image: NetworkImage(
-                                  "$baseUrl/${widget.recipe.imageURL}"))),
+                        color: primaryAmber,
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            "$baseUrl/${widget.recipe.imageURL}",
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.only(top: 60, left: 16),
                         child: Align(
@@ -74,7 +85,8 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: GlobalFavoriteButton(
-                                      userId: 3,
+                                      item: widget.recipe,
+                                      userId: user?.id ?? 0,
                                       recipeId: widget.recipe.id!,
                                     ),
                                   ),
@@ -211,11 +223,8 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                       ),
                       Spacing(value: 0.02),
                       GlobalSendRating(
-                        userId: user?.id != null
-                            ? int.parse(user!.id.toString())
-                            : 0, // Conversão explícita para int
-                        recipeId: widget.recipe.id ??
-                            0, // Forneça um valor padrão se recipe.id puder ser null
+                        userId: user?.id ?? 0,
+                        recipeId: widget.recipe.id ?? 0,
                         messagecontroller: messagecontroller,
                       ),
                       Spacing(value: 0.03),

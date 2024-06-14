@@ -34,7 +34,7 @@ class RecipeRepository {
     }
   }
 
-  Future<List<RecipeModel>> getRecipeBuCategory(int id_category) async {
+  Future<List<RecipeModel>> getRecipeByCategory(int id_category) async {
     var url = Uri.parse(
         "$baseurl/api/Recipe/list_by_recipe_category?id=$id_category");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();

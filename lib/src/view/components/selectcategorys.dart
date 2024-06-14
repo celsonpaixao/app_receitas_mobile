@@ -1,22 +1,22 @@
-
 import 'package:app_receitas_mobile/src/view/components/globalshimmer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../controller/categoryController.dart';
-import '../../model/categoryModel.dart';
 import '../styles/colores.dart';
 
 class SelectCategory extends StatefulWidget {
   final List<int> CategorysIds;
-    final String? Function(String? value) validator; // Correção aqui
-  const SelectCategory({Key? key, required this.CategorysIds, required this.validator});
+  final String? Function(String? value) validator; // Correção aqui
+  const SelectCategory(
+      {Key? key, required this.CategorysIds, required this.validator});
 
   @override
   State<SelectCategory> createState() => _SelectCategoryState();
 }
 
 class _SelectCategoryState extends State<SelectCategory> {
-  List<CategoryModel> categories = [];
+  late CategoryController categories;
   bool isLoading = false;
 
   @override
@@ -26,22 +26,7 @@ class _SelectCategoryState extends State<SelectCategory> {
   }
 
   Future<void> _loadCategory() async {
-    setState(() {
-      isLoading = true;
-    });
-    try {
-      List<CategoryModel> getCategories =
-          await CategoryController().getCategoryList();
-      setState(() {
-        categories = getCategories;
-        isLoading = false;
-      });
-    } catch (e) {
-      // Tratar exceções aqui
-      setState(() {
-        isLoading = false;
-      });
-    }
+    categories = Provider.of<CategoryController>(context);
   }
 
   @override
@@ -53,12 +38,12 @@ class _SelectCategoryState extends State<SelectCategory> {
         border: Border.all(width: 1, color: primaryAmber),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: isLoading
+      child: categories.isLoading
           ? ShimmerCategory()
           : ListView.builder(
-              itemCount: categories.length,
+              itemCount: categories.listCategories.length,
               itemBuilder: (context, index) {
-                var item = categories[index];
+                var item = categories.listCategories[index];
                 return Container(
                   alignment: Alignment.centerLeft,
                   child: Padding(

@@ -1,5 +1,3 @@
-import 'package:app_receitas_mobile/src/view/components/addimagebutton.dart';
-import 'package:app_receitas_mobile/src/view/components/buttonaddrecipe.dart';
 import 'package:app_receitas_mobile/src/view/pages/favoritespage.dart';
 import 'package:app_receitas_mobile/src/view/pages/homepage.dart';
 import 'package:app_receitas_mobile/src/view/pages/listrecipepage.dart';

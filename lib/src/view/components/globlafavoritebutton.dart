@@ -1,80 +1,73 @@
-import 'package:app_receitas_mobile/src/controller/favoriteController.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+
+import '../../controller/favoriteController.dart';
+import '../../model/recipeModel.dart';
+
 
 class GlobalFavoriteButton extends StatefulWidget {
-  final int userId;
-  final int recipeId;
-
   const GlobalFavoriteButton({
     Key? key,
     required this.userId,
     required this.recipeId,
+    required this.item,
   }) : super(key: key);
+
+  final int userId;
+  final int recipeId;
+  final RecipeModel item;
 
   @override
   State<GlobalFavoriteButton> createState() => _GlobalFavoriteButtonState();
 }
 
 class _GlobalFavoriteButtonState extends State<GlobalFavoriteButton> {
-  late final FavoriteController controller;
-    bool isFavorite = false;
-  bool isAddingToFavorites = false;
+  late FavoriteController controller;
+  bool isFavorite = false;
 
   @override
   void initState() {
     super.initState();
-    controller = Get.find<FavoriteController>();
-    _checkIfRecipeIsFavorite();
-  }
+    // Get the instance of FavoriteController using context.read, which is safe in initState
+    controller = context.read<FavoriteController>();
 
-  void _checkIfRecipeIsFavorite() async {
-    bool _isFavorite = await controller.checkInRecipe(widget.userId, widget.recipeId);
-    setState(() {
-      isFavorite = _isFavorite;
-    });
-  }
-
-  void _toggleFavoriteStatus() async {
-    if (isAddingToFavorites) return; // Evita múltiplas solicitações enquanto uma está em andamento
-    setState(() {
-      isAddingToFavorites = true;
-    });
-
-    try {
-      if (isFavorite) {
-        await controller.removeRecipeinFavorite(widget.userId, widget.recipeId);
-      } else {
-        await controller.addRecipeinFavorite(widget.userId, widget.recipeId);
-      }
-      setState(() {
-        isFavorite = !isFavorite; // Alterna o status de favorito após a operação ser concluída com sucesso
-      });
-    } catch (e) {
-      // Lidar com erros aqui, como exibir uma mensagem para o usuário
-      print('Error: $e');
-    } finally {
-      setState(() {
-        isAddingToFavorites = false;
-      });
-    }
+    // Check if the item is already in the favorite list
+    isFavorite =
+        controller.listFavorite.any((recipe) => recipe.id == widget.item.id);
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _toggleFavoriteStatus,
-      child: Container(
-        child: isFavorite
-            ? Icon(
-                Icons.favorite,
-                color: Colors.pinkAccent,
-              )
-            : Icon(
-                Icons.favorite_border,
-                color: Colors.pinkAccent,
-              ),
-      ),
-    );
+    return controller.isLoading
+        ? CircularProgressIndicator() // Show loading indicator
+        : IconButton(
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+            ),
+            color: Colors.red,
+            onPressed: () async {
+              try {
+                if (isFavorite) {
+                  await controller.removeRecipeInFavorite(
+                      widget.userId, widget.recipeId);
+                } else {
+                  await controller.addRecipeInFavorite(
+                      widget.userId, widget.recipeId);
+                }
+                setState(() {
+                  isFavorite = !isFavorite; // Toggle the favorite state locally
+                });
+              } catch (e) {
+                // Handle any errors that might occur during add/remove operations
+                print('Error toggling favorite status: $e');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Failed to update favorite status'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+          );
   }
 }

@@ -10,7 +10,7 @@ import '../utils/api/apicontext.dart';
 class FavoriteRepository {
   static String baseurl = baseUrl;
 
-  Future<List<RecipeModel>> getReciepeFavorite(int userId) async {
+  getReciepeFavorite(int userId) async {
     var url = Uri.parse("$baseurl/api/Favorite/list_favorite?id_user=$userId");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final String? token = sharedPreferences.getString("auth_token");
@@ -47,7 +47,7 @@ class FavoriteRepository {
     }
   }
 
-  Future<bool> checkInRecipe(int userId, int recipeId) async {
+  checkInRecipe(int userId, int recipeId) async {
     var url = Uri.parse("$baseurl/api/Favorite/list_favorite?id_user=$userId");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final String? token = sharedPreferences.getString("auth_token");
@@ -82,7 +82,7 @@ class FavoriteRepository {
     }
   }
 
-  Future<DTOresponse> addRecipeinFavorite(int userId, int recipeId) async {
+  addRecipeinFavorite(int userId, int recipeId) async {
     var url = Uri.parse(
         "$baseurl/api/Favorite/add_favorite?userId=$userId&recipeId=$recipeId");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();

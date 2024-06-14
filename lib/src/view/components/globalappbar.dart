@@ -4,8 +4,9 @@ import '../styles/colores.dart';
 class GlobalAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double? height;
   final Widget? title;
+  final bool? titlecenter;
 
-  const GlobalAppBar({super.key, this.height, this.title});
+  const GlobalAppBar({super.key, this.height, this.title, this.titlecenter});
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +20,7 @@ class GlobalAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       surfaceTintColor: primaryAmber,
       title: title,
+      centerTitle: titlecenter,
     );
   }
 

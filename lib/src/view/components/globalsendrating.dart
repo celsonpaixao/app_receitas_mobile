@@ -1,8 +1,6 @@
-import 'package:app_receitas_mobile/src/controller/ratingController.dart';
 import 'package:app_receitas_mobile/src/model/ratingModel.dart';
 import 'package:app_receitas_mobile/src/repository/ratingRepository.dart';
 import 'package:app_receitas_mobile/src/view/components/globalmulttextinpu.dart';
-import 'package:app_receitas_mobile/src/view/components/globalprogress.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';

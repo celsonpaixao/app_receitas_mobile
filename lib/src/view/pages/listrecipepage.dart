@@ -1,19 +1,19 @@
-import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
+import 'package:app_receitas_mobile/src/controller/recipeController.dart';
+import 'package:app_receitas_mobile/src/model/recipeModel.dart';
 import 'package:app_receitas_mobile/src/view/components/globalappbar.dart';
+import 'package:app_receitas_mobile/src/view/components/globalrating.dart';
 import 'package:app_receitas_mobile/src/view/components/globalsearchinput.dart';
-import 'package:app_receitas_mobile/src/view/components/globalshimmer.dart';
 import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
+import 'package:app_receitas_mobile/src/view/components/shimmerlist.dart';
 import 'package:app_receitas_mobile/src/view/pages/detalhe_recipepage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
-import '../../controller/recipeController.dart';
-import '../../model/recipeModel.dart';
-import '../components/globalrating.dart';
+import '../../utils/api/apicontext.dart';
 
 class ListRecipePage extends StatefulWidget {
-  const ListRecipePage({super.key});
+  const ListRecipePage({Key? key}) : super(key: key);
 
   @override
   State<ListRecipePage> createState() => _ListRecipePageState();
@@ -23,29 +23,31 @@ class _ListRecipePageState extends State<ListRecipePage> {
   List<RecipeModel> recipes = [];
   List<RecipeModel> filteredRecipes = [];
   TextEditingController searchController = TextEditingController();
+  late RecipeController controller;
 
   @override
   void initState() {
     super.initState();
-    _loadRecipe();
-    searchController.addListener(_filterRecipes);
-  }
-
-  void _loadRecipe() async {
-    List<RecipeModel> getRecipes = await RecipeController().getRecipeAll();
-    setState(() {
-      recipes = getRecipes;
-      filteredRecipes = getRecipes;
+    controller = Provider.of<RecipeController>(context, listen: false);
+    // Fetch recipes initially
+    controller.getRecipeAll().then((_) {
+      setState(() {
+        recipes = controller.listAllRecipe.toList();
+        filteredRecipes = recipes;
+      });
     });
+    searchController.addListener(_filterRecipes);
   }
 
   void _filterRecipes() {
     String query = searchController.text.toLowerCase();
     setState(() {
       filteredRecipes = recipes
-          .where((recipe) =>
-              recipe.title!.toLowerCase().contains(query) ||
-              recipe.description!.toLowerCase().contains(query))
+          .where(
+            (recipe) =>
+                recipe.title!.toLowerCase().contains(query) ||
+                recipe.description!.toLowerCase().contains(query),
+          )
           .toList();
     });
   }
@@ -67,21 +69,23 @@ class _ListRecipePageState extends State<ListRecipePage> {
         height: 100,
       ),
       body: LayoutPage(
-        body: filteredRecipes.isEmpty
-            ? ListView.builder(
-                itemCount: 9,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: GlobalShimmer(
-                      shimmerWidth: double.infinity,
-                      shimmerHeight: 80,
-                      border: 8,
-                    ),
-                  );
-                },
-              )
-            : ListView.builder(
+        body: Consumer<RecipeController>(
+          builder: (context, controller, child) {
+            if (controller.isLoadAllList) {
+              return ShimmerList();
+            } else if (filteredRecipes.isEmpty) {
+              return Center(
+                child: Text(
+                  "Nenhuma receita encontrada...!",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
+              );
+            } else {
+              return ListView.builder(
                 itemCount: filteredRecipes.length,
                 itemBuilder: (context, index) {
                   var item = filteredRecipes[index];
@@ -144,7 +148,10 @@ class _ListRecipePageState extends State<ListRecipePage> {
                     ),
                   );
                 },
-              ),
+              );
+            }
+          },
+        ),
       ),
     );
   }

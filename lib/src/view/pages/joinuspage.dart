@@ -90,7 +90,8 @@ class _JoinUsPageState extends State<JoinUsPage> {
                   Image.asset(
                     "assets/images/Add User-bro.png",
                     width: 300,
-                    height: MediaQuery.of(context).size.height<= 1080? 240:  300,
+                    height:
+                        MediaQuery.of(context).size.height <= 1080 ? 240 : 300,
                   ),
                   GlobalInput(
                     controller: _firstNameController,

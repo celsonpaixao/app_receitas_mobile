@@ -1,40 +1,85 @@
+import 'dart:collection';
 
-import 'package:app_receitas_mobile/src/model/recipeModel.dart';
-import 'package:app_receitas_mobile/src/repository/favoriteRepository.dart';
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 
-import '../DTO/DTOresponse.dart';
+import '../model/recipeModel.dart';
+import '../repository/favoriteRepository.dart';
 
-class FavoriteController extends GetxController {
-  final List<RecipeModel> _listfavorite = <RecipeModel>[].obs;
-  List<RecipeModel> get listfavorite => _listfavorite;
+class FavoriteController extends ChangeNotifier {
+  List<RecipeModel> _listFavorite = <RecipeModel>[];
+  UnmodifiableListView<RecipeModel> get listFavorite =>
+      UnmodifiableListView(_listFavorite);
 
-  final RxBool _isLoading = false.obs;
-  RxBool get isLoading => _isLoading;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
-  Future<void> getFavoritesRecipe(int userId) async {
-    _isLoading.value = true;
+  void getFavoritesRecipe(int userId) async {
+    _isLoading = true;
+    notifyListeners(); // Notify listeners when loading starts
 
     try {
       final response = await FavoriteRepository().getReciepeFavorite(userId);
-      _listfavorite.assignAll(response);
+      _listFavorite.clear();
+      _listFavorite.addAll(response); // Use addAll to update list
     } catch (e) {
-      // Tratar erro
-      print('Erro ao obter receitas favoritas: $e');
+      // Handle error
+      print('Error fetching favorite recipes: $e');
     } finally {
-      _isLoading.value = false;
+      _isLoading = false;
+      notifyListeners(); // Notify listeners when loading completes
     }
   }
 
-  Future<bool> checkInRecipe(int userId, int recipeId) async {
-    return FavoriteRepository().checkInRecipe(userId, recipeId);
+  Future<void> checkInRecipe(int userId, int recipeId) async {
+    try {
+      bool isFavorite =
+          await FavoriteRepository().checkInRecipe(userId, recipeId);
+      if (isFavorite) {
+        _listFavorite.add(RecipeModel(id: recipeId)); // Add to local list
+      } else {
+        _listFavorite.removeWhere((recipe) => recipe.id == recipeId);
+      }
+      notifyListeners(); // Notify listeners after updating favorite status
+    } catch (e) {
+      // Handle error
+      print('Error checking favorite recipe: $e');
+    }
   }
 
-  Future<DTOresponse> addRecipeinFavorite(int userId, int recipeId) async {
-    return FavoriteRepository().addRecipeinFavorite(userId, recipeId);
+  Future<void> addRecipeInFavorite(int userId, int recipeId) async {
+    _isLoading = true;
+    notifyListeners(); // Notify listeners when operation starts
+    try {
+      if (_listFavorite.any((recipe) => recipe.id == recipeId)) {
+        print('Recipe already exists in favorites!');
+        return;
+      }
+
+      await FavoriteRepository().addRecipeinFavorite(userId, recipeId);
+      _listFavorite.add(RecipeModel(id: recipeId)); // Add to local list
+      notifyListeners(); // Notify listeners after adding to favorites
+    } catch (e) {
+      // Handle error
+      print('Error adding recipe to favorites: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners(); // Notify listeners when operation completes
+    }
   }
 
-  Future<DTOresponse> removeRecipeinFavorite(int userId, int recipeId) async {
-    return FavoriteRepository().removeRecipeinFavorite(userId, recipeId);
+  Future<void> removeRecipeInFavorite(int userId, int recipeId) async {
+    _isLoading = true;
+    notifyListeners(); // Notify listeners when operation starts
+    try {
+      await FavoriteRepository().removeRecipeinFavorite(userId, recipeId);
+      _listFavorite.removeWhere((recipe) => recipe.id == recipeId);
+      notifyListeners(); // Notify listeners after removing from favorites
+    } catch (e) {
+      // Handle error
+      print('Error removing recipe from favorites: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners(); // Notify listeners when operation completes
+    }
   }
 }

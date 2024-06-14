@@ -1,8 +1,9 @@
 import 'package:app_receitas_mobile/src/DTO/DTOresponse.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/repository/userRepository.dart';
+import 'package:flutter/material.dart';
 
-class UserController {
+class UserController extends ChangeNotifier {
   Future<DTOresponse> LoginUser(String email, String password) async {
     return UserRespository().AuthUser(email, password);
   }

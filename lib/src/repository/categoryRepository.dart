@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 class CategoryRepository {
   static String baseurl = baseUrl;
 
-  Future<List<CategoryModel>> getCategorys() async {
+  Future<List<CategoryModel>> getCategories() async {
     var url = Uri.parse("$baseurl/api/Category/list_all_category");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final String? token = sharedPreferences.getString("auth_token");

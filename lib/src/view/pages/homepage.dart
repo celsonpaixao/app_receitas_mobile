@@ -1,12 +1,12 @@
-import 'package:app_receitas_mobile/src/repository/categoryRepository.dart';
+import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
 import 'package:app_receitas_mobile/src/view/components/globalappbar.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/pages/listrecipepage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../../model/categoryModel.dart';
+import 'package:provider/provider.dart';
+import '../../controller/categoryController.dart';
 import '../components/tabcategorys.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,23 +17,36 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final UserToken user;
-  List<CategoryModel> categories = [];
+ UserModel? user;
 
   @override
   void initState() {
     super.initState();
-    user = Get.find<UserToken>();
-    _loadCategory();
+    _initialize();
   }
 
-  void _loadCategory() async {
+  Future<void> _initialize() async {
+    await _loadUser();
+    await _loadCategory();
+  }
+
+  Future<void> _loadUser() async {
     try {
-      List<CategoryModel> getCategories =
-          await CategoryRepository().getCategorys();
+      final tokenController = Provider.of<TokenDecod>(context, listen: false);
+      final decodedUser = await tokenController.decodeUser();
       setState(() {
-        categories = getCategories;
+        user = decodedUser;
       });
+    } catch (e) {
+      print('Error loading user: $e');
+    }
+  }
+
+  Future<void> _loadCategory() async {
+    try {
+      final categoryController =
+          Provider.of<CategoryController>(context, listen: false);
+      await categoryController.getCategoryList();
     } catch (e) {
       print('Error loading categories: $e');
     }
@@ -49,15 +62,19 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              user.firstName.isNotEmpty
-                  ? "Olá... ${user.firstName} ☺️"
-                  : "Carregando...!",
-              style: TextStyle(
-                color: primaryWhite,
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-              ),
+            Consumer<TokenDecod>(
+              builder: (context, token, child) {
+                return Text(
+                  user != null
+                      ? "Olá... ${user!.firstName} ☺️"
+                      : "Carregando...!",
+                  style: TextStyle(
+                    color: primaryWhite,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                  ),
+                );
+              },
             ),
             Spacing(value: .02),
             GestureDetector(
@@ -96,9 +113,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: categories.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : TabCategory(),
+      body: TabCategory(),
     );
   }
 }

@@ -1,12 +1,48 @@
+import 'dart:collection';
 import 'package:app_receitas_mobile/src/model/recipeModel.dart';
 import 'package:app_receitas_mobile/src/repository/recipeRepository.dart';
+import 'package:flutter/material.dart';
 
-class RecipeController {
-  Future<List<RecipeModel>> getRecipeAll() async {
-    return RecipeRepository().getRecipes();
+class RecipeController extends ChangeNotifier {
+  List<RecipeModel> _listAllRecipe = [];
+  UnmodifiableListView<RecipeModel> get listAllRecipe =>
+      UnmodifiableListView(_listAllRecipe);
+
+  bool _isLoadAllList = false;
+  bool get isLoadAllList => _isLoadAllList;
+
+  List<RecipeModel> _listRecipebyCategory = [];
+  UnmodifiableListView<RecipeModel> get listRecipebyCategory =>
+      UnmodifiableListView(_listRecipebyCategory);
+
+  bool _isLoadbyCategory = false;
+  bool get isLoadbyCategory => _isLoadbyCategory;
+
+  Future<void> getRecipeAll() async {
+    _isLoadAllList = true;
+
+    try {
+      var response = await RecipeRepository().getRecipes();
+      _listAllRecipe = response;
+    } catch (e) {
+      print('Erro ao obter todas as receitas: ${e.toString()}');
+    } finally {
+      _isLoadAllList = false;
+      notifyListeners();
+    }
   }
 
-  Future<List<RecipeModel>> getRecipeByCategory(int id_category) async {
-    return RecipeRepository().getRecipeBuCategory(id_category);
+  Future<void> getRecipeByCategory(int id_category) async {
+    _isLoadbyCategory = true;
+
+    try {
+      var response = await RecipeRepository().getRecipeByCategory(id_category);
+      _listRecipebyCategory = response;
+    } catch (e) {
+      print('Erro ao obter todas as receitas por categoria: ${e.toString()}');
+    } finally {
+      _isLoadbyCategory = false;
+      notifyListeners();
+    }
   }
 }

@@ -2,7 +2,6 @@
 import 'package:app_receitas_mobile/src/view/components/globalrating.dart';
 import 'package:app_receitas_mobile/src/view/pages/detalhe_recipepage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class GetRatingsForRecipe extends StatelessWidget {
   const GetRatingsForRecipe({
