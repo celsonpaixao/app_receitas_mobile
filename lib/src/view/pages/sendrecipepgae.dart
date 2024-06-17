@@ -24,38 +24,10 @@ class _SendRecipePageState extends State<SendRecipePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final List<String> _materials = [];
   final List<String> _ingredients = [];
-  final TextEditingController _materialController = TextEditingController();
-  final TextEditingController _ingredientController = TextEditingController();
 
-  void _addMaterial() {
-    if (_materialController.text.isNotEmpty) {
-      setState(() {
-        _materials.add(_materialController.text);
-        _materialController.clear();
-      });
-    }
-  }
+  final TextEditingController materialController = TextEditingController();
+  final TextEditingController ingredientController = TextEditingController();
 
-  void _addIngredient() {
-    if (_ingredientController.text.isNotEmpty) {
-      setState(() {
-        _ingredients.add(_ingredientController.text);
-        _ingredientController.clear();
-      });
-    }
-  }
-
-  void _removeMaterial(int index) {
-    setState(() {
-      _materials.removeAt(index);
-    });
-  }
-
-  void _removeIngredient(int index) {
-    setState(() {
-      _ingredients.removeAt(index);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -20,7 +20,8 @@ class RatingRepository {
     }
 
     final url = Uri.parse(
-        "$baseUrl/api/Rating/public_avaliaction?id_receita=$recipeId&id_user=$userId");
+      "$baseUrl/api/Rating/public_avaliaction?id_receita=$recipeId&id_user=$userId"
+    );
 
     print(url);
 

@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => RecipeController()),
         ChangeNotifierProvider(create: (context) => CategoryController()),
         ChangeNotifierProvider(create: (context) => FavoriteController()),
-        // Adicione outros providers aqui se necessário
+
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
