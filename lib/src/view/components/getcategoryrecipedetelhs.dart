@@ -1,5 +1,6 @@
 import 'package:app_receitas_mobile/src/view/pages/detalhe_recipepage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
+import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
 
 class GetCategoryRecipeDetalhes extends StatelessWidget {
@@ -20,8 +21,6 @@ class GetCategoryRecipeDetalhes extends StatelessWidget {
         (index) {
           var item = widget.recipe.categorias?[index];
           return Container(
-            width: (MediaQuery.of(context).size.width - 48) /
-                3, // 3 items por linha com espaçamento
             decoration: BoxDecoration(
               color: primaryAmber,
               borderRadius: BorderRadius.circular(8),
@@ -30,11 +29,7 @@ class GetCategoryRecipeDetalhes extends StatelessWidget {
             child: Center(
               child: Text(
                 item ?? 'Categoria não disponível',
-                style: TextStyle(
-                  color: primaryWhite,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
+                style: white_text_normal_bold,
                 textAlign: TextAlign.center,
               ),
             ),

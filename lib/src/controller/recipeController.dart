@@ -18,6 +18,13 @@ class RecipeController extends ChangeNotifier {
   bool _isLoadbyCategory = false;
   bool get isLoadbyCategory => _isLoadbyCategory;
 
+  List<RecipeModel> _listRecipebyUser = [];
+  UnmodifiableListView<RecipeModel> get listRecipebyUser =>
+      UnmodifiableListView(_listRecipebyUser);
+
+  bool _isLoadbyUser = false;
+  bool get isLoadbyUser => _isLoadbyCategory;
+
   Future<void> getRecipeAll() async {
     _isLoadAllList = true;
 
@@ -42,6 +49,20 @@ class RecipeController extends ChangeNotifier {
       print('Erro ao obter todas as receitas por categoria: ${e.toString()}');
     } finally {
       _isLoadbyCategory = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getRecipeByUser(int id_user) async {
+    _isLoadbyUser = true;
+
+    try {
+      var response = await RecipeRepository().getRecipeByUser(id_user);
+      _listRecipebyUser = response;
+    } catch (e) {
+      print('Erro ao obter todas as receitas por categoria: ${e.toString()}');
+    } finally {
+      _isLoadbyUser = false;
       notifyListeners();
     }
   }

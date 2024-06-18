@@ -1,4 +1,6 @@
+import 'package:app_receitas_mobile/providers.dart';
 import 'package:app_receitas_mobile/src/controller/categoryController.dart';
+import 'package:app_receitas_mobile/src/controller/ratingController.dart';
 import 'package:app_receitas_mobile/src/controller/recipeController.dart';
 import 'package:app_receitas_mobile/src/controller/userController.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +14,10 @@ import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'src/controller/favoriteController.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  // Configura todas as dependências
-  runApp(const MyApp());
+
+  runApp(
+    MyApp()
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -23,14 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => TokenDecod()),
-        ChangeNotifierProvider(create: (context) => UserController()),
-        ChangeNotifierProvider(create: (context) => RecipeController()),
-        ChangeNotifierProvider(create: (context) => CategoryController()),
-        ChangeNotifierProvider(create: (context) => FavoriteController()),
-        // Adicione outros providers aqui se necessário
-      ],
+      providers: providers,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'DishDash',

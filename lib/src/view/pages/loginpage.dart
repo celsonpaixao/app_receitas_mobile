@@ -140,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     child: Text(
                       "Ainda não possui uma conta? Clique aqui",
-                      style: Amber_Text_Normal,
+                      style: amber_text_normal,
                     ),
                   ),
                   Spacing(

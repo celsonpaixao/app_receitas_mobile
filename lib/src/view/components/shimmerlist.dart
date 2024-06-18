@@ -9,10 +9,11 @@ class ShimmerList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      
       itemCount: 6,
       itemBuilder: (context, index) {
         return Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(6.0),
           child: Container(
             decoration: BoxDecoration(
               color: secundaryGrey,
@@ -21,7 +22,7 @@ class ShimmerList extends StatelessWidget {
             child: Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(6.0),
                   child: GlobalShimmer(
                     shimmerWidth: 100,
                     shimmerHeight: 100,
@@ -32,15 +33,15 @@ class ShimmerList extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(6.0),
                       child: GlobalShimmer(
                         shimmerWidth: 150,
-                        shimmerHeight: 30,
+                        shimmerHeight: 20,
                         border: 8,
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(6),
                       child: GlobalShimmer(
                         shimmerWidth: 150,
                         shimmerHeight: 10,
@@ -48,9 +49,9 @@ class ShimmerList extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(6),
                       child: GlobalShimmer(
-                        shimmerWidth: 200,
+                        shimmerWidth: 150,
                         shimmerHeight: 10,
                         border: 8,
                       ),
