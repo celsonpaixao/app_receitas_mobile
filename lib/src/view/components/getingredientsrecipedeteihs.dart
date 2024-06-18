@@ -1,5 +1,5 @@
 import 'package:app_receitas_mobile/src/view/pages/detalhe_recipepage.dart';
-import 'package:app_receitas_mobile/src/view/styles/colores.dart';
+import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
 
 class GetIngredientsRecipeDetalhs extends StatelessWidget {
@@ -20,15 +20,10 @@ class GetIngredientsRecipeDetalhs extends StatelessWidget {
           var item = widget.recipe.ingredients?[index];
           return Text(
             item ?? 'Ingrediente não disponível',
-            style: TextStyle(
-              color: primaryGrey,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
+            style: grey_text_normal_bold,
           );
         },
       ),
     );
   }
 }
-

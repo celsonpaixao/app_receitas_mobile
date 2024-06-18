@@ -1,6 +1,7 @@
 import 'package:app_receitas_mobile/src/controller/recipeController.dart';
 import 'package:app_receitas_mobile/src/view/components/minicardrecipe.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
+import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -33,16 +34,21 @@ class _TabViewAllRecipeState extends State<TabViewAllRecipe>
           builder: (context, recipes, child) {
             return Container(
               child: recipes.isLoadAllList
-                  ? MiniCardRecipeShimmer()
+                  ? ListView.builder(
+                    itemCount: 6,
+                    scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: MiniCardRecipeShimmer(),
+                        );
+                      },
+                    )
                   : recipes.listAllRecipe.isEmpty
                       ? Center(
                           child: Text(
                             "Nenhuma receita encontrada...!",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey, // Adjust color as needed
-                            ),
+                            style: black_text_normal
                           ),
                         )
                       : ListView.builder(

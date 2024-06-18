@@ -4,6 +4,9 @@ import 'package:app_receitas_mobile/src/DTO/DTOresponse.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../utils/filters/messagefilter.dart';
 
 class UserRespository {
   static String baseurl = baseUrl;
@@ -29,6 +32,7 @@ class UserRespository {
         final Map<String, dynamic> data = jsonDecode(response.body);
         final String token = data['response']['token'];
         final String message = data['message'];
+        print(message);
         print('Token de autenticação recebido: $token');
         return DTOresponse(
           success: true,
@@ -44,7 +48,23 @@ class UserRespository {
     } catch (e) {
       print('Erro ao autenticar usuário: $e');
       return DTOresponse(
-          success: false, message: _parseErrorMessage(e.toString()));
+        success: false,
+        message: parseErrorMessage(
+          e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<bool> logout() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.clear();
+    final String? token = sharedPreferences.getString("auth_token");
+
+    if (token == null) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -79,25 +99,11 @@ class UserRespository {
     } catch (e) {
       print('Erro ao registrar usuário: $e');
       return DTOresponse(
-          success: false, message: _parseErrorMessage(e.toString()));
-    }
-  }
-
-  String _parseErrorMessage(String error) {
-    if (error.contains("This user does not exist")) {
-      return "Este usuário não existe !!";
-    } else if (error.contains("Incorrect password")) {
-      return "Senha incorreta !!";
-    } else if (error.contains(
-        "CERTIFICATE_VERIFY_FAILED: self signed certificate(handshake.cc:393))")) {
-      return "Sem Internet !!";
-    } else if (error.contains("User already exists with this email!")) {
-      return "Este E-mail está a ser utilizado";
-    } else if (error
-        .contains("Password and password confirmation do not match!")) {
-      return "A senha e a confirmação da senha não coincidem!";
-    } else {
-      return error;
+        success: false,
+        message: parseErrorMessage(
+          e.toString(),
+        ),
+      );
     }
   }
 }

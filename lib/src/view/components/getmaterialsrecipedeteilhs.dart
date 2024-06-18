@@ -1,5 +1,6 @@
 import 'package:app_receitas_mobile/src/view/pages/detalhe_recipepage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
+import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
 
 class GetMaterialsRecipeDeteilhs extends StatelessWidget {
@@ -18,14 +19,8 @@ class GetMaterialsRecipeDeteilhs extends StatelessWidget {
         widget.recipe.materials?.length ?? 0,
         (index) {
           var item = widget.recipe.materials?[index];
-          return Text(
-            item ?? 'Material não disponível',
-            style: TextStyle(
-              color: primaryGrey,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
-          );
+          return Text(item ?? 'Material não disponível',
+              style: grey_text_normal_bold);
         },
       ),
     );

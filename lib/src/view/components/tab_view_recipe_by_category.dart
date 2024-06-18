@@ -1,6 +1,7 @@
 import 'package:app_receitas_mobile/src/view/components/minicardrecipe.dart';
 import 'package:app_receitas_mobile/src/view/components/minicardshimmer.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
+import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controller/recipeController.dart';
@@ -49,7 +50,13 @@ class _TabViewRecipeByCategoryState extends State<TabViewRecipeByCategory> {
                     childAspectRatio: .65,
                   ),
                   itemBuilder: (context, index) {
-                    return MiniCardRecipeShimmer();
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 10,
+                      ),
+                      child: MiniCardRecipeShimmer(),
+                    );
                   },
                 )
               : recipe.listRecipebyCategory.isEmpty
@@ -57,6 +64,7 @@ class _TabViewRecipeByCategoryState extends State<TabViewRecipeByCategory> {
                       child: Text(
                         "Não foi encontrada nenhuma receita da categoria ${widget.name}",
                         textAlign: TextAlign.center,
+                        style: black_text_normal,
                       ),
                     )
                   : GridView.builder(
@@ -72,7 +80,9 @@ class _TabViewRecipeByCategoryState extends State<TabViewRecipeByCategory> {
                         var item = recipe.listRecipebyCategory[index];
                         return Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 10),
+                            horizontal: 6,
+                            vertical: 10,
+                          ),
                           child: MiniCardRecipe(item: item),
                         );
                       },

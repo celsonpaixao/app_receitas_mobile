@@ -11,6 +11,8 @@ class FavoriteController extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  String? errorMessage;
+
   Future<void> getFavoritesRecipe(int userId) async {
     _isLoading = true;
     notifyListeners();
@@ -20,8 +22,8 @@ class FavoriteController extends ChangeNotifier {
       _listFavorite.clear();
       _listFavorite.addAll(response);
     } catch (e) {
-      // Handle error
-      print('Error fetching favorite recipes: $e');
+      errorMessage = 'Error fetching favorite recipes: $e';
+      print(errorMessage);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -33,20 +35,24 @@ class FavoriteController extends ChangeNotifier {
       bool isFavorite =
           await FavoriteRepository().checkInRecipe(userId, recipeId);
       if (isFavorite) {
+        // Adiciona o novo favorito à lista local
         _listFavorite.add(RecipeModel(id: recipeId));
+        notifyListeners(); // Notifica os ouvintes para atualizar a interface
       } else {
+        // Remove o favorito da lista local
         _listFavorite.removeWhere((recipe) => recipe.id == recipeId);
+        notifyListeners(); // Notifica os ouvintes para atualizar a interface
       }
-      notifyListeners();
     } catch (e) {
-      // Handle error
-      print('Error checking favorite recipe: $e');
+      errorMessage = 'Error checking favorite recipe: $e';
+      print(errorMessage);
     }
   }
 
   Future<void> addRecipeInFavorite(int userId, int recipeId) async {
     _isLoading = true;
     notifyListeners();
+
     try {
       if (_listFavorite.any((recipe) => recipe.id == recipeId)) {
         print('Recipe already exists in favorites!');
@@ -55,9 +61,10 @@ class FavoriteController extends ChangeNotifier {
 
       await FavoriteRepository().addRecipeinFavorite(userId, recipeId);
       _listFavorite.add(RecipeModel(id: recipeId));
-      notifyListeners();
+      notifyListeners(); // Notifica os ouvintes para atualizar a interface
     } catch (e) {
-      print('Error adding recipe to favorites: $e');
+      errorMessage = 'Error adding recipe to favorites: $e';
+      print(errorMessage);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -67,16 +74,17 @@ class FavoriteController extends ChangeNotifier {
   Future<void> removeRecipeInFavorite(int userId, int recipeId) async {
     _isLoading = true;
     notifyListeners();
+
     try {
       await FavoriteRepository().removeRecipeinFavorite(userId, recipeId);
       _listFavorite.removeWhere((recipe) => recipe.id == recipeId);
-      notifyListeners(); // Notify listeners after removing from favorites
+      notifyListeners(); // Notifica os ouvintes para atualizar a interface
     } catch (e) {
-      // Handle error
-      print('Error removing recipe from favorites: $e');
+      errorMessage = 'Error removing recipe from favorites: $e';
+      print(errorMessage);
     } finally {
       _isLoading = false;
-      notifyListeners(); // Notify listeners when operation completes
+      notifyListeners();
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:app_receitas_mobile/src/view/components/globalappbar.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/pages/listrecipepage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
+import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controller/categoryController.dart';
@@ -68,11 +69,7 @@ class _HomePageState extends State<HomePage> {
                   user != null
                       ? "Olá... ${user!.firstName} ☺️"
                       : "Carregando...!",
-                  style: TextStyle(
-                    color: primaryWhite,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 25,
-                  ),
+                  style: white_text_title
                 );
               },
             ),

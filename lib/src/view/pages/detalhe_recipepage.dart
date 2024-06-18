@@ -1,3 +1,4 @@
+import 'package:app_receitas_mobile/src/controller/recipeController.dart';
 import 'package:app_receitas_mobile/src/model/recipeModel.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
@@ -5,16 +6,20 @@ import 'package:app_receitas_mobile/src/view/components/getingredientsrecipedete
 import 'package:app_receitas_mobile/src/view/components/getmaterialsrecipedeteilhs.dart';
 import 'package:app_receitas_mobile/src/view/components/getratingsforrecipes.dart';
 import 'package:app_receitas_mobile/src/view/components/globalbaclbutton.dart';
+import 'package:app_receitas_mobile/src/view/components/globalbutton.dart';
 import 'package:app_receitas_mobile/src/view/components/globalsendrating.dart';
-import 'package:app_receitas_mobile/src/view/components/globlafavoritebutton.dart';
+
 import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
-import 'package:app_receitas_mobile/src/view/styles/colores.dart';
+
+import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../utils/auth/tokendecod.dart';
 import '../components/getcategoryrecipedetelhs.dart';
+import '../components/globlafavoritebutton.dart';
+import '../styles/colores.dart';
 
 class DetalheRecipePage extends StatefulWidget {
   final RecipeModel recipe;
@@ -78,10 +83,11 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Globalbackbutton(),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
+                                  Globalbackbutton(),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: GlobalFavoriteButton(
@@ -91,7 +97,7 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                                     ),
                                   ),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -101,145 +107,148 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                 ),
               ];
             },
-            body: LayoutPage(
-              body: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.recipe.title ?? 'Título não disponível',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Spacing(value: 0.02),
-                      Text(
-                        widget.recipe.description ?? 'Descrição não disponível',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Spacing(value: 0.02),
-                      Text(
-                        "Categorias da Receita",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      Spacing(value: 0.02),
-                      GetCategoryRecipeDetalhes(widget: widget),
-                      Spacing(value: 0.02),
-                      Text(
-                        "Ingrediente da Receita",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      Spacing(value: 0.02),
-                      GetIngredientsRecipeDetalhs(widget: widget),
-                      Spacing(value: 0.02),
-                      Text(
-                        "Materiais/Instrumentos usados",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      Spacing(value: 0.02),
-                      GetMaterialsRecipeDeteilhs(widget: widget),
-                      Spacing(value: 0.02),
-                      ExpansionPanelList(
-                        expansionCallback: (int index, bool isExpanded) {
-                          setState(() {
-                            _isExpanded = !_isExpanded;
-                          });
-                        },
+            body: Consumer<RecipeController>(
+              builder: (context, recipeController, child) {
+                return LayoutPage(
+                  body: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ExpansionPanel(
-                            backgroundColor: primaryAmber,
-                            headerBuilder:
-                                (BuildContext context, bool isExpanded) {
-                              return ListTile(
-                                title: Text(
-                                  "Instruções",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: primaryWhite,
+                          Text(
+                            widget.recipe.title ?? 'Título não disponível',
+                            style: black_text_title,
+                          ),
+                          Spacing(value: 0.02),
+                          Text(
+                            widget.recipe.description ??
+                                'Descrição não disponível',
+                            style: grey_text_normal,
+                          ),
+                          Spacing(value: 0.02),
+                          Text(
+                            "Categorias da Receita",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          Spacing(value: 0.02),
+                          GetCategoryRecipeDetalhes(widget: widget),
+                          Spacing(value: 0.02),
+                          Text(
+                            "Ingrediente da Receita",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          Spacing(value: 0.02),
+                          GetIngredientsRecipeDetalhs(widget: widget),
+                          Spacing(value: 0.02),
+                          Text(
+                            "Materiais/Instrumentos usados",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          Spacing(value: 0.02),
+                          GetMaterialsRecipeDeteilhs(widget: widget),
+                          Spacing(value: 0.02),
+                          ExpansionPanelList(
+                            expansionCallback: (int index, bool isExpanded) {
+                              setState(() {
+                                _isExpanded = !_isExpanded;
+                              });
+                            },
+                            children: [
+                              ExpansionPanel(
+                                backgroundColor: primaryAmber,
+                                headerBuilder:
+                                    (BuildContext context, bool isExpanded) {
+                                  return ListTile(
+                                    title: Text(
+                                      "Instruções",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: primaryWhite,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                body: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0),
+                                  child: Text(
+                                    widget.recipe.instructions ??
+                                        'Instruções não disponíveis',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: primaryWhite,
+                                    ),
                                   ),
                                 ),
-                              );
-                            },
-                            body: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Text(
-                                widget.recipe.instructions ??
-                                    'Instruções não disponíveis',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: primaryWhite,
-                                ),
+                                isExpanded: _isExpanded,
                               ),
+                            ],
+                          ),
+                          Spacing(value: 0.02),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "Receita de: ",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: widget.recipe.admin ??
+                                      'Administrador não disponível',
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
                             ),
-                            isExpanded: _isExpanded,
+                          ),
+                          Divider(
+                            thickness: 1,
+                            color: primaryGrey,
+                          ),
+                          Spacing(value: 0.02),
+                          GlobalSendRating(
+                            userId: user?.id ?? 0,
+                            recipeId: widget.recipe.id ?? 0,
+                            messagecontroller: messagecontroller,
+                          ),
+                          Spacing(value: 0.03),
+                          Text(
+                            "Avaliações:",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          RefreshIndicator(
+                            onRefresh: () async {
+                              await recipeController.getRecipeAll();
+                            },
+                            child: GetRatingsForRecipe(widget: widget),
                           ),
                         ],
                       ),
-                      Spacing(value: 0.02),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "Receita de: ",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TextSpan(
-                              text: widget.recipe.admin ??
-                                  'Administrador não disponível',
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        thickness: 1,
-                        color: primaryGrey,
-                      ),
-                      Spacing(value: 0.02),
-                      GlobalSendRating(
-                        userId: user?.id ?? 0,
-                        recipeId: widget.recipe.id ?? 0,
-                        messagecontroller: messagecontroller,
-                      ),
-                      Spacing(value: 0.03),
-                      Text(
-                        "Avaliações:",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      GetRatingsForRecipe(widget: widget),
-                    ],
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
         ],

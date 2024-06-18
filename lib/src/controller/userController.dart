@@ -8,6 +8,10 @@ class UserController extends ChangeNotifier {
     return UserRespository().AuthUser(email, password);
   }
 
+  Future<bool> LogoutUser() async {
+    return UserRespository().logout();
+  }
+
   Future<DTOresponse> JoinUsUser(
       UserModel user, String confirm_password) async {
     return UserRespository().RegisterUser(user, confirm_password);

@@ -1,4 +1,6 @@
 import 'package:app_receitas_mobile/src/view/components/shimmerlist.dart';
+import 'package:app_receitas_mobile/src/view/pages/detalhe_recipepage.dart';
+import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app_receitas_mobile/src/controller/favoriteController.dart';
@@ -20,8 +22,8 @@ class FavoritesPage extends StatefulWidget {
 
 class _FavoritesPageState extends State<FavoritesPage> {
   late FavoriteController favorites;
-  late UserModel user;
-  late String searchText = '';
+  UserModel? user;
+  String searchText = '';
 
   @override
   void initState() {
@@ -31,8 +33,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   Future<void> initializeData() async {
-    user = await TokenDecod().decodeUser();
-    await favorites.getFavoritesRecipe(user.id!);
+    try {
+      user = await TokenDecod().decodeUser();
+      if (user?.id != null) {
+        await favorites.getFavoritesRecipe(user!.id!);
+      }
+    } catch (e) {
+      print('Error initializing data: $e');
+    }
   }
 
   @override
@@ -43,14 +51,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              "Seus Favoritos",
-              style: TextStyle(
-                color: primaryWhite,
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Text("Seus Favoritos", style: white_text_title),
             GlobalSearchInput(
               onchange: (value) {
                 setState(() {
@@ -71,69 +72,88 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     ? Center(
                         child: Text("Sem Favoritos..."),
                       )
-                    : ListView.builder(
-                        itemCount: favoriteController.listFavorite.length,
-                        itemBuilder: (context, index) {
-                          var item = favoriteController.listFavorite[index];
-                          final averageRating =
-                              item.calculateAverageRating()?.toDouble();
+                    : RefreshIndicator(
+                      color: primaryAmber,
+                      
+                        onRefresh: () async {
+                          await favoriteController
+                              .getFavoritesRecipe(user!.id!);
+                        },
+                        child: ListView.builder(
+                          itemCount: favoriteController.listFavorite.length,
+                          itemBuilder: (context, index) {
+                            var item = favoriteController.listFavorite[index];
+                            final averageRating =
+                                item.calculateAverageRating()?.toDouble();
 
-                          // Aplicar filtro
-                          if (searchText.isNotEmpty &&
-                              !item.title!
-                                  .toLowerCase()
-                                  .contains(searchText.toLowerCase())) {
-                            return Container(); // Retorna um container vazio se o título não contém o texto de pesquisa
-                          }
+                            if (searchText.isNotEmpty &&
+                                !item.title!
+                                    .toLowerCase()
+                                    .contains(searchText.toLowerCase())) {
+                              return SizedBox.shrink();
+                            }
 
-                          return Column(
-                            children: [
-                              ListTile(
-                                leading: Container(
-                                  width: 80,
-                                  height: 80,
-                                  decoration: BoxDecoration(
-                                    color: primaryAmber,
-                                    borderRadius: BorderRadius.circular(6),
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        "$baseUrl/${item.imageURL}",
+                            return Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetalheRecipePage(recipe: item),
+                                        ));
+                                  },
+                                  child: ListTile(
+                                    leading: Container(
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        color: primaryAmber,
+                                        borderRadius: BorderRadius.circular(6),
+                                        image: item.imageURL != null
+                                            ? DecorationImage(
+                                                image: NetworkImage(
+                                                  "$baseUrl/${item.imageURL}",
+                                                ),
+                                                fit: BoxFit.cover,
+                                              )
+                                            : null,
                                       ),
-                                      fit: BoxFit.cover,
+                                    ),
+                                    title: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            item.title ?? 'Carregando....',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        if (averageRating != null)
+                                          GlobalRating(
+                                            count: 5,
+                                            value: averageRating,
+                                            sizeStar: 15,
+                                          ),
+                                      ],
+                                    ),
+                                    subtitle: Text(
+                                      item.description ?? 'Carregando...',
+                                      style: TextStyle(color: primaryGrey),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ),
-                                title: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        item.title!,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    if (averageRating != null)
-                                      GlobalRating(
-                                        count: 5,
-                                        value: averageRating,
-                                        sizeStar: 15,
-                                      ),
-                                  ],
-                                ),
-                                subtitle: Text(
-                                  item.description!,
-                                  style: TextStyle(color: primaryGrey),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              Divider(),
-                            ],
-                          );
-                        },
+                                Divider(),
+                              ],
+                            );
+                          },
+                        ),
                       ),
           );
         },
