@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../controller/favoriteController.dart';
 import '../../model/recipeModel.dart';
-
 
 class GlobalFavoriteButton extends StatefulWidget {
   const GlobalFavoriteButton({
@@ -28,10 +26,7 @@ class _GlobalFavoriteButtonState extends State<GlobalFavoriteButton> {
   @override
   void initState() {
     super.initState();
-    // Get the instance of FavoriteController using context.read, which is safe in initState
     controller = context.read<FavoriteController>();
-
-    // Check if the item is already in the favorite list
     isFavorite =
         controller.listFavorite.any((recipe) => recipe.id == widget.item.id);
   }
@@ -39,7 +34,7 @@ class _GlobalFavoriteButtonState extends State<GlobalFavoriteButton> {
   @override
   Widget build(BuildContext context) {
     return controller.isLoading
-        ? CircularProgressIndicator() // Show loading indicator
+        ? CircularProgressIndicator()
         : IconButton(
             icon: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -55,14 +50,14 @@ class _GlobalFavoriteButtonState extends State<GlobalFavoriteButton> {
                       widget.userId, widget.recipeId);
                 }
                 setState(() {
-                  isFavorite = !isFavorite; // Toggle the favorite state locally
+                  isFavorite = !isFavorite;
                 });
               } catch (e) {
-                // Handle any errors that might occur during add/remove operations
                 print('Error toggling favorite status: $e');
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Failed to update favorite status'),
+                    content: Text(
+                        'Failed to update favorite status: ${controller.errorMessage}'),
                     backgroundColor: Colors.red,
                   ),
                 );

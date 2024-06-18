@@ -1,8 +1,7 @@
-
 class CategoryModel {
-  int? id;
-  String? name;
-  late bool isSelected; // Adicione a propriedade isSelected aqui
+  final int? id;
+  final String? name;
+  late final bool isSelected; // Adicione a propriedade isSelected aqui
 
   CategoryModel({
     required this.id,

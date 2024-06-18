@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:app_receitas_mobile/src/model/categoryModel.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/api/apicontext.dart';
 import 'package:http/http.dart' as http;
@@ -29,7 +30,9 @@ class CategoryRepository {
       var bodyresponse = body
           .map((dynamic item) => CategoryModel.fromJson(item['categoria']))
           .toList();
-      print(bodyresponse.toList());
+
+      debugPrint(
+          "${bodyresponse.length.toString()} Categorias Carregadas com Sucesso");
       return bodyresponse;
     } else {
       throw Exception('Failed to load categories');

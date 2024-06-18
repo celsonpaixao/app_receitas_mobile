@@ -1,16 +1,15 @@
 import 'dart:convert';
-
-import 'package:app_receitas_mobile/src/model/recipeModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
+import '../model/recipeModel.dart';
 import '../DTO/DTOresponse.dart';
 import '../utils/api/apicontext.dart';
 
 class FavoriteRepository {
   static String baseurl = baseUrl;
 
-  getReciepeFavorite(int userId) async {
+  
+  Future<List<RecipeModel>> getReciepeFavorite(int userId) async {
     var url = Uri.parse("$baseurl/api/Favorite/list_favorite?id_user=$userId");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final String? token = sharedPreferences.getString("auth_token");
@@ -43,11 +42,13 @@ class FavoriteRepository {
         throw Exception('Failed to decode recipes: $e');
       }
     } else {
-      throw Exception('Failed to load recipes');
+      throw Exception(
+          'Failed to load recipes. Status code: ${response.statusCode}');
     }
   }
 
-  checkInRecipe(int userId, int recipeId) async {
+
+  Future<bool> checkInRecipe(int userId, int recipeId) async {
     var url = Uri.parse("$baseurl/api/Favorite/list_favorite?id_user=$userId");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final String? token = sharedPreferences.getString("auth_token");
@@ -78,11 +79,12 @@ class FavoriteRepository {
 
       return favoriteRecipes.any((recipe) => recipe.id == recipeId);
     } else {
-      throw Exception('Failed to fetch favorite recipes');
+      throw Exception(
+          'Failed to fetch favorite recipes. Status code: ${response.statusCode}');
     }
   }
 
-  addRecipeinFavorite(int userId, int recipeId) async {
+  Future<DTOresponse> addRecipeinFavorite(int userId, int recipeId) async {
     var url = Uri.parse(
         "$baseurl/api/Favorite/add_favorite?userId=$userId&recipeId=$recipeId");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -100,8 +102,8 @@ class FavoriteRepository {
       },
     );
 
-    try {
-      if (response.statusCode == 200) {
+    if (response.statusCode == 200) {
+      try {
         final Map<String, dynamic> data = jsonDecode(response.body);
         final String message = data['message'];
         print(message);
@@ -109,15 +111,15 @@ class FavoriteRepository {
           success: true,
           message: message,
         );
-      } else {
-        return DTOresponse(
-          success: false,
-          message:
-              'Failed to add recipe to favorites. Status code: ${response.statusCode}',
-        );
+      } catch (e) {
+        throw Exception('Failed to decode response: $e');
       }
-    } catch (e) {
-      throw Exception('Failed to process response: $e');
+    } else {
+      return DTOresponse(
+        success: false,
+        message:
+            'Failed to add recipe to favorites. Status code: ${response.statusCode}, Error: ${response.body}',
+      );
     }
   }
 
@@ -139,8 +141,8 @@ class FavoriteRepository {
       },
     );
 
-    try {
-      if (response.statusCode == 200) {
+    if (response.statusCode == 200) {
+      try {
         final Map<String, dynamic> data = jsonDecode(response.body);
         final String message = data['message'];
         print(message);
@@ -148,15 +150,15 @@ class FavoriteRepository {
           success: true,
           message: message,
         );
-      } else {
-        return DTOresponse(
-          success: false,
-          message:
-              'Failed to add recipe to favorites. Status code: ${response.statusCode}',
-        );
+      } catch (e) {
+        throw Exception('Failed to decode response: $e');
       }
-    } catch (e) {
-      throw Exception('Failed to process response: $e');
+    } else {
+      return DTOresponse(
+        success: false,
+        message:
+            'Failed to remove recipe from favorites. Status code: ${response.statusCode}, Error: ${response.body}',
+      );
     }
   }
 }

@@ -174,7 +174,7 @@ class _JoinUsPageState extends State<JoinUsPage> {
                     },
                     child: Text(
                       "Já possui uma conta? Clique aqui",
-                      style: Amber_Text_Normal,
+                      style: amber_text_normal,
                     ),
                   ),
                   Spacing(value: .02),

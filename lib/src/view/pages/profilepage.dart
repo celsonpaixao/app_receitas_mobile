@@ -1,10 +1,15 @@
+import 'package:app_receitas_mobile/src/controller/recipeController.dart';
+import 'package:app_receitas_mobile/src/controller/userController.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
 import 'package:app_receitas_mobile/src/view/components/globalappbar.dart';
-import 'package:app_receitas_mobile/src/view/components/globalbutton.dart';
 import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
+import 'package:app_receitas_mobile/src/view/components/minicardrecipe.dart';
+import 'package:app_receitas_mobile/src/view/components/minicardshimmer.dart';
+import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/pages/loginpage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
+import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,78 +23,176 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   UserModel? user;
+  late RecipeController recipe;
 
   @override
   void initState() {
     super.initState();
+    recipe = Provider.of(context, listen: false);
     _initialize();
   }
 
   Future<void> _initialize() async {
-    await _loadUser();
-  }
-
-  Future<void> _loadUser() async {
     try {
       final tokenController = Provider.of<TokenDecod>(context, listen: false);
       final decodedUser = await tokenController.decodeUser();
       setState(() {
         user = decodedUser;
       });
+      if (user?.id != null) {
+        await recipe.getRecipeByUser(user!.id!);
+      }
     } catch (e) {
       print('Error loading user: $e');
     }
   }
 
-  Future<bool> logout() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    await sharedPreferences.clear();
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LoginPage(),
-      ),
-    );
-
-    return true;
+  Future<void> logout() async {
+    var cond = await UserController().LogoutUser();
+    if (cond == true) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginPage(),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GlobalAppBar(
-        title: Consumer<TokenDecod>(
-          builder: (context, token, child) {
-            return Text(
-              user != null
-                  ? "${user!.firstName} ${user!.lastName}"
-                  : "Carregando...!",
-              style: TextStyle(
-                color: primaryWhite,
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
+        appBar: GlobalAppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Consumer<TokenDecod>(
+                builder: (context, token, child) {
+                  return Text(
+                      user != null
+                          ? "${user!.firstName} ${user!.lastName}"
+                          : "Carregando...!",
+                      style: white_text_title);
+                },
+              ),
+              IconButton(
+                  onPressed: logout,
+                  icon: Icon(
+                    Icons.login,
+                    color: primaryWhite,
+                  ))
+            ],
+          ),
+          titlecenter: true,
+        ),
+        body: Consumer<TokenDecod>(
+          builder: (context, usercontroller, child) {
+            return LayoutPage(
+              body: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Spacing(value: .04),
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: secundaryGrey,
+                        borderRadius: BorderRadius.circular(100),
+                        image: user!.imageURL!.isNotEmpty
+                            ? DecorationImage(
+                                image: NetworkImage(user!.imageURL!),
+                              )
+                            : null,
+                      ),
+                      child: user!.imageURL!.isEmpty
+                          ? Icon(
+                              Icons.person,
+                              color: primaryGrey,
+                              size: 80,
+                            )
+                          : null,
+                    ),
+                    Spacing(value: .04),
+                    MaterialButton(
+                      minWidth: 100,
+                      height: 45,
+                      color: primaryAmber,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Text(
+                        "Ediar",
+                        style: TextStyle(color: primaryWhite),
+                      ),
+                      onPressed: () {
+                        // Lógica para quando o botão é pressionado
+                      },
+                    ),
+                    Spacing(value: .04),
+                    Text(
+                      "Suas receitas",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: Consumer<RecipeController>(
+                        builder: (context, recipecontroller, child) {
+                          return recipecontroller.isLoadbyUser
+                              ? GridView.builder(
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 0,
+                                    mainAxisSpacing: 5,
+                                    childAspectRatio: .65,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: MiniCardRecipeShimmer(),
+                                    );
+                                  },
+                                )
+                              : recipecontroller.listRecipebyUser.isEmpty
+                                  ? Center(
+                                      child: Text(
+                                          "Você ainda não publicou nehuma receita..!!"),
+                                    )
+                                  : GridView.builder(
+                                      itemCount: recipecontroller
+                                          .listRecipebyUser.length,
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        crossAxisSpacing: 0,
+                                        mainAxisSpacing: 5,
+                                        childAspectRatio: .65,
+                                      ),
+                                      itemBuilder: (context, index) {
+                                        var item = recipecontroller
+                                            .listRecipebyUser[index];
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: MiniCardRecipe(
+                                            item: item,
+                                          ),
+                                        );
+                                      },
+                                    );
+                        },
+                      ),
+                    )
+                  ],
+                ),
               ),
             );
           },
-        ),
-        titlecenter: true,
-        
-      ),
-      body: LayoutPage(
-        body: Column(
-          children: [
-            Center(
-              child: GlobalButton(
-                textButton: "Sair",
-                onClick: logout,
-                background: primaryAmber,
-                textColor: primaryWhite,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+        ));
   }
 }

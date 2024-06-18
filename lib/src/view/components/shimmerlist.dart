@@ -51,7 +51,7 @@ class ShimmerList extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(6),
                       child: GlobalShimmer(
-                        shimmerWidth: 200,
+                        shimmerWidth: 150,
                         shimmerHeight: 10,
                         border: 8,
                       ),

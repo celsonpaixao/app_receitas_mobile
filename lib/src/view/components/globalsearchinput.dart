@@ -1,4 +1,5 @@
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
+import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
 
 class GlobalSearchInput extends StatelessWidget {
@@ -30,11 +31,7 @@ class GlobalSearchInput extends StatelessWidget {
           ),
           contentPadding: EdgeInsets.all(0),
           hintText: "Procurar Receita...!",
-          hintStyle: TextStyle(
-            color: primaryWhite,
-            fontWeight: FontWeight.normal,
-            fontSize: 13,
-          ),
+          hintStyle: white_text_normal,
           prefixIcon: Icon(
             Icons.search_rounded,
             color: primaryWhite,
