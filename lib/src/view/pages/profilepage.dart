@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:app_receitas_mobile/src/controller/recipeController.dart';
 import 'package:app_receitas_mobile/src/controller/userController.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
@@ -13,7 +15,8 @@ import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../utils/api/apicontext.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -102,20 +105,17 @@ class _ProfilePageState extends State<ProfilePage> {
                     decoration: BoxDecoration(
                       color: secundaryGrey,
                       borderRadius: BorderRadius.circular(100),
-                      image:
-                          user!.imageURL != null && user!.imageURL!.isNotEmpty
-                              ? DecorationImage(
-                                  image: NetworkImage(user!.imageURL!),
-                                )
-                              : null,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image:
+                            user?.imageURL != null && user!.imageURL!.isNotEmpty
+                                ? NetworkImage("$baseUrl/${user!.imageURL!}")
+                                : AssetImage(
+                                    "assets/images/Depositphotos_484354208_S.jpg",
+                                    
+                                  ) as ImageProvider,
+                      ),
                     ),
-                    child: user!.imageURL != null && user!.imageURL!.isEmpty
-                        ? Icon(
-                            Icons.person,
-                            color: primaryGrey,
-                            size: 80,
-                          )
-                        : null,
                   ),
                   Spacing(value: .04),
                   MaterialButton(

@@ -17,7 +17,22 @@ class UpdateUserPage extends StatefulWidget {
 }
 
 class _UpdateUserPageState extends State<UpdateUserPage> {
+  final TextEditingController newfirtNameController = TextEditingController();
+  final TextEditingController newlastNameController = TextEditingController();
+  final TextEditingController newemailController = TextEditingController();
+  final TextEditingController newpasswordController = TextEditingController();
+  final TextEditingController confirmpasswordController =
+      TextEditingController();
   @override
+  @override
+  void initState() {
+    super.initState();
+    newfirtNameController.text = widget.userdate.firstName;
+    newlastNameController.text = widget.userdate.lastName;
+    newemailController.text = widget.userdate.email;
+    
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: GlobalAppBar(
@@ -35,29 +50,36 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
             hintText: "Atualizar Primeiro Nome",
             ispassword: false,
             prefixIcon: Icon(Icons.person),
-            value: widget.userdate.firstName,
+            controller: newfirtNameController,
           ),
           Spacing(value: .01),
           GlobalInput(
             hintText: "Atualizar Ultimo Nome",
             ispassword: false,
             prefixIcon: Icon(Icons.person),
-            value: widget.userdate.lastName,
+            controller: newlastNameController,
           ),
           Spacing(value: .01),
           GlobalInput(
             hintText: "Atualizar Email",
             ispassword: false,
             prefixIcon: Icon(Icons.email),
-            value: widget.userdate.email,
+            controller: newemailController,
           ),
           Spacing(value: .01),
-
           GlobalInput(
             hintText: "Atualizar Password",
             ispassword: false,
             prefixIcon: Icon(Icons.lock),
-            value: widget.userdate.password,
+            controller: newpasswordController,
+          ),
+          Spacing(value: .01),
+
+          GlobalInput(
+            hintText: "Confirmar password",
+            ispassword: false,
+            prefixIcon: Icon(Icons.lock),
+            controller: confirmpasswordController,
           ),
           Spacing(value: .01),
           GlobalButton(
