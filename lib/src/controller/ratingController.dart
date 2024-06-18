@@ -1,10 +1,11 @@
 import 'dart:collection';
 
+import 'package:flutter/material.dart';
 import 'package:app_receitas_mobile/src/model/ratingModel.dart';
 import 'package:app_receitas_mobile/src/repository/ratingRepository.dart';
-import 'package:flutter/material.dart';
 
 class RatingController extends ChangeNotifier {
+  final RatingRepository ratingRepository;
   final List<RatingModel> _listRating = [];
   UnmodifiableListView<RatingModel> get listRating =>
       UnmodifiableListView(_listRating);
@@ -20,18 +21,20 @@ class RatingController extends ChangeNotifier {
 
   bool get hasError => _errorMessage != null;
 
+  RatingController({required this.ratingRepository});
+
   Future<void> getRatingByRecipe(int recipeId) async {
     _setLoading(true);
+
     try {
-      var response = await RatingRepository().getRatingByRecipe(recipeId);
-      _listRating.clear();
+      var response = await ratingRepository.getRatingByRecipe(recipeId);
       _listRating.addAll(response);
-      _setErrorMessage(null);
-      _setInitialized(true); // Set isInitialized to true after successful fetch
+      print(_listRating.toString());
     } catch (e) {
       _setErrorMessage('Failed to fetch ratings: $e');
     } finally {
       _setLoading(false);
+      notifyListeners();
     }
   }
 
@@ -39,7 +42,7 @@ class RatingController extends ChangeNotifier {
       int userId, int recipeId, RatingModel rating) async {
     _setLoading(true);
     try {
-      await RatingRepository().publicaRating(userId, recipeId, rating);
+      await ratingRepository.publicaRating(userId, recipeId, rating);
       _listRating.add(rating);
       _setErrorMessage(null);
       notifyListeners();
@@ -52,7 +55,6 @@ class RatingController extends ChangeNotifier {
 
   void _setLoading(bool value) {
     _isLoading = value;
-    notifyListeners();
   }
 
   void _setErrorMessage(String? message) {

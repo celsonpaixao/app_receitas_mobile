@@ -6,7 +6,7 @@ import '../styles/colores.dart';
 
 class SelectCategory extends StatefulWidget {
   final List<int> CategorysIds;
-  final String? Function(String? value) validator; // Correção aqui
+  final String? Function(String? value)? validator; // Corrigido
 
   const SelectCategory({
     Key? key,
@@ -22,51 +22,48 @@ class _SelectCategoryState extends State<SelectCategory> {
   late CategoryController categories;
   bool isLoading = false;
 
-
   @override
   Widget build(BuildContext context) {
     categories = Provider.of<CategoryController>(context);
     return categories.isLoading
         ? ShimmerCategory()
         : Wrap(
-          spacing: 10,
-          runSpacing: 0.0,
-          children: categories.listCategories.map((item) {
-            return ChoiceChip(
-              label: Text(
-                item.name!,
-                style: TextStyle(
-                  color: item.isSelected ? primaryWhite : primaryAmber,
-                  fontWeight: item.isSelected
-                      ? FontWeight.bold
-                      : FontWeight.normal,
+            spacing: 10,
+            runSpacing: 0.0,
+            children: categories.listCategories.map((item) {
+              return ChoiceChip(
+                label: Text(
+                  item.name!,
+                  style: TextStyle(
+                    color: item.isSelected ? primaryWhite : primaryAmber,
+                    fontWeight: item.isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
                 ),
-              ),
-              selected: item.isSelected,
-              side: BorderSide(
-                width: .9,
-                color: primaryAmber, // Cor da borda
-              ),
-              selectedColor: primaryAmber,
-              checkmarkColor: primaryWhite,
-              backgroundColor: primaryWhite,
-              onSelected: (bool selected) {
-                setState(() {
-                  item.isSelected = selected;
-                  if (selected) {
-                    if (!widget.CategorysIds.contains(item.id)) {
-                      widget.CategorysIds.add(item.id!);
+                selected: item.isSelected,
+                side: BorderSide(
+                  width: .9,
+                  color: primaryAmber, // Cor da borda
+                ),
+                selectedColor: primaryAmber,
+                checkmarkColor: primaryWhite,
+                backgroundColor: primaryWhite,
+                onSelected: (bool selected) {
+                  setState(() {
+                    item.isSelected = selected;
+                    if (selected) {
+                      if (!widget.CategorysIds.contains(item.id)) {
+                        widget.CategorysIds.add(item.id!);
+                      }
+                    } else {
+                      widget.CategorysIds.remove(item.id);
                     }
-                  } else {
-                    widget.CategorysIds.remove(item.id);
-                  }
-            
-                  print(widget.CategorysIds.toList());
-                });
-              },
-            );
-          }).toList(),
-        );
+
+                    print(widget.CategorysIds.toList());
+                  });
+                },
+              );
+            }).toList(),
+          );
   }
 }
 

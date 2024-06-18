@@ -31,8 +31,7 @@ class CategoryRepository {
           .map((dynamic item) => CategoryModel.fromJson(item['categoria']))
           .toList();
 
-      debugPrint(
-          "${bodyresponse.length.toString()} Categorias Carregadas com Sucesso");
+      debugPrint(bodyresponse.toString());
       return bodyresponse;
     } else {
       throw Exception('Failed to load categories');

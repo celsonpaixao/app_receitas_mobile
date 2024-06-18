@@ -8,6 +8,7 @@ import 'package:app_receitas_mobile/src/view/components/minicardrecipe.dart';
 import 'package:app_receitas_mobile/src/view/components/minicardshimmer.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/pages/loginpage.dart';
+import 'package:app_receitas_mobile/src/view/pages/updateuserpage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
@@ -62,137 +63,146 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: GlobalAppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Consumer<TokenDecod>(
-                builder: (context, token, child) {
-                  return Text(
-                      user != null
-                          ? "${user!.firstName} ${user!.lastName}"
-                          : "Carregando...!",
-                      style: white_text_title);
-                },
+      appBar: GlobalAppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              user != null
+                  ? "${user!.firstName} ${user!.lastName}"
+                  : "Carregando...!",
+              style: white_text_title,
+            ),
+            IconButton(
+              onPressed: logout,
+              icon: Icon(
+                Icons.login,
+                color: primaryWhite,
               ),
-              IconButton(
-                  onPressed: logout,
-                  icon: Icon(
-                    Icons.login,
-                    color: primaryWhite,
-                  ))
-            ],
-          ),
-          titlecenter: true,
+            )
+          ],
         ),
-        body: Consumer<TokenDecod>(
-          builder: (context, usercontroller, child) {
-            return LayoutPage(
-              body: Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Spacing(value: .04),
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: secundaryGrey,
-                        borderRadius: BorderRadius.circular(100),
-                        image: user!.imageURL!.isNotEmpty
-                            ? DecorationImage(
-                                image: NetworkImage(user!.imageURL!),
-                              )
-                            : null,
-                      ),
-                      child: user!.imageURL!.isEmpty
-                          ? Icon(
-                              Icons.person,
-                              color: primaryGrey,
-                              size: 80,
-                            )
-                          : null,
+        titlecenter: true,
+      ),
+      body: Consumer<TokenDecod>(
+        builder: (context, usercontroller, child) {
+          if (user == null) {
+            return Center(child: CircularProgressIndicator());
+          }
+          return LayoutPage(
+            body: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Spacing(value: .04),
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: secundaryGrey,
+                      borderRadius: BorderRadius.circular(100),
+                      image:
+                          user!.imageURL != null && user!.imageURL!.isNotEmpty
+                              ? DecorationImage(
+                                  image: NetworkImage(user!.imageURL!),
+                                )
+                              : null,
                     ),
-                    Spacing(value: .04),
-                    MaterialButton(
-                      minWidth: 100,
-                      height: 45,
-                      color: primaryAmber,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Text(
-                        "Ediar",
-                        style: TextStyle(color: primaryWhite),
-                      ),
-                      onPressed: () {
-                        // Lógica para quando o botão é pressionado
+                    child: user!.imageURL != null && user!.imageURL!.isEmpty
+                        ? Icon(
+                            Icons.person,
+                            color: primaryGrey,
+                            size: 80,
+                          )
+                        : null,
+                  ),
+                  Spacing(value: .04),
+                  MaterialButton(
+                    minWidth: 100,
+                    height: 45,
+                    color: primaryAmber,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Text(
+                      "Editar",
+                      style: TextStyle(color: primaryWhite),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                UpdateUserPage(userdate: user!),
+                          ));
+                    },
+                  ),
+                  Spacing(value: .04),
+                  Text(
+                    "Suas receitas",
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Expanded(
+                    child: Consumer<RecipeController>(
+                      builder: (context, recipecontroller, child) {
+                        if (recipecontroller.isLoadbyUser) {
+                          return GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 0,
+                              mainAxisSpacing: 5,
+                              childAspectRatio: .65,
+                            ),
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: MiniCardRecipeShimmer(),
+                              );
+                            },
+                          );
+                        } else if (recipecontroller.listRecipebyUser.isEmpty) {
+                          return Center(
+                            child: Text(
+                                "Você ainda não publicou nehuma receita..!!"),
+                          );
+                        } else {
+                          return GridView.builder(
+                            itemCount: recipecontroller.listRecipebyUser.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 0,
+                              mainAxisSpacing: 5,
+                              childAspectRatio: .65,
+                            ),
+                            itemBuilder: (context, index) {
+                              var item =
+                                  recipecontroller.listRecipebyUser[index];
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: MiniCardRecipe(
+                                  item: item,
+                                ),
+                              );
+                            },
+                          );
+                        }
                       },
                     ),
-                    Spacing(value: .04),
-                    Text(
-                      "Suas receitas",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Expanded(
-                      child: Consumer<RecipeController>(
-                        builder: (context, recipecontroller, child) {
-                          return recipecontroller.isLoadbyUser
-                              ? GridView.builder(
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 0,
-                                    mainAxisSpacing: 5,
-                                    childAspectRatio: .65,
-                                  ),
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: MiniCardRecipeShimmer(),
-                                    );
-                                  },
-                                )
-                              : recipecontroller.listRecipebyUser.isEmpty
-                                  ? Center(
-                                      child: Text(
-                                          "Você ainda não publicou nehuma receita..!!"),
-                                    )
-                                  : GridView.builder(
-                                      itemCount: recipecontroller
-                                          .listRecipebyUser.length,
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2,
-                                        crossAxisSpacing: 0,
-                                        mainAxisSpacing: 5,
-                                        childAspectRatio: .65,
-                                      ),
-                                      itemBuilder: (context, index) {
-                                        var item = recipecontroller
-                                            .listRecipebyUser[index];
-                                        return Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: MiniCardRecipe(
-                                            item: item,
-                                          ),
-                                        );
-                                      },
-                                    );
-                        },
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
-            );
-          },
-        ));
+            ),
+          );
+        },
+      ),
+    );
   }
 }

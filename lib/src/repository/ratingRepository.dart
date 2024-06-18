@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
@@ -21,8 +22,7 @@ class RatingRepository {
     }
 
     final url = Uri.parse(
-      "$baseUrl/api/Rating/public_avaliaction?id_receita=$recipeId&id_user=$userId"
-    );
+        "$baseUrl/api/Rating/public_avaliaction?id_receita=$recipeId&id_user=$userId");
 
     print(url);
 
@@ -74,6 +74,7 @@ class RatingRepository {
 
     if (response.statusCode == 200) {
       List<dynamic> body = json.decode(response.body)['response'];
+    
       List<RatingModel> recipes =
           body.map((dynamic item) => RatingModel.fromJson(item)).toList();
       return recipes;

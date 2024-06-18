@@ -18,12 +18,11 @@ class CategoryController extends ChangeNotifier {
 
   getCategoryList() async {
     _isLoading = true;
-    notifyListeners();
 
     try {
       var response = await repository.getCategories();
       _listCategories = [
-        CategoryModel(id: 0, name: "Todos"), // Adiciona a categoria "Todos"
+       
         ...response
       ];
     } catch (e) {

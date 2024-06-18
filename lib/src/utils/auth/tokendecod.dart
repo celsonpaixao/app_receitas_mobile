@@ -17,6 +17,7 @@ class TokenDecod extends ChangeNotifier {
       final String lastName = decodedToken['lastname'];
       final String email = decodedToken['useremail'];
       final String imageURL = decodedToken['imageurl'];
+      final String password = decodedToken['password'];
       print(firstName);
 
       return UserModel(
@@ -25,7 +26,7 @@ class TokenDecod extends ChangeNotifier {
         lastName: lastName,
         email: email,
         imageURL: imageURL,
-        password: null, // Adicione uma senha padrão ou nula se necessário
+        password: password, // Adicione uma senha padrão ou nula se necessário
       );
     } else {
       throw Exception('Token not found in SharedPreferences');

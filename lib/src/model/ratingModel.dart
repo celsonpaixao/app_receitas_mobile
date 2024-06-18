@@ -19,9 +19,7 @@ class RatingModel {
     data['id'] = id;
     data['value'] = value;
     data['message'] = message;
-    if (user != null) {
-      data['user'] = user!.toJson();
-    }
+     data['user'] = user!.toJson();
     return data;
   }
 }

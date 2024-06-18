@@ -34,7 +34,7 @@ class _GlobalSendRatingState extends State<GlobalSendRating> {
     setState(() {
       _isLoading = true;
     });
-    
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -71,6 +71,7 @@ class _GlobalSendRatingState extends State<GlobalSendRating> {
         _setRating = 0.0;
       });
       widget.messagecontroller.clear();
+      _setRating = 0.0;
     }
   }
 

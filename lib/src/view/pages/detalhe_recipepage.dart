@@ -6,7 +6,6 @@ import 'package:app_receitas_mobile/src/view/components/getingredientsrecipedete
 import 'package:app_receitas_mobile/src/view/components/getmaterialsrecipedeteilhs.dart';
 import 'package:app_receitas_mobile/src/view/components/getratingsforrecipes.dart';
 import 'package:app_receitas_mobile/src/view/components/globalbaclbutton.dart';
-import 'package:app_receitas_mobile/src/view/components/globalbutton.dart';
 import 'package:app_receitas_mobile/src/view/components/globalsendrating.dart';
 
 import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
@@ -14,6 +13,7 @@ import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 
 import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 import '../../utils/auth/tokendecod.dart';
@@ -237,12 +237,7 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                               fontSize: 18,
                             ),
                           ),
-                          RefreshIndicator(
-                            onRefresh: () async {
-                              await recipeController.getRecipeAll();
-                            },
-                            child: GetRatingsForRecipe(widget: widget),
-                          ),
+                          GetRatingsForRecipe(widget: widget),
                         ],
                       ),
                     ),

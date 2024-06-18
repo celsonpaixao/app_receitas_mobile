@@ -49,14 +49,17 @@ class _TabCategoryState extends State<TabCategory>
         final categories = categoryController.listCategories;
         final categoriesLength = categories.length;
 
+        // Clone the original list to a new mutable list
+        List<CategoryModel> modifiedCategories = List.from(categories);
+
         // Add "Todos" category if it's not already present
         if (!categories.any((category) => category.name == "Todos")) {
-          categories.insert(0, CategoryModel(id: 0, name: "Todos"));
+          modifiedCategories.insert(0, CategoryModel(id: 0, name: "Todos"));
         }
 
         // Update TabController length when categories change
-        if (_tabController.length != categoriesLength) {
-          _tabController = TabController(length: categoriesLength, vsync: this);
+        if (_tabController.length != modifiedCategories.length) {
+          _tabController = TabController(length: modifiedCategories.length, vsync: this);
         }
 
         return LayoutPage(
@@ -82,7 +85,7 @@ class _TabCategoryState extends State<TabCategory>
                               fontWeight: FontWeight.normal,
                               fontSize: 14,
                             ),
-                            tabs: categories
+                            tabs: modifiedCategories
                                 .map((category) => Tab(text: category.name!))
                                 .toList(),
                           )
@@ -96,7 +99,7 @@ class _TabCategoryState extends State<TabCategory>
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
-                  children: categories.map((category) {
+                  children: modifiedCategories.map((category) {
                     if (category.name == "Todos") {
                       return Container(
                         padding: EdgeInsets.all(16.0),

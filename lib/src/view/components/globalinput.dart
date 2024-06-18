@@ -5,6 +5,7 @@ class GlobalInput extends StatelessWidget {
   final String hintText;
   final Widget? prefixIcon;
   final Widget? sufixIcon;
+  final String? value;
   final TextEditingController? controller;
   final bool ispassword;
   final TextInputType? type;
@@ -21,6 +22,7 @@ class GlobalInput extends StatelessWidget {
     this.onchange,
     this.type,
     this.validator,
+    this.value,
   });
 
   @override
@@ -29,6 +31,7 @@ class GlobalInput extends StatelessWidget {
       controller: controller,
       onChanged: onchange,
       validator: validator,
+      initialValue: value,
       keyboardType: type,
       maxLines: 1,
       obscureText: ispassword,
@@ -37,7 +40,6 @@ class GlobalInput extends StatelessWidget {
         color: primaryAmber,
       ),
       decoration: InputDecoration(
-        
           contentPadding: EdgeInsets.symmetric(
             vertical: 7,
             horizontal: 10,

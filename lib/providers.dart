@@ -1,3 +1,5 @@
+
+import 'package:app_receitas_mobile/src/repository/ratingRepository.dart';
 import 'package:provider/provider.dart';
 
 import 'src/controller/categoryController.dart';
@@ -25,9 +27,13 @@ final providers = [
     create: (_) => RecipeController(),
   ),
 
-  // Provedor para RatingController
+  // Provedor para RatingController~
+  Provider<RatingRepository>(
+    create: (_) => RatingRepository(),
+  ),
   ChangeNotifierProvider<RatingController>(
-    create: (_) => RatingController(),
+    create: (context) =>
+        RatingController(ratingRepository: context.read<RatingRepository>()),
   ),
 
   // Provedor para CategoryRepository (lazy: false se não precisar de carregamento preguiçoso)
