@@ -24,7 +24,7 @@ class RatingRepository {
     final url = Uri.parse(
         "$baseUrl/api/Rating/public_avaliaction?id_receita=$recipeId&id_user=$userId");
 
-    print(url);
+    debugPrint(url.toString());
 
     try {
       final response = await http.post(
@@ -39,24 +39,55 @@ class RatingRepository {
         }),
       );
 
-      print(response.body);
+      debugPrint(response.body);
 
       if (response.statusCode == 200) {
         var message = json.decode(response.body)['message'];
-        print(message);
+        debugPrint(message);
         return DTOresponse(success: true, message: message);
       } else {
         return DTOresponse(success: false, message: 'Failed to publish rating');
       }
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
       return DTOresponse(success: false, message: 'An error occurred');
     }
   }
 
-  Future<List<RatingModel>> getRatingByRecipe(int recipe_id) async {
+  Future<DTOresponse> deletRating(int ratingId) async {
+    late DTOresponse response;
+    var url = Uri.parse("$baseurl/api/Rating/delete_avaliaction?id=$ratingId");
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final String? token = sharedPreferences.getString("auth_token");
+
+    if (token == null) {
+      throw Exception('Token not found in SharedPreferences');
+    }
+
+    try {
+      final request = await http.delete(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+
+      if (request.statusCode == 200) {
+        var message = jsonDecode(request.body)['Avaluation deleted sucess'];
+
+        response = DTOresponse(success: true, message: message);
+      }
+    } catch (e) {
+      response = DTOresponse(success: false, message: e.toString());
+    }
+
+    return response;
+  }
+
+  Future<List<RatingModel>> getRatingByRecipe(int recipeId) async {
     var url = Uri.parse(
-        "$baseurl/api/Rating/list_all_avaliaction?id_receita=$recipe_id");
+        "$baseurl/api/Rating/list_all_avaliaction?id_receita=$recipeId");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final String? token = sharedPreferences.getString("auth_token");
 
@@ -74,12 +105,14 @@ class RatingRepository {
 
     if (response.statusCode == 200) {
       List<dynamic> body = json.decode(response.body)['response'];
-    
-      List<RatingModel> recipes =
+      debugPrint(body.toString()); // Adicionado para depuração
+
+      List<RatingModel> ratings =
           body.map((dynamic item) => RatingModel.fromJson(item)).toList();
-      return recipes;
+      return ratings;
     } else {
-      throw Exception('Failed to load recipes');
+      debugPrint('Failed to load ratings: ${response.statusCode}');
+      throw Exception('Failed to load ratings');
     }
   }
 }

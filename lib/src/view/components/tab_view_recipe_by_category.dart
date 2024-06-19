@@ -4,6 +4,7 @@ import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../controller/ratingController.dart';
 import '../../controller/recipeController.dart';
 
 class TabViewRecipeByCategory extends StatefulWidget {
@@ -40,6 +41,7 @@ class _TabViewRecipeByCategoryState extends State<TabViewRecipeByCategory> {
       backgroundColor: primaryWhite,
       body: Consumer<RecipeController>(
         builder: (context, recipe, child) {
+          final ratings = Provider.of<RatingController>(context, listen: false);
           return recipe.isLoadbyCategory
               ? GridView.builder(
                   itemCount: 6,
@@ -78,12 +80,16 @@ class _TabViewRecipeByCategoryState extends State<TabViewRecipeByCategory> {
                       ),
                       itemBuilder: (context, index) {
                         var item = recipe.listRecipebyCategory[index];
+                        ratings.getRatingByRecipe(item.id!);
                         return Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 6,
                             vertical: 10,
                           ),
-                          child: MiniCardRecipe(item: item),
+                          child: MiniCardRecipe(
+                            item: item,
+                            ratings: ratings.listRating,
+                          ),
                         );
                       },
                     );

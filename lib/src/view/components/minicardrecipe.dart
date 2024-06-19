@@ -1,3 +1,4 @@
+import 'package:app_receitas_mobile/src/model/ratingModel.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
@@ -11,9 +12,11 @@ import '../../model/recipeModel.dart';
 import '../styles/colores.dart';
 
 class MiniCardRecipe extends StatefulWidget {
-  const MiniCardRecipe({Key? key, required this.item}) : super(key: key);
+  const MiniCardRecipe({Key? key, required this.item, required this.ratings})
+      : super(key: key);
 
   final RecipeModel item;
+  final List<RatingModel> ratings;
 
   @override
   State<MiniCardRecipe> createState() => _MiniCardRecipeState();
@@ -22,6 +25,7 @@ class MiniCardRecipe extends StatefulWidget {
 class _MiniCardRecipeState extends State<MiniCardRecipe> {
   late final TokenDecod tokenDecod;
   UserModel? user;
+  late final RatingModel ratingModel;
 
   @override
   void initState() {
@@ -31,6 +35,7 @@ class _MiniCardRecipeState extends State<MiniCardRecipe> {
 
   Future<void> _loadUser() async {
     tokenDecod = Provider.of<TokenDecod>(context, listen: false);
+    ratingModel = RatingModel();
     user = await tokenDecod.decodeUser();
     if (mounted) {
       setState(() {}); // Força a reconstrução do widget após carregar o usuário
@@ -39,7 +44,8 @@ class _MiniCardRecipeState extends State<MiniCardRecipe> {
 
   @override
   Widget build(BuildContext context) {
-    final averageRating = widget.item.calculateAverageRating()?.toDouble();
+    final averageRating =
+        ratingModel.calculateAverageRating(widget.ratings)?.toDouble();
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -90,7 +96,7 @@ class _MiniCardRecipeState extends State<MiniCardRecipe> {
                       padding: const EdgeInsets.all(8.0),
                       child: user != null
                           ? GlobalFavoriteButton(
-                            item: widget.item,
+                              item: widget.item,
                               userId: user!.id!,
                               recipeId: widget.item.id!,
                             )

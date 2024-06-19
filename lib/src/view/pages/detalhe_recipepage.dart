@@ -7,15 +7,11 @@ import 'package:app_receitas_mobile/src/view/components/getmaterialsrecipedeteil
 import 'package:app_receitas_mobile/src/view/components/getratingsforrecipes.dart';
 import 'package:app_receitas_mobile/src/view/components/globalbaclbutton.dart';
 import 'package:app_receitas_mobile/src/view/components/globalsendrating.dart';
-
 import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
-
 import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-
 import '../../utils/auth/tokendecod.dart';
 import '../components/getcategoryrecipedetelhs.dart';
 import '../components/globlafavoritebutton.dart';
@@ -53,7 +49,7 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
     }
   }
 
-  @override
+ @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -237,7 +233,7 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                               fontSize: 18,
                             ),
                           ),
-                          GetRatingsForRecipe(widget: widget),
+                          GetRatingsForRecipe(recipeId: widget.recipe.id!,),
                         ],
                       ),
                     ),
@@ -250,4 +246,5 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
       ),
     );
   }
+
 }

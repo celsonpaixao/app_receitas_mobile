@@ -47,7 +47,6 @@ class _TabCategoryState extends State<TabCategory>
       builder: (context, categoryController, child) {
         // Get the number of categories
         final categories = categoryController.listCategories;
-        final categoriesLength = categories.length;
 
         // Clone the original list to a new mutable list
         List<CategoryModel> modifiedCategories = List.from(categories);

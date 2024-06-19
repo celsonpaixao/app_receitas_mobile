@@ -27,6 +27,7 @@ class _GlobalFavoriteButtonState extends State<GlobalFavoriteButton> {
   void initState() {
     super.initState();
     controller = context.read<FavoriteController>();
+    // Verifica se a receita atual está na lista de favoritos ao inicializar o estado
     isFavorite =
         controller.listFavorite.any((recipe) => recipe.id == widget.item.id);
   }
@@ -34,7 +35,7 @@ class _GlobalFavoriteButtonState extends State<GlobalFavoriteButton> {
   @override
   Widget build(BuildContext context) {
     return controller.isLoading
-        ? CircularProgressIndicator()
+        ? CircularProgressIndicator() // Mostra um indicador de progresso se estiver carregando
         : IconButton(
             icon: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -42,17 +43,23 @@ class _GlobalFavoriteButtonState extends State<GlobalFavoriteButton> {
             color: Colors.red,
             onPressed: () async {
               try {
+                // Alterna o status de favorito ao pressionar o botão
                 if (isFavorite) {
                   await controller.removeRecipeInFavorite(
-                      widget.userId, widget.recipeId);
+                      widget.userId, widget.recipeId, widget.item);
                 } else {
                   await controller.addRecipeInFavorite(
-                      widget.userId, widget.recipeId);
+                    widget.userId,
+                    widget.recipeId,
+                    widget.item,
+                  );
                 }
+                // Atualiza o estado local para refletir a mudança
                 setState(() {
                   isFavorite = !isFavorite;
                 });
               } catch (e) {
+                // Lida com erros durante a alteração de status de favorito
                 print('Error toggling favorite status: $e');
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

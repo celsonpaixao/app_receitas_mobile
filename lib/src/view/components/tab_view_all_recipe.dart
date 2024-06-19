@@ -5,6 +5,7 @@ import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../controller/ratingController.dart';
 import 'minicardshimmer.dart';
 
 class TabViewAllRecipe extends StatefulWidget {
@@ -20,6 +21,7 @@ class _TabViewAllRecipeState extends State<TabViewAllRecipe>
   void initState() {
     super.initState();
     // Fetch recipes initially
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final recipes = Provider.of<RecipeController>(context, listen: false);
       recipes.getRecipeAll();
@@ -32,11 +34,13 @@ class _TabViewAllRecipeState extends State<TabViewAllRecipe>
         backgroundColor: primaryWhite,
         body: Consumer<RecipeController>(
           builder: (context, recipes, child) {
+            final ratings =
+                Provider.of<RatingController>(context, listen: false);
             return Container(
               child: recipes.isLoadAllList
                   ? ListView.builder(
-                    itemCount: 6,
-                    scrollDirection: Axis.horizontal,
+                      itemCount: 6,
+                      scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -46,10 +50,8 @@ class _TabViewAllRecipeState extends State<TabViewAllRecipe>
                     )
                   : recipes.listAllRecipe.isEmpty
                       ? Center(
-                          child: Text(
-                            "Nenhuma receita encontrada...!",
-                            style: black_text_normal
-                          ),
+                          child: Text("Nenhuma receita encontrada...!",
+                              style: black_text_normal),
                         )
                       : ListView.builder(
                           padding: EdgeInsets.symmetric(horizontal: 8),
@@ -57,9 +59,14 @@ class _TabViewAllRecipeState extends State<TabViewAllRecipe>
                           itemCount: recipes.listAllRecipe.length,
                           itemBuilder: (context, index) {
                             var item = recipes.listAllRecipe[index];
+
+                            ratings.getRatingByRecipe(item.id!);
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: MiniCardRecipe(item: item),
+                              child: MiniCardRecipe(
+                                item: item,
+                                ratings: ratings.listRating,
+                              ),
                             );
                           },
                         ),

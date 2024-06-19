@@ -49,7 +49,7 @@ class FavoriteController extends ChangeNotifier {
     }
   }
 
-  Future<void> addRecipeInFavorite(int userId, int recipeId) async {
+  Future<void> addRecipeInFavorite(int userId, int recipeId, RecipeModel recipe) async {
     _isLoading = true;
     notifyListeners();
 
@@ -60,7 +60,7 @@ class FavoriteController extends ChangeNotifier {
       }
 
       await FavoriteRepository().addRecipeinFavorite(userId, recipeId);
-      _listFavorite.add(RecipeModel(id: recipeId));
+      _listFavorite.add(recipe);
       notifyListeners(); // Notifica os ouvintes para atualizar a interface
     } catch (e) {
       errorMessage = 'Error adding recipe to favorites: $e';
@@ -71,7 +71,7 @@ class FavoriteController extends ChangeNotifier {
     }
   }
 
-  Future<void> removeRecipeInFavorite(int userId, int recipeId) async {
+  Future<void> removeRecipeInFavorite(int userId, int recipeId, RecipeModel recipe) async {
     _isLoading = true;
     notifyListeners();
 

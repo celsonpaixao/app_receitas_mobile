@@ -1,12 +1,11 @@
 import 'package:app_receitas_mobile/src/view/components/globalbaclbutton.dart';
+import 'package:flutter/material.dart';
 import 'package:app_receitas_mobile/src/view/components/globalbutton.dart';
 import 'package:app_receitas_mobile/src/view/components/globalinput.dart';
 import 'package:app_receitas_mobile/src/view/components/globalmulttextinpu.dart';
 import 'package:app_receitas_mobile/src/view/components/selectcategorys.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
-import 'package:flutter/material.dart';
-
 import '../components/setingredientrecipe.dart';
 import '../components/setmaterialrecipe.dart';
 
@@ -21,10 +20,8 @@ class _SendRecipePageState extends State<SendRecipePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final List<String> _materials = [];
   final List<String> _ingredients = [];
-
   final TextEditingController materialController = TextEditingController();
   final TextEditingController ingredientController = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +48,10 @@ class _SendRecipePageState extends State<SendRecipePage> {
               title: Text(
                 "Publicar nova receita",
                 style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: primaryWhite),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: primaryWhite,
+                ),
               ),
             ),
           ),
@@ -75,7 +73,7 @@ class _SendRecipePageState extends State<SendRecipePage> {
                         return null;
                       },
                     ),
-                    Spacing(value: .02),
+                    Spacing(value: 0.02),
                     GlobalMultTextInput(
                       hintText: "Descrição",
                       validator: (value) {
@@ -85,12 +83,12 @@ class _SendRecipePageState extends State<SendRecipePage> {
                         return null;
                       },
                     ),
-                    Spacing(value: .03),
+                    Spacing(value: 0.03),
                     Text(
                       "Categoria",
                       style: TextStyle(color: primaryAmber),
                     ),
-                    Spacing(value: .009),
+                    Spacing(value: 0.009),
                     SelectCategory(
                       CategorysIds: _Id_CategorysController,
                       validator: (value) {
@@ -100,7 +98,7 @@ class _SendRecipePageState extends State<SendRecipePage> {
                         return null;
                       },
                     ),
-                    Spacing(value: .03),
+                    Spacing(value: 0.03),
                     Text(
                       "Materiais",
                       style: TextStyle(color: primaryAmber),
@@ -118,7 +116,7 @@ class _SendRecipePageState extends State<SendRecipePage> {
                         return null;
                       },
                     ),
-                    Spacing(value: .02),
+                    Spacing(value: 0.02),
                     Text(
                       "Ingredientes",
                       style: TextStyle(color: primaryAmber),
@@ -136,9 +134,9 @@ class _SendRecipePageState extends State<SendRecipePage> {
                         return null;
                       },
                     ),
-                    Spacing(value: .02),
+                    Spacing(value: 0.02),
                     GlobalMultTextInput(hintText: "Instruções"),
-                    Spacing(value: .02),
+                    Spacing(value: 0.02),
                     GlobalButton(
                       textButton: "Publicar",
                       onClick: () {

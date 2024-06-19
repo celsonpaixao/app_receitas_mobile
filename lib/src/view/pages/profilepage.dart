@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:app_receitas_mobile/src/controller/recipeController.dart';
 import 'package:app_receitas_mobile/src/controller/userController.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
@@ -16,6 +14,7 @@ import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../controller/ratingController.dart';
 import '../../utils/api/apicontext.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -89,6 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: Consumer<TokenDecod>(
         builder: (context, usercontroller, child) {
+          final ratings = Provider.of<RatingController>(context, listen: false);
           if (user == null) {
             return Center(child: CircularProgressIndicator());
           }
@@ -112,7 +112,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ? NetworkImage("$baseUrl/${user!.imageURL!}")
                                 : AssetImage(
                                     "assets/images/Depositphotos_484354208_S.jpg",
-                                    
                                   ) as ImageProvider,
                       ),
                     ),
@@ -185,10 +184,13 @@ class _ProfilePageState extends State<ProfilePage> {
                             itemBuilder: (context, index) {
                               var item =
                                   recipecontroller.listRecipebyUser[index];
+
+                              ratings.getRatingByRecipe(item.id!);
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: MiniCardRecipe(
                                   item: item,
+                                  ratings: ratings.listRating,
                                 ),
                               );
                             },

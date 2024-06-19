@@ -1,13 +1,11 @@
-import 'package:app_receitas_mobile/src/DTO/DTOresponse.dart';
-import 'package:app_receitas_mobile/src/model/ratingModel.dart';
-import 'package:app_receitas_mobile/src/view/components/globalmulttextinpu.dart';
-import 'package:app_receitas_mobile/src/view/components/globalprogress.dart';
-import 'package:app_receitas_mobile/src/view/components/spacing.dart';
+import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-
+import 'package:flutter_pannable_rating_bar/flutter_pannable_rating_bar.dart';
 import '../../repository/ratingRepository.dart';
+import 'globalmulttextinpu.dart';
 import 'globalprogress.dart';
+import '../../DTO/DTOresponse.dart';
+import '../../model/ratingModel.dart';
 
 class GlobalSendRating extends StatefulWidget {
   final TextEditingController messagecontroller;
@@ -54,24 +52,31 @@ class _GlobalSendRatingState extends State<GlobalSendRating> {
           message: widget.messagecontroller.text,
         ),
       );
+
       Navigator.of(context).pop();
-      // Show success message or handle response accordingly
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Rating submitted successfully!'),
+        content: Text('Avaliação enviada com sucesso!'),
+        backgroundColor: Colors.green,
       ));
+
+      widget.messagecontroller.clear();
+
+      setState(() {
+        _setRating = 0.0;
+      });
     } catch (e) {
       Navigator.of(context).pop();
-      // Show error message
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Failed to submit rating. Please try again.'),
+        content:
+            Text('Falha ao enviar a avaliação. Por favor, tente novamente.'),
+        backgroundColor: Colors.red,
       ));
     } finally {
       setState(() {
         _isLoading = false;
-        _setRating = 0.0;
       });
-      widget.messagecontroller.clear();
-      _setRating = 0.0;
     }
   }
 
@@ -80,20 +85,31 @@ class _GlobalSendRatingState extends State<GlobalSendRating> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RatingBar.builder(
+        PannableRatingBar.builder(
+          rate: _setRating,
+          alignment: WrapAlignment.center,
+          spacing: 10,
+          runSpacing: 0,
           itemCount: 5,
-          itemSize: 30,
-          itemBuilder: (context, _) => const Icon(
-            Icons.star,
-            color: Colors.amber,
-          ),
-          onRatingUpdate: (rating) {
+          direction: Axis.horizontal,
+          itemBuilder: (context, index) {
+            return RatingWidget(
+  
+              selectedColor: Colors.amber,
+              unSelectedColor: secundaryGrey,
+              child: Icon(
+                Icons.star,
+                size: 35,
+              ),
+            );
+          },
+          onChanged: (value) {
             setState(() {
-              _setRating = rating;
+              _setRating = value;
             });
           },
         ),
-        const Spacing(value: 0.01),
+        const SizedBox(height: 16),
         GlobalMultTextInput(
           hintText: "O que achou desta receita?",
           controller: widget.messagecontroller,

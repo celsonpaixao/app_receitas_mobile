@@ -10,6 +10,8 @@ import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../controller/ratingController.dart';
+import '../../model/ratingModel.dart';
 import '../../utils/api/apicontext.dart';
 
 class ListRecipePage extends StatefulWidget {
@@ -71,6 +73,9 @@ class _ListRecipePageState extends State<ListRecipePage> {
       body: LayoutPage(
         body: Consumer<RecipeController>(
           builder: (context, controller, child) {
+                      final ratigs =
+                Provider.of<RatingController>(context, listen: false);
+            final RatingModel ratingModel = RatingModel();
             if (controller.isLoadAllList) {
               return ShimmerList();
             } else if (filteredRecipes.isEmpty) {
@@ -89,8 +94,10 @@ class _ListRecipePageState extends State<ListRecipePage> {
                 itemCount: filteredRecipes.length,
                 itemBuilder: (context, index) {
                   var item = filteredRecipes[index];
-                  final averageRating =
-                      item.calculateAverageRating()?.toDouble();
+                   ratigs.getRatingByRecipe(item.id!);
+                  final averageRating = ratingModel
+                      .calculateAverageRating(ratigs.listRating)
+                      ?.toDouble();
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: Column(
@@ -110,11 +117,14 @@ class _ListRecipePageState extends State<ListRecipePage> {
                               width: 80,
                               height: 80,
                               decoration: BoxDecoration(
-                                  color: primaryAmber,
-                                  borderRadius: BorderRadius.circular(6),
-                                  image: DecorationImage(
-                                      image: NetworkImage(
-                                          "$baseUrl/${item.imageURL}"))),
+                                color: primaryAmber,
+                                borderRadius: BorderRadius.circular(6),
+                                image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(
+                                      "$baseUrl/${item.imageURL}",
+                                    )),
+                              ),
                             ),
                             title: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,

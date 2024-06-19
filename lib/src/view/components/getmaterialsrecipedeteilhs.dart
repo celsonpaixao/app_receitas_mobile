@@ -1,5 +1,4 @@
 import 'package:app_receitas_mobile/src/view/pages/detalhe_recipepage.dart';
-import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
 

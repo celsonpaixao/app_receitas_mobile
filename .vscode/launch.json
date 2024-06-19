@@ -1,25 +1,29 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "app_receitas_mobile",
-            "request": "launch",
-            "type": "dart"
-        },
-        {
-            "name": "app_receitas_mobile (profile mode)",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "profile"
-        },
-        {
-            "name": "app_receitas_mobile (release mode)",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "release"
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "app_receitas_mobile",
+      "request": "launch",
+      "type": "dart"
+    },
+    {
+      "name": "app_receitas_mobile (profile mode)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "app_receitas_mobile (release mode)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release"
+    },
+    {
+      "name": "Flutter (Pixel 4 API 29)",
+      "program": "lib/main.dart",
+      "deviceId": "emulator-5554",
+      "request": "launch",
+      "type": "dart"
+    }
+  ]
 }

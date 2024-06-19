@@ -22,7 +22,6 @@ class RecipeController extends ChangeNotifier {
   UnmodifiableListView<RecipeModel> get listRecipebyUser =>
       UnmodifiableListView(_listRecipebyUser);
 
-  bool _isLoadbyUser = false;
   bool get isLoadbyUser => _isLoadbyCategory;
 
   Future<void> getRecipeAll() async {
@@ -32,37 +31,35 @@ class RecipeController extends ChangeNotifier {
       var response = await RecipeRepository().getRecipes();
       _listAllRecipe = response;
     } catch (e) {
-      print('Erro ao obter todas as receitas: ${e.toString()}');
+      debugPrint('Erro ao obter todas as receitas: ${e.toString()}');
     } finally {
       _isLoadAllList = false;
       notifyListeners();
     }
   }
 
-  Future<void> getRecipeByCategory(int id_category) async {
+  Future<void> getRecipeByCategory(int idCategory) async {
     _isLoadbyCategory = true;
 
     try {
-      var response = await RecipeRepository().getRecipeByCategory(id_category);
+      var response = await RecipeRepository().getRecipeByCategory(idCategory);
       _listRecipebyCategory = response;
     } catch (e) {
-      print('Erro ao obter todas as receitas por categoria: ${e.toString()}');
+      debugPrint('Erro ao obter todas as receitas por categoria: ${e.toString()}');
     } finally {
       _isLoadbyCategory = false;
       notifyListeners();
     }
   }
 
-  Future<void> getRecipeByUser(int id_user) async {
-    _isLoadbyUser = true;
+  Future<void> getRecipeByUser(int idUser) async {
 
     try {
-      var response = await RecipeRepository().getRecipeByUser(id_user);
+      var response = await RecipeRepository().getRecipeByUser(idUser);
       _listRecipebyUser = response;
     } catch (e) {
       print('Erro ao obter todas as receitas por categoria: ${e.toString()}');
     } finally {
-      _isLoadbyUser = false;
       notifyListeners();
     }
   }
