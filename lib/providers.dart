@@ -1,4 +1,4 @@
-
+import 'package:app_receitas_mobile/src/model/ratingModel.dart';
 import 'package:app_receitas_mobile/src/repository/ratingRepository.dart';
 import 'package:provider/provider.dart';
 
@@ -7,49 +7,48 @@ import 'src/controller/favoriteController.dart';
 import 'src/controller/ratingController.dart';
 import 'src/controller/recipeController.dart';
 import 'src/controller/userController.dart';
-import 'src/repository/categoryRepository.dart'; // Importe do repository
+import 'src/repository/categoryRepository.dart';
 import 'src/utils/auth/tokendecod.dart';
 
 final providers = [
-  // Provedor para TokenDecod (se precisar acessar o token decodificado)
   ChangeNotifierProvider<TokenDecod>(
     create: (_) => TokenDecod(),
     lazy: false,
   ),
 
-  // Provedor para UserController
   ChangeNotifierProvider<UserController>(
     create: (_) => UserController(),
   ),
 
-  // Provedor para RecipeController
-  ChangeNotifierProvider<RecipeController>(
-    create: (_) => RecipeController(),
+  Provider(
+    create: (_) => RatingModel(),
   ),
 
-  // Provedor para RatingController~
   Provider<RatingRepository>(
     create: (_) => RatingRepository(),
+  ),
+
+  Provider<CategoryRepository>(
+    create: (_) => CategoryRepository(),
+    lazy: false,
+  ),
+
+  ChangeNotifierProvider<RecipeController>(
+    create: (context) => RecipeController(
+        ratingModel: context.read<RatingModel>(),
+        ratingRepository: context.read<RatingRepository>()),
   ),
   ChangeNotifierProvider<RatingController>(
     create: (context) =>
         RatingController(ratingRepository: context.read<RatingRepository>()),
   ),
 
-  // Provedor para CategoryRepository (lazy: false se não precisar de carregamento preguiçoso)
-  Provider<CategoryRepository>(
-    create: (_) => CategoryRepository(),
-    lazy: false,
-  ),
-
-  // Provedor para CategoryController, com acesso ao CategoryRepository
   ChangeNotifierProvider<CategoryController>(
     create: (context) => CategoryController(
       repository: context.read<CategoryRepository>(),
     ),
   ),
 
-  // Provedor para FavoriteController
   ChangeNotifierProvider<FavoriteController>(
     create: (_) => FavoriteController(),
   ),

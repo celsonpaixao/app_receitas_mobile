@@ -12,6 +12,12 @@ var white_text_title = TextStyle(
   fontWeight: FontWeight.bold,
   color: primaryWhite,
 );
+
+var white_text_subtitle = TextStyle(
+  fontSize: 18,
+  fontWeight: FontWeight.bold,
+  color: primaryWhite,
+);
 var white_text_normal = TextStyle(
   fontSize: 14,
   fontWeight: FontWeight.normal,

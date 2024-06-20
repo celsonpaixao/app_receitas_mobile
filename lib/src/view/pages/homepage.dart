@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
- UserModel? user;
+  UserModel? user;
 
   @override
   void initState() {
@@ -66,11 +66,10 @@ class _HomePageState extends State<HomePage> {
             Consumer<TokenDecod>(
               builder: (context, token, child) {
                 return Text(
-                  user != null
-                      ? "Olá... ${user!.firstName} ☺️"
-                      : "Carregando...!",
-                  style: white_text_title
-                );
+                    user != null
+                        ? "Olá... ${user!.firstName} ☺️"
+                        : "Carregando...!",
+                    style: white_text_title);
               },
             ),
             Spacing(value: .02),

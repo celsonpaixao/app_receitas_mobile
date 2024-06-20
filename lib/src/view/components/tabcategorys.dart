@@ -1,3 +1,5 @@
+import 'package:app_receitas_mobile/src/view/components/spacing.dart';
+import 'package:app_receitas_mobile/src/view/components/tab_view_best_recipes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -58,7 +60,8 @@ class _TabCategoryState extends State<TabCategory>
 
         // Update TabController length when categories change
         if (_tabController.length != modifiedCategories.length) {
-          _tabController = TabController(length: modifiedCategories.length, vsync: this);
+          _tabController =
+              TabController(length: modifiedCategories.length, vsync: this);
         }
 
         return LayoutPage(
@@ -100,16 +103,26 @@ class _TabCategoryState extends State<TabCategory>
                   controller: _tabController,
                   children: modifiedCategories.map((category) {
                     if (category.name == "Todos") {
-                      return Container(
-                        padding: EdgeInsets.all(16.0),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
-                              child: Row(
+                      return Scaffold(
+                        body: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Spacing(value: .02),
+                              Text(
+                                "Receitas  mais bem avaliadas...",
+                                style: grey_text_subtitle,
+                              ),
+                              Spacing(value: .02),
+                              SizedBox(
+                                height: 150,
+                                child: TabViewBestRecipe(),
+                              ),
+                              Spacing(value: .02),
+                              Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     "Receitas recentes",
@@ -134,12 +147,13 @@ class _TabCategoryState extends State<TabCategory>
                                   ),
                                 ],
                               ),
-                            ),
-                            SizedBox(
-                              height: 270,
-                              child: TabViewAllRecipe(),
-                            ),
-                          ],
+                              Spacing(value: .02),
+                              SizedBox(
+                                height: 270,
+                                child: TabViewAllRecipe(),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     } else {

@@ -1,6 +1,5 @@
 import 'package:app_receitas_mobile/src/model/ratingModel.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
-import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
 import 'package:app_receitas_mobile/src/view/components/globalrating.dart';
 import 'package:app_receitas_mobile/src/view/components/globlafavoritebutton.dart';
@@ -9,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../model/recipeModel.dart';
+import '../../utils/api/apicontext.dart';
 import '../styles/colores.dart';
 
 class MiniCardRecipe extends StatefulWidget {
@@ -24,22 +24,21 @@ class MiniCardRecipe extends StatefulWidget {
 
 class _MiniCardRecipeState extends State<MiniCardRecipe> {
   late final TokenDecod tokenDecod;
-  UserModel? user;
   late final RatingModel ratingModel;
+  UserModel? user;
 
   @override
   void initState() {
     super.initState();
-    _loadUser();
-  }
-
-  Future<void> _loadUser() async {
+    // Carrega o TokenDecod e o RatingModel
     tokenDecod = Provider.of<TokenDecod>(context, listen: false);
-    ratingModel = RatingModel();
-    user = await tokenDecod.decodeUser();
-    if (mounted) {
-      setState(() {}); // Força a reconstrução do widget após carregar o usuário
-    }
+    ratingModel = Provider.of<RatingModel>(context, listen: false);
+    // Carrega o usuário após o TokenDecod
+    tokenDecod.decodeUser().then((decodedUser) {
+      setState(() {
+        user = decodedUser;
+      });
+    });
   }
 
   @override
@@ -100,8 +99,7 @@ class _MiniCardRecipeState extends State<MiniCardRecipe> {
                               userId: user!.id!,
                               recipeId: widget.item.id!,
                             )
-                          : SizedBox
-                              .shrink(), // Oculta o botão se o usuário não estiver carregado
+                          : SizedBox.shrink(),
                     ),
                   ),
                 ),
