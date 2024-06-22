@@ -1,3 +1,4 @@
+import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/view/components/minicardrecipe.dart';
 import 'package:app_receitas_mobile/src/view/components/minicardshimmer.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
@@ -8,13 +9,14 @@ import '../../controller/ratingController.dart';
 import '../../controller/recipeController.dart';
 
 class TabViewRecipeByCategory extends StatefulWidget {
+  final UserModel user;
   final int idCategory;
   final String name;
 
   const TabViewRecipeByCategory({
     Key? key,
     required this.idCategory,
-    required this.name,
+    required this.name, required this.user,
   }) : super(key: key);
 
   @override
@@ -72,7 +74,8 @@ class _TabViewRecipeByCategoryState extends State<TabViewRecipeByCategory> {
                   : GridView.builder(
                       scrollDirection: Axis.vertical,
                       itemCount: recipe.listRecipebyCategory.length,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 0,
                         mainAxisSpacing: 5,
@@ -82,12 +85,10 @@ class _TabViewRecipeByCategoryState extends State<TabViewRecipeByCategory> {
                         var item = recipe.listRecipebyCategory[index];
                         ratings.getRatingByRecipe(item.id!);
                         return Padding(
-                          padding: const EdgeInsets.only(
-                            left: 6,
-                            right: 5,
-                            top: 5
-                          ),
+                          padding:
+                              const EdgeInsets.only(left: 6, right: 5, top: 5),
                           child: MiniCardRecipe(
+                            user: widget.user,
                             item: item,
                             ratings: ratings.listRating,
                           ),

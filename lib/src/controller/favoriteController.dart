@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:app_receitas_mobile/src/DTO/DTOresponse.dart';
 import 'package:flutter/material.dart';
 import '../model/recipeModel.dart';
 import '../repository/favoriteRepository.dart';
@@ -44,13 +45,19 @@ class FavoriteController extends ChangeNotifier {
       int userId, int recipeId, RecipeModel recipe) async {
     _setLoading(true);
 
-    if (_listFavorite.any((recipe) => recipe.id == recipeId)) {
-      print('Recipe already exists in favorites!');
-      return;
+    try {
+      DTOresponse response =
+          await _favoriteRepository.addRecipeinFavorite(userId, recipeId);
+      if (response.success) {
+        _listFavorite.add(recipe);
+      } else {
+        throw Exception(
+            'Failed to add recipe to favorites: ${response.message}');
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+      print('Error adding recipe to favorites: $e');
     }
-
-    await _favoriteRepository.addRecipeinFavorite(userId, recipeId);
-    _listFavorite.add(recipe);
 
     _setLoading(false);
   }
@@ -59,11 +66,23 @@ class FavoriteController extends ChangeNotifier {
       int userId, int recipeId, RecipeModel recipe) async {
     _setLoading(true);
 
-    await _favoriteRepository.removeRecipeinFavorite(userId, recipeId);
-    _listFavorite.removeWhere((recipe) => recipe.id == recipeId);
+    try {
+      DTOresponse response =
+          await _favoriteRepository.removeRecipeinFavorite(userId, recipeId);
+      if (response.success) {
+        _listFavorite.removeWhere((recipe) => recipe.id == recipeId);
+      } else {
+        throw Exception(
+            'Failed to remove recipe from favorites: ${response.message}');
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+      print('Error removing recipe from favorites: $e');
+    }
 
     _setLoading(false);
   }
+
 
   void _setLoading(bool loading) {
     _isLoading = loading;
