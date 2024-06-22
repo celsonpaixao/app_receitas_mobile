@@ -85,7 +85,7 @@ class RatingRepository {
     return response;
   }
 
-  Future<List<RatingModel>> getRatingByRecipe(int recipeId) async {
+Future<List<RatingModel>> getRatingByRecipe(int recipeId) async {
     var url = Uri.parse(
         "$baseurl/api/Rating/list_all_avaliaction?id_receita=$recipeId");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -95,24 +95,86 @@ class RatingRepository {
       throw Exception('Token not found in SharedPreferences');
     }
 
-    final response = await http.get(
-      url,
-      headers: <String, String>{
-        'accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
+    try {
+      final response = await http.get(
+        url,
+        headers: <String, String>{
+          'accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
 
-    if (response.statusCode == 200) {
-      List<dynamic> body = json.decode(response.body)['response'];
-      debugPrint(body.toString()); // Adicionado para depuração
+      if (response.statusCode == 200) {
+        debugPrint(response.body); // Print the entire response body
 
-      List<RatingModel> ratings =
-          body.map((dynamic item) => RatingModel.fromJson(item)).toList();
-      return ratings;
-    } else {
-      debugPrint('Failed to load ratings: ${response.statusCode}');
-      throw Exception('Failed to load ratings');
+        final Map<String, dynamic> responseBody = json.decode(response.body);
+        debugPrint(responseBody.toString()); // Print the parsed JSON
+
+        if (responseBody.containsKey('response')) {
+          final responseContent = responseBody['response'];
+          if (responseContent is List) {
+            List<RatingModel> ratings = responseContent
+                .map((dynamic item) => RatingModel.fromJson(item))
+                .toList();
+            return ratings;
+          } else if (responseContent.containsKey('ratings')) {
+            List<dynamic> body = responseContent['ratings'];
+            List<RatingModel> ratings =
+                body.map((dynamic item) => RatingModel.fromJson(item)).toList();
+            return ratings;
+          } else {
+            throw Exception('Ratings key not found');
+          }
+        } else {
+          throw Exception('Response key not found');
+        }
+      } else {
+        debugPrint('Failed to load ratings: ${response.statusCode}');
+        throw Exception('Failed to load ratings');
+      }
+    } catch (e) {
+      debugPrint('Error fetching ratings: $e');
+      rethrow;
     }
   }
+
+
+   Future<DTOresponse> updateRating(int ratingId, RatingModel rating) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final String? token = sharedPreferences.getString("auth_token");
+
+    if (token == null) {
+      return DTOresponse(success: false, message: 'Token not found');
+    }
+
+    final url =
+        Uri.parse("$baseUrl/api/Rating/update_avaliaction?id_avaliacao=$ratingId");
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode(<String, String>{
+          "value": rating.value.toString(),
+          "message": rating.message!
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        var message = json.decode(response.body)['message'];
+        return DTOresponse(success: true, message: message);
+      } else {
+        return DTOresponse(success: false, message: 'Failed to update rating');
+      }
+    } catch (e) {
+      return DTOresponse(success: false, message: 'An error occurred');
+    }
+  }
+
+
+
+
 }

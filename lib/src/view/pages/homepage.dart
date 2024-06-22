@@ -11,15 +11,14 @@ import '../../controller/categoryController.dart';
 import '../components/tabcategorys.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final UserModel user;
+  const HomePage({super.key, required this.user});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  UserModel? user;
-
   @override
   void initState() {
     super.initState();
@@ -27,27 +26,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _initialize() async {
-    await _loadUser();
     await _loadCategory();
-  }
-
-  Future<void> _loadUser() async {
-    try {
-      final tokenController = Provider.of<TokenDecod>(context, listen: false);
-      final decodedUser = await tokenController.decodeUser();
-      setState(() {
-        user = decodedUser;
-      });
-    } catch (e) {
-      print('Error loading user: $e');
-    }
   }
 
   Future<void> _loadCategory() async {
     try {
       final categoryController =
           Provider.of<CategoryController>(context, listen: false);
-      await categoryController.listCategories;
+      categoryController.listCategories;
     } catch (e) {
       print('Error loading categories: $e');
     }
@@ -63,22 +49,18 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Consumer<TokenDecod>(
-              builder: (context, token, child) {
-                return Text(
-                    user != null
-                        ? "Olá... ${user!.firstName} ☺️"
-                        : "Carregando...!",
-                    style: white_text_title);
-              },
-            ),
-            Spacing(value: .02),
+            Text(
+                widget.user != null
+                    ? "Olá... ${widget.user!.firstName} ☺️"
+                    : "Carregando...!",
+                style: white_text_title),
+            const Spacing(value: .02),
             GestureDetector(
               onTap: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ListRecipePage(),
+                      builder: (context) => const ListRecipePage(),
                     ));
               },
               child: Container(
@@ -109,7 +91,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: const TabCategory(),
+      body: TabCategory(user: widget.user,),
     );
   }
 }

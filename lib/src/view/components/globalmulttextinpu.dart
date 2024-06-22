@@ -2,7 +2,7 @@ import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
 
 class GlobalMultTextInput extends StatelessWidget {
-  final String hintText;
+  final String? hintText;
   final Widget? prefixIcon;
   final Widget? sufixIcon;
   final TextEditingController? controller;
@@ -13,7 +13,7 @@ class GlobalMultTextInput extends StatelessWidget {
 
   const GlobalMultTextInput({
     super.key,
-    required this.hintText,
+    this.hintText,
     this.prefixIcon,
     this.sufixIcon,
     this.controller,

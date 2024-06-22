@@ -18,9 +18,9 @@ import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import '../../utils/api/apicontext.dart';
 
-
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  final UserModel user;
+  const ProfilePage({super.key, required this.user});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -70,7 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
       barrierDismissible: false, // Evita fechar o dialogo clicando fora
       builder: (BuildContext context) {
         return GlobalDialog(
-          onConfirm: logout, 
+          onConfirm: logout,
           text: "Você está tentado sair",
         );
       },
@@ -200,6 +200,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                               ratings.getRatingByRecipe(item.id!);
                               return MiniCardRecipe(
+                                user: widget.user,
                                 item: item,
                                 ratings: ratings.listRating,
                               );

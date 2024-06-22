@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:app_receitas_mobile/src/model/recipeModel.dart';
 import 'package:app_receitas_mobile/src/repository/recipeRepository.dart';
@@ -80,5 +81,32 @@ class RecipeController extends ChangeNotifier {
 
     _isLoadbestRecipe = false;
     notifyListeners();
+  }
+
+  // Método para publicar uma receita
+  Future<void> publicarReceita(
+    File image,
+    String title,
+    String description,
+    String instructions,
+    List<String> categorias,
+    List<String> ingredients,
+    List<String> materials,
+    int userId,
+  ) async {
+    RecipeModel recipe = RecipeModel(
+      title: title,
+      description: description,
+      instructions: instructions,
+      categorias: categorias,
+      ingredients: ingredients,
+      materials: materials,
+    );
+
+    try {
+      await recipeRepository.createRecipe(image, recipe, userId);
+    } catch (e) {
+      throw Exception('Failed to publish recipe: $e');
+    }
   }
 }

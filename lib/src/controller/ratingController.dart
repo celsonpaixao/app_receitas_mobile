@@ -23,7 +23,6 @@ class RatingController extends ChangeNotifier {
     try {
       var response = await ratingRepository.getRatingByRecipe(recipeId);
       _listRating = response;
-      print(_listRating.toString());
     } catch (e) {
       print('Error fetching ratings: $e');
     } finally {
@@ -34,19 +33,34 @@ class RatingController extends ChangeNotifier {
   }
 
   Future<void> deleteRating(int ratingId) async {
-    _isLoading = true;
-    notifyListeners();
+    _setLoadingState(true);
     try {
       await ratingRepository.deletRating(ratingId);
       _listRating.removeWhere((rating) => rating.id == ratingId);
-      notifyListeners();
     } catch (e) {
-      print('Error deleting rating: $e');
+      debugPrint('Error deleting rating: $e');
     } finally {
-      _isLoading = false;
+      _setLoadingState(false);
       notifyListeners();
     }
   }
+
+Future<void> updateRating(int ratingId, RatingModel rating) async {
+    _setLoadingState(true);
+    try {
+      await ratingRepository.updateRating(ratingId, rating);
+      var index = _listRating.indexWhere((r) => r.id == ratingId);
+      if (index != -1) {
+        _listRating[index] = rating; // Atualiza a avaliação na lista local
+      }
+    } catch (e) {
+      debugPrint('Error updating rating: $e');
+    } finally {
+      _setLoadingState(false);
+      notifyListeners(); // Mova notifyListeners para o final, após atualizar o estado
+    }
+  }
+
 
   bool checkInAdmin(int admId, int userId) {
     return admId == userId;
@@ -54,13 +68,20 @@ class RatingController extends ChangeNotifier {
 
   Future<void> publishRating(
       int userId, int recipeId, RatingModel rating) async {
+    _setLoadingState(true);
     try {
       await ratingRepository.publicaRating(userId, recipeId, rating);
       _listRating.add(rating);
-      notifyListeners();
       await getRatingByRecipe(recipeId);
     } catch (e) {
-      print('Error publishing rating: $e');
+      debugPrint('Error publishing rating: $e');
+    } finally {
+      _setLoadingState(false);
     }
+  }
+
+  void _setLoadingState(bool isLoading) {
+    _isLoading = isLoading;
+    notifyListeners();
   }
 }
