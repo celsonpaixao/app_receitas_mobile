@@ -73,91 +73,93 @@ class _ListRecipePageState extends State<ListRecipePage> {
       body: LayoutPage(
         body: Consumer<RecipeController>(
           builder: (context, controller, child) {
-                      final ratigs =
+            final ratigs =
                 Provider.of<RatingController>(context, listen: false);
-            final RatingModel ratingModel = RatingModel();
+
             if (controller.isLoadAllList) {
-              return ShimmerList();
+              return const ShimmerList();
             } else if (filteredRecipes.isEmpty) {
-              return Center(
+              return const Center(
                 child: Text(
                   "Nenhuma receita encontrada...!",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
-                  ),
                 ),
               );
             } else {
-              return ListView.builder(
-                itemCount: filteredRecipes.length,
-                itemBuilder: (context, index) {
-                  var item = filteredRecipes[index];
-                   ratigs.getRatingByRecipe(item.id!);
-                  final averageRating = ratingModel
-                      .calculateAverageRating(ratigs.listRating)
-                      ?.toDouble();
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    DetalheRecipePage(recipe: item),
+              return RefreshIndicator(
+                onRefresh: () async {
+                  setState(() {
+                    controller.getRecipeAll();
+                  });
+                },
+                child: ListView.builder(
+                  itemCount: filteredRecipes.length,
+                  itemBuilder: (context, index) {
+                    var item =
+                        filteredRecipes[filteredRecipes.length - 1 - index];
+                    ratigs.getRatingByRecipe(item.id!);
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      DetalheRecipePage(recipe: item),
+                                ),
+                              );
+                            },
+                            child: ListTile(
+                              leading: Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  color: primaryAmber,
+                                  borderRadius: BorderRadius.circular(6),
+                                  image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(
+                                        "$baseUrl/${item.imageURL}",
+                                      )),
+                                ),
                               ),
-                            );
-                          },
-                          child: ListTile(
-                            leading: Container(
-                              width: 80,
-                              height: 80,
-                              decoration: BoxDecoration(
-                                color: primaryAmber,
-                                borderRadius: BorderRadius.circular(6),
-                                image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: NetworkImage(
-                                      "$baseUrl/${item.imageURL}",
-                                    )),
-                              ),
-                            ),
-                            title: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    item.title!,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                              title: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      item.title!,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                if (averageRating != null)
-                                  GlobalRating(
-                                    count: 5,
-                                    value: averageRating,
-                                    sizeStar: 15,
-                                  ),
-                              ],
-                            ),
-                            subtitle: Text(
-                              item.description!,
-                              style: TextStyle(color: primaryGrey),
-                              overflow: TextOverflow.ellipsis,
+                                  if (item.averageRating != null)
+                                    GlobalRating(
+                                      count: 5,
+                                      value: item.averageRating!,
+                                      sizeStar: 15,
+                                    ),
+                                ],
+                              ),
+                              subtitle: Text(
+                                item.description!,
+                                style: TextStyle(color: primaryGrey),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
-                        ),
-                        Divider()
-                      ],
-                    ),
-                  );
-                },
+                          const Divider()
+                        ],
+                      ),
+                    );
+                  },
+                ),
               );
             }
           },

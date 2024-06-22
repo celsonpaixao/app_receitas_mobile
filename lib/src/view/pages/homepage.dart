@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
     try {
       final categoryController =
           Provider.of<CategoryController>(context, listen: false);
-      await categoryController.getCategoryList();
+      await categoryController.listCategories;
     } catch (e) {
       print('Error loading categories: $e');
     }
@@ -109,7 +109,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: TabCategory(),
+      body: const TabCategory(),
     );
   }
 }

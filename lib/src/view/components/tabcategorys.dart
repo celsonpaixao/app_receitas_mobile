@@ -115,7 +115,7 @@ class _TabCategoryState extends State<TabCategory>
                               ),
                               Spacing(value: .02),
                               SizedBox(
-                                height: 150,
+                                height: 200,
                                 child: TabViewBestRecipe(),
                               ),
                               Spacing(value: .02),
@@ -152,6 +152,7 @@ class _TabCategoryState extends State<TabCategory>
                                 height: 270,
                                 child: TabViewAllRecipe(),
                               ),
+                                Spacing(value: .1),
                             ],
                           ),
                         ),

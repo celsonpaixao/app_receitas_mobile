@@ -1,5 +1,10 @@
+import 'dart:async';
+import 'package:app_receitas_mobile/src/view/components/globaldialog.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:app_receitas_mobile/src/controller/recipeController.dart';
-import 'package:app_receitas_mobile/src/controller/userController.dart';
+import 'package:app_receitas_mobile/src/controller/ratingController.dart';
+import 'package:app_receitas_mobile/src/controller/userController.dart'; // Importe o controller de usuário
 import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
 import 'package:app_receitas_mobile/src/view/components/globalappbar.dart';
@@ -11,14 +16,11 @@ import 'package:app_receitas_mobile/src/view/pages/loginpage.dart';
 import 'package:app_receitas_mobile/src/view/pages/updateuserpage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:app_receitas_mobile/src/view/styles/texts.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../../controller/ratingController.dart';
 import '../../utils/api/apicontext.dart';
 
+
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -62,6 +64,19 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  void _confirmLogout() {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // Evita fechar o dialogo clicando fora
+      builder: (BuildContext context) {
+        return GlobalDialog(
+          onConfirm: logout, 
+          text: "Você está tentado sair",
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,9 +91,10 @@ class _ProfilePageState extends State<ProfilePage> {
               style: white_text_title,
             ),
             IconButton(
-              onPressed: logout,
+              onPressed:
+                  _confirmLogout, // Chama o método de confirmação de logout
               icon: Icon(
-                Icons.login,
+                Icons.logout,
                 color: primaryWhite,
               ),
             )
@@ -90,7 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (context, usercontroller, child) {
           final ratings = Provider.of<RatingController>(context, listen: false);
           if (user == null) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           return LayoutPage(
             body: Center(
@@ -98,7 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Spacing(value: .04),
+                  const Spacing(value: .04),
                   Container(
                     width: 120,
                     height: 120,
@@ -110,13 +126,13 @@ class _ProfilePageState extends State<ProfilePage> {
                         image:
                             user?.imageURL != null && user!.imageURL!.isNotEmpty
                                 ? NetworkImage("$baseUrl/${user!.imageURL!}")
-                                : AssetImage(
+                                : const AssetImage(
                                     "assets/images/Depositphotos_484354208_S.jpg",
                                   ) as ImageProvider,
                       ),
                     ),
                   ),
-                  Spacing(value: .04),
+                  const Spacing(value: .04),
                   MaterialButton(
                     minWidth: 100,
                     height: 45,
@@ -131,15 +147,15 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                UpdateUserPage(userdate: user!),
-                          ));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UpdateUserPage(userdate: user!),
+                        ),
+                      );
                     },
                   ),
-                  Spacing(value: .04),
-                  Text(
+                  const Spacing(value: .04),
+                  const Text(
                     "Suas receitas",
                     textAlign: TextAlign.start,
                     style: TextStyle(
@@ -153,21 +169,18 @@ class _ProfilePageState extends State<ProfilePage> {
                         if (recipecontroller.isLoadbyUser) {
                           return GridView.builder(
                             gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
+                                const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               crossAxisSpacing: 0,
                               mainAxisSpacing: 5,
                               childAspectRatio: .65,
                             ),
                             itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: MiniCardRecipeShimmer(),
-                              );
+                              return const MiniCardRecipeShimmer();
                             },
                           );
                         } else if (recipecontroller.listRecipebyUser.isEmpty) {
-                          return Center(
+                          return const Center(
                             child: Text(
                                 "Você ainda não publicou nehuma receita..!!"),
                           );
@@ -175,7 +188,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           return GridView.builder(
                             itemCount: recipecontroller.listRecipebyUser.length,
                             gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
+                                const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               crossAxisSpacing: 0,
                               mainAxisSpacing: 5,
@@ -186,12 +199,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   recipecontroller.listRecipebyUser[index];
 
                               ratings.getRatingByRecipe(item.id!);
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: MiniCardRecipe(
-                                  item: item,
-                                  ratings: ratings.listRating,
-                                ),
+                              return MiniCardRecipe(
+                                item: item,
+                                ratings: ratings.listRating,
                               );
                             },
                           );

@@ -72,7 +72,7 @@ class _TabViewRecipeByCategoryState extends State<TabViewRecipeByCategory> {
                   : GridView.builder(
                       scrollDirection: Axis.vertical,
                       itemCount: recipe.listRecipebyCategory.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 0,
                         mainAxisSpacing: 5,
@@ -82,9 +82,10 @@ class _TabViewRecipeByCategoryState extends State<TabViewRecipeByCategory> {
                         var item = recipe.listRecipebyCategory[index];
                         ratings.getRatingByRecipe(item.id!);
                         return Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 10,
+                          padding: const EdgeInsets.only(
+                            left: 6,
+                            right: 5,
+                            top: 5
                           ),
                           child: MiniCardRecipe(
                             item: item,

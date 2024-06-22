@@ -19,56 +19,47 @@ class RatingController extends ChangeNotifier {
 
   Future<void> getRatingByRecipe(int recipeId) async {
     _isLoading = true;
+    notifyListeners();
     try {
       var response = await ratingRepository.getRatingByRecipe(recipeId);
       _listRating = response;
       print(_listRating.toString());
     } catch (e) {
-      // Handle error if needed
       print('Error fetching ratings: $e');
     } finally {
       _isLoading = false;
-      _isInitialized = true; // Mark as initialized after fetching ratings
+      _isInitialized = true;
       notifyListeners();
     }
   }
 
   Future<void> deleteRating(int ratingId) async {
     _isLoading = true;
+    notifyListeners();
     try {
       await ratingRepository.deletRating(ratingId);
       _listRating.removeWhere((rating) => rating.id == ratingId);
       notifyListeners();
     } catch (e) {
-      // Handle error if needed
       print('Error deleting rating: $e');
     } finally {
       _isLoading = false;
+      notifyListeners();
     }
   }
 
   bool checkInAdmin(int admId, int userId) {
-    if (admId == userId) {
-      return true;
-    }
-
-    return false;
+    return admId == userId;
   }
 
   Future<void> publishRating(
-    int userId,
-    int recipeId,
-    RatingModel rating,
-  ) async {
+      int userId, int recipeId, RatingModel rating) async {
     try {
       await ratingRepository.publicaRating(userId, recipeId, rating);
       _listRating.add(rating);
       notifyListeners();
-
-      // After publishing rating, update the ratings list
       await getRatingByRecipe(recipeId);
     } catch (e) {
-      // Handle error if needed
       print('Error publishing rating: $e');
     }
   }

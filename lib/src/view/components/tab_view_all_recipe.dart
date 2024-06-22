@@ -56,7 +56,8 @@ class _TabViewAllRecipeState extends State<TabViewAllRecipe>
                       scrollDirection: Axis.horizontal,
                       itemCount: recipes.listAllRecipe.length,
                       itemBuilder: (context, index) {
-                        var item = recipes.listAllRecipe[index];
+                       var item = recipes.listAllRecipe[
+                            recipes.listAllRecipe.length - 1 - index];
                         ratings.getRatingByRecipe(item.id!);
                         return Padding(
                           padding: const EdgeInsets.all(8),

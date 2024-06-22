@@ -1,5 +1,6 @@
 import 'package:app_receitas_mobile/src/controller/ratingController.dart';
 import 'package:app_receitas_mobile/src/model/ratingModel.dart';
+import 'package:app_receitas_mobile/src/model/recipeModel.dart';
 import 'package:app_receitas_mobile/src/view/components/shimmerlist.dart';
 import 'package:app_receitas_mobile/src/view/pages/detalhe_recipepage.dart';
 import 'package:app_receitas_mobile/src/view/styles/texts.dart';
@@ -67,8 +68,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
       ),
       body: Consumer<FavoriteController>(
         builder: (context, favoriteController, child) {
-          final ratigs = Provider.of<RatingController>(context, listen: false);
-          final RatingModel ratingModel = RatingModel();
+          final ratings = Provider.of<RatingController>(context, listen: false);
           return LayoutPage(
             body: favoriteController.isLoading
                 ? ShimmerList()
@@ -79,17 +79,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     : RefreshIndicator(
                         color: primaryAmber,
                         onRefresh: () async {
-                          await favoriteController
-                              .getFavoritesRecipe(user!.id!);
+                          if (user != null) {
+                            await favoriteController
+                                .getFavoritesRecipe(user!.id!);
+                          }
                         },
                         child: ListView.builder(
                           itemCount: favoriteController.listFavorite.length,
                           itemBuilder: (context, index) {
                             var item = favoriteController.listFavorite[index];
-                            ratigs.getRatingByRecipe(item.id!);
-                            final averageRating = ratingModel
-                                .calculateAverageRating(ratigs.listRating)
-                                ?.toDouble();
 
                             if (searchText.isNotEmpty &&
                                 !item.title!
@@ -139,10 +137,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                             ),
                                           ),
                                         ),
-                                        if (averageRating != null)
+                                        if (item.averageRating != null)
                                           GlobalRating(
                                             count: 5,
-                                            value: averageRating,
+                                            value: item.averageRating!,
                                             sizeStar: 15,
                                           ),
                                       ],

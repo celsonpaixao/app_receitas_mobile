@@ -49,7 +49,7 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
     }
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -83,7 +83,7 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Globalbackbutton(),
+                                  const Globalbackbutton(),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: GlobalFavoriteButton(
@@ -116,43 +116,43 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                             widget.recipe.title ?? 'Título não disponível',
                             style: black_text_title,
                           ),
-                          Spacing(value: 0.02),
+                          const Spacing(value: 0.02),
                           Text(
                             widget.recipe.description ??
                                 'Descrição não disponível',
                             style: grey_text_normal,
                           ),
-                          Spacing(value: 0.02),
-                          Text(
+                          const Spacing(value: 0.02),
+                          const Text(
                             "Categorias da Receita",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
                           ),
-                          Spacing(value: 0.02),
+                          const Spacing(value: 0.02),
                           GetCategoryRecipeDetalhes(widget: widget),
-                          Spacing(value: 0.02),
-                          Text(
+                          const Spacing(value: 0.02),
+                          const Text(
                             "Ingrediente da Receita",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
                           ),
-                          Spacing(value: 0.02),
+                          const Spacing(value: 0.02),
                           GetIngredientsRecipeDetalhs(widget: widget),
-                          Spacing(value: 0.02),
-                          Text(
+                          const Spacing(value: 0.02),
+                          const Text(
                             "Materiais/Instrumentos usados",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
                           ),
-                          Spacing(value: 0.02),
+                          const Spacing(value: 0.02),
                           GetMaterialsRecipeDeteilhs(widget: widget),
-                          Spacing(value: 0.02),
+                          const Spacing(value: 0.02),
                           ExpansionPanelList(
                             expansionCallback: (int index, bool isExpanded) {
                               setState(() {
@@ -192,11 +192,11 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                               ),
                             ],
                           ),
-                          Spacing(value: 0.02),
+                          const Spacing(value: 0.02),
                           RichText(
                             text: TextSpan(
                               children: [
-                                TextSpan(
+                                const TextSpan(
                                   text: "Receita de: ",
                                   style: TextStyle(
                                     color: Colors.black,
@@ -207,7 +207,7 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                                 TextSpan(
                                   text: widget.recipe.admin ??
                                       'Administrador não disponível',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Colors.blue,
                                     fontSize: 14,
                                   ),
@@ -219,21 +219,25 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                             thickness: 1,
                             color: primaryGrey,
                           ),
-                          Spacing(value: 0.02),
+                          const Spacing(value: 0.02),
                           GlobalSendRating(
                             userId: user?.id ?? 0,
                             recipeId: widget.recipe.id ?? 0,
                             messagecontroller: messagecontroller,
                           ),
-                          Spacing(value: 0.03),
-                          Text(
+                          const Spacing(value: 0.03),
+                          const Text(
                             "Avaliações:",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
                           ),
-                          GetRatingsForRecipe(recipeId: widget.recipe.id!,),
+                          SizedBox(
+                            height: 200,
+                              child: GetRatingsForRecipe(
+                            recipeId: widget.recipe.id!,
+                          )),
                         ],
                       ),
                     ),
@@ -246,5 +250,4 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
       ),
     );
   }
-
 }

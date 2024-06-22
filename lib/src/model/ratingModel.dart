@@ -8,16 +8,19 @@ class RatingModel {
 
   RatingModel({this.id, this.value, this.message, this.user});
 
-  RatingModel.fromJson(Map<String, dynamic> json)
-      : id = json['rating']['id'],
-        value = json['rating']['value']?.toDouble(),
-        message = json['rating']['message'],
-        user = json['rating']['user'] != null
-            ? UserModel.fromJson(json['rating']['user'])
-            : null;
+  factory RatingModel.fromJson(Map<String, dynamic> json) {
+    return RatingModel(
+      id: json['ratingId'],
+      value: json['rating']['value']?.toDouble(),
+      message: json['rating']['message'],
+      user: json['rating']['user'] != null
+          ? UserModel.fromJson(json['rating']['user'])
+          : null,
+    );
+  }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final Map<String, dynamic> data = {};
     data['id'] = id;
     data['value'] = value;
     data['message'] = message;
@@ -25,18 +28,5 @@ class RatingModel {
       data['user'] = user!.toJson();
     }
     return data;
-  }
-
-
-
-   double? calculateAverageRating(List<RatingModel> ratings) {
-    if (ratings.isEmpty) {
-      return null;
-    }
-    double totalRating = 0.0;
-    for (var rating in ratings) {
-      totalRating += rating.value ?? 0.0;
-    }
-    return totalRating / ratings.length;
   }
 }

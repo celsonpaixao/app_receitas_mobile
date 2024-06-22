@@ -26,15 +26,15 @@ class _WelcomePageState extends State<WelcomePage> {
 
     pageController = PageController(initialPage: 0);
     scrollPages = [
-      WelcomeCard(
+      const WelcomeCard(
         image: "assets/images/Eating healthy food-cuate.png",
         text: "Descubra Novos Sabores",
       ),
-      WelcomeCard(
+      const WelcomeCard(
         image: "assets/images/healthy food vs fast food-cuate.png",
         text: "Encontre Receitas mais Saudáveis",
       ),
-      WelcomeCard(
+      const WelcomeCard(
         image: "assets/images/Deconstructed food-amico.png",
         text: "Cozinhe com Facilidade",
       ),
@@ -50,7 +50,7 @@ class _WelcomePageState extends State<WelcomePage> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (pageController.page != null) {
         int nextPage = pageController.page!.toInt() + 1;
         if (nextPage >= scrollPages.length) {
@@ -58,7 +58,7 @@ class _WelcomePageState extends State<WelcomePage> {
         }
         pageController.animateToPage(
           nextPage,
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.ease,
         );
       }
@@ -81,7 +81,7 @@ class _WelcomePageState extends State<WelcomePage> {
           body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Spacing(value: .009),
+              const Spacing(value: .009),
               SizedBox(
                 height: size.height * .7,
                 child: PageView.builder(
@@ -101,7 +101,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     activeDotColor: primaryWhite,
                     dotColor: Colors.white38),
               ),
-              Spacing(value: .03),
+              const Spacing(value: .03),
               GlobalButton(
                 textButton: "Seguinte",
                 onClick: () {
@@ -109,7 +109,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   if (nextPage < scrollPages.length) {
                     pageController.animateToPage(
                       nextPage,
-                      duration: Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
                     );
                   } else {
@@ -119,20 +119,20 @@ class _WelcomePageState extends State<WelcomePage> {
                 background: primaryWhite,
                 textColor: primaryAmber,
               ),
-              Spacing(value: .01),
+              const Spacing(value: .01),
               GlobalButton(
                 textButton: "Pular",
                 onClick: () {
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => LoginPage(),
+                        builder: (context) => const LoginPage(),
                       ));
                 },
                 background: primaryAmber,
                 textColor: primaryWhite,
               ),
-              Spacing(value: .01),
+              const Spacing(value: .01),
             ],
           ),
         ),

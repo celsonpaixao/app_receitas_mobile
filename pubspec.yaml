@@ -27,6 +27,7 @@ dependencies:
   provider: ^6.1.2
   image_picker: ^1.1.2
   flutter_pannable_rating_bar: ^2.7.2+1
+  carousel_slider: ^4.2.1
 
 dev_dependencies:
   flutter_test:

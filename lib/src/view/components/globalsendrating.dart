@@ -94,7 +94,6 @@ class _GlobalSendRatingState extends State<GlobalSendRating> {
           direction: Axis.horizontal,
           itemBuilder: (context, index) {
             return RatingWidget(
-  
               selectedColor: Colors.amber,
               unSelectedColor: secundaryGrey,
               child: Icon(

@@ -8,7 +8,6 @@ import '../utils/api/apicontext.dart';
 class FavoriteRepository {
   static String baseurl = baseUrl;
 
-  
   Future<List<RecipeModel>> getReciepeFavorite(int userId) async {
     var url = Uri.parse("$baseurl/api/Favorite/list_favorite?id_user=$userId");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -46,7 +45,6 @@ class FavoriteRepository {
           'Failed to load recipes. Status code: ${response.statusCode}');
     }
   }
-
 
   Future<bool> checkInRecipe(int userId, int recipeId) async {
     var url = Uri.parse("$baseurl/api/Favorite/list_favorite?id_user=$userId");
