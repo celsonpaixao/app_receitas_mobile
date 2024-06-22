@@ -17,7 +17,7 @@ class GlobalDialog extends StatelessWidget {
       title: Text(text),
       content: const SingleChildScrollView(
         child: ListBody(
-          children: <Widget>[
+          children:[
             Text('Tem certeza que deseja fazer isso?'),
           ],
         ),

@@ -17,22 +17,20 @@ class RatingController extends ChangeNotifier {
 
   RatingController({required this.ratingRepository});
 
-Future<void> getRatingByRecipe(int recipeId) async {
-  _isLoading = true;
-  notifyListeners();
-  try {
-    var response = await ratingRepository.getRatingByRecipe(recipeId);
-    _listRating = response;
-    print(_listRating.toString()); // Verifique se há avaliações aqui
-  } catch (e) {
-    print('Error fetching ratings: $e');
-  } finally {
-    _isLoading = false;
-    _isInitialized = true;
+  Future<void> getRatingByRecipe(int recipeId) async {
+    _isLoading = true;
     notifyListeners();
+    try {
+      var response = await ratingRepository.getRatingByRecipe(recipeId);
+      _listRating = response;
+    } catch (e) {
+      print('Error fetching ratings: $e');
+    } finally {
+      _isLoading = false;
+      _isInitialized = true;
+      notifyListeners();
+    }
   }
-}
-
 
   Future<void> deleteRating(int ratingId) async {
     _setLoadingState(true);
@@ -47,17 +45,22 @@ Future<void> getRatingByRecipe(int recipeId) async {
     }
   }
 
-  Future<void> updateRating(int ratingId, RatingModel rating) async {
+Future<void> updateRating(int ratingId, RatingModel rating) async {
     _setLoadingState(true);
     try {
       await ratingRepository.updateRating(ratingId, rating);
-      await getRatingByRecipe(rating.id!); // Recarrega as avaliações da receita
+      var index = _listRating.indexWhere((r) => r.id == ratingId);
+      if (index != -1) {
+        _listRating[index] = rating; // Atualiza a avaliação na lista local
+      }
     } catch (e) {
       debugPrint('Error updating rating: $e');
     } finally {
       _setLoadingState(false);
+      notifyListeners(); // Mova notifyListeners para o final, após atualizar o estado
     }
   }
+
 
   bool checkInAdmin(int admId, int userId) {
     return admId == userId;

@@ -27,15 +27,9 @@ class FavoriteRepository {
 
     if (response.statusCode == 200) {
       try {
-        List<dynamic> body = json.decode(response.body)['response'];
-        List<RecipeModel> recipes = [];
-        for (var item in body) {
-          if (item['recipe'] != null) {
-            for (var recipe in item['recipe']) {
-              recipes.add(RecipeModel.fromJson(recipe));
-            }
-          }
-        }
+       List<dynamic> body = json.decode(response.body)['response'];
+        List<RecipeModel> recipes =
+            body.map((dynamic item) => RecipeModel.fromJson(item)).toList();
         return recipes;
       } catch (e) {
         throw Exception('Failed to decode recipes: $e');

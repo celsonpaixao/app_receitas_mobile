@@ -1,3 +1,5 @@
+import 'package:app_receitas_mobile/src/view/components/globaldialogeditrating.dart';
+import 'package:app_receitas_mobile/src/view/components/globalmulttextinpu.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app_receitas_mobile/src/controller/ratingController.dart';
@@ -119,7 +121,17 @@ class _GetRatingsForRecipeState extends State<GetRatingsForRecipe> {
                                     ),
                                     TextButton(
                                       onPressed: () {
-                                        print("Editar avaliação");
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return GlobalDialogEditRating(
+                                              message: item.message!,
+                                              setRating: item.value!,
+                                              ratingController: ratings,
+                                              ratingId: item.id!,
+                                            );
+                                          },
+                                        );
                                       },
                                       child: const Text(
                                         "Editar",
