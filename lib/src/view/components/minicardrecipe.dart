@@ -1,3 +1,4 @@
+import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:flutter/material.dart';
 import 'package:app_receitas_mobile/src/model/recipeModel.dart';
 import 'package:app_receitas_mobile/src/model/ratingModel.dart';
@@ -8,10 +9,11 @@ import 'package:app_receitas_mobile/src/view/components/globlafavoritebutton.dar
 import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
 
 class MiniCardRecipe extends StatefulWidget {
-  const MiniCardRecipe({super.key, required this.item, required this.ratings});
-
+    final UserModel user;
   final RecipeModel item;
   final List<RatingModel> ratings;
+  const MiniCardRecipe({super.key, required this.item, required this.ratings, required this.user});
+
 
   @override
   State<MiniCardRecipe> createState() => _MiniCardRecipeState();
@@ -63,8 +65,8 @@ class _MiniCardRecipeState extends State<MiniCardRecipe> {
                   alignment: Alignment.topRight,
                   child: GlobalFavoriteButton(
                     item: widget.item,
-                    userId: widget.item.idAdmin ?? 0,
-                    recipeId: widget.item.id ?? 0,
+                    userId: widget.user.id!,
+                    recipeId: widget.item.id!,
                   ),
                 ),
               ),

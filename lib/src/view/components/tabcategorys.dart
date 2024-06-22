@@ -1,3 +1,4 @@
+import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/components/tab_view_best_recipes.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,8 @@ import '../styles/colores.dart';
 import '../styles/texts.dart';
 
 class TabCategory extends StatefulWidget {
-  const TabCategory({Key? key}) : super(key: key);
+  final UserModel user;
+  const TabCategory({super.key, required this.user});
 
   @override
   State<TabCategory> createState() => _TabCategoryState();
@@ -70,20 +72,20 @@ class _TabCategoryState extends State<TabCategory>
               Material(
                 color: primaryWhite,
                 child: categoryController.isLoading
-                    ? GlobalProgress()
+                    ? const GlobalProgress()
                     : categoryController.listCategories.isNotEmpty
                         ? TabBar(
                             controller: _tabController,
                             isScrollable: true,
                             tabAlignment: TabAlignment.start,
-                            physics: ClampingScrollPhysics(),
+                            physics: const ClampingScrollPhysics(),
                             unselectedLabelColor: secundaryAmber,
                             indicatorSize: TabBarIndicatorSize.tab,
                             indicatorColor: primaryAmber,
                             labelColor: primaryAmber,
                             overlayColor:
                                 MaterialStateProperty.all(Colors.transparent),
-                            labelStyle: TextStyle(
+                            labelStyle: const TextStyle(
                               fontWeight: FontWeight.normal,
                               fontSize: 14,
                             ),
@@ -108,17 +110,17 @@ class _TabCategoryState extends State<TabCategory>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Spacing(value: .02),
+                              const Spacing(value: .02),
                               Text(
                                 "Receitas  mais bem avaliadas...",
                                 style: grey_text_subtitle,
                               ),
-                              Spacing(value: .02),
-                              SizedBox(
+                              const Spacing(value: .02),
+                              const SizedBox(
                                 height: 200,
                                 child: TabViewBestRecipe(),
                               ),
-                              Spacing(value: .02),
+                              const Spacing(value: .01),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -134,7 +136,7 @@ class _TabCategoryState extends State<TabCategory>
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              ListRecipePage(),
+                                              const ListRecipePage(),
                                         ),
                                       );
                                     },
@@ -147,18 +149,21 @@ class _TabCategoryState extends State<TabCategory>
                                   ),
                                 ],
                               ),
-                              Spacing(value: .02),
+                              const Spacing(value: .02),
                               SizedBox(
-                                height: 270,
-                                child: TabViewAllRecipe(),
+                                height: 260,
+                                child: TabViewAllRecipe(
+                                  user: widget.user,
+                                ),
                               ),
-                                Spacing(value: .1),
+                              const Spacing(value: .1),
                             ],
                           ),
                         ),
                       );
                     } else {
                       return TabViewRecipeByCategory(
+                        user: widget.user,
                         name: category.name!,
                         idCategory: category.id!,
                       );

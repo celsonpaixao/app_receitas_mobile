@@ -115,7 +115,8 @@ class FavoriteRepository {
     }
   }
 
-  Future<DTOresponse> removeRecipeinFavorite(int userId, int recipeId) async {
+
+Future<DTOresponse> removeRecipeinFavorite(int userId, int recipeId) async {
     var url = Uri.parse(
         "$baseurl/api/Favorite/remove_favorite?userId=$userId&recipeId=$recipeId");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -153,4 +154,5 @@ class FavoriteRepository {
       );
     }
   }
+
 }
