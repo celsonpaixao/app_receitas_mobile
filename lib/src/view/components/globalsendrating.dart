@@ -1,11 +1,11 @@
-import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pannable_rating_bar/flutter_pannable_rating_bar.dart';
-import '../../repository/ratingRepository.dart';
+import 'package:provider/provider.dart';
+import '../../controller/ratingController.dart';
+import '../../model/ratingModel.dart';
+import '../styles/colores.dart';
 import 'globalmulttextinpu.dart';
 import 'globalprogress.dart';
-import '../../DTO/DTOresponse.dart';
-import '../../model/ratingModel.dart';
 
 class GlobalSendRating extends StatefulWidget {
   final TextEditingController messagecontroller;
@@ -25,7 +25,6 @@ class GlobalSendRating extends StatefulWidget {
 
 class _GlobalSendRatingState extends State<GlobalSendRating> {
   double _setRating = 0.0;
-  late DTOresponse rating;
   bool _isLoading = false;
 
   Future<void> _publishRating() async {
@@ -44,7 +43,9 @@ class _GlobalSendRatingState extends State<GlobalSendRating> {
     );
 
     try {
-      rating = await RatingRepository().publicaRating(
+      final ratingController =
+          Provider.of<RatingController>(context, listen: false);
+      await ratingController.publishRating(
         widget.userId,
         widget.recipeId,
         RatingModel(

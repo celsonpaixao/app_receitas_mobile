@@ -1,11 +1,14 @@
-import 'package:app_receitas_mobile/src/view/components/globalbaclbutton.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:app_receitas_mobile/src/view/components/globalbutton.dart';
 import 'package:app_receitas_mobile/src/view/components/globalinput.dart';
 import 'package:app_receitas_mobile/src/view/components/globalmulttextinpu.dart';
 import 'package:app_receitas_mobile/src/view/components/selectcategorys.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
+import '../components/globalbaclbutton.dart';
 import '../components/setingredientrecipe.dart';
 import '../components/setmaterialrecipe.dart';
 
@@ -22,6 +25,7 @@ class _SendRecipePageState extends State<SendRecipePage> {
   final List<String> _ingredients = [];
   final TextEditingController materialController = TextEditingController();
   final TextEditingController ingredientController = TextEditingController();
+  File? _image; // Variável para armazenar a imagem selecionada
 
   @override
   Widget build(BuildContext context) {
@@ -29,22 +33,41 @@ class _SendRecipePageState extends State<SendRecipePage> {
     final String defaultImage =
         "assets/images/b844ef8b6b63db7380bdcb229955b8ae-12-754x394.jpg";
 
+    Future<void> _getImage(ImageSource source) async {
+      final pickedFile = await ImagePicker().pickImage(
+        source: source,
+        maxWidth: 600,
+        imageQuality: 90,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+      }
+    }
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             expandedHeight: 200,
             backgroundColor: primaryAmber,
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
+            leading: const Padding(
+              padding: EdgeInsets.all(8.0),
               child: Globalbackbutton(),
             ),
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              background: Image.asset(
-                defaultImage,
-                fit: BoxFit.cover,
-              ),
+              background: _image != null
+                  ? Image.file(
+                      _image!,
+                      fit: BoxFit.cover,
+                    )
+                  : Image.asset(
+                      defaultImage,
+                      fit: BoxFit.cover,
+                    ),
               title: Text(
                 "Publicar nova receita",
                 style: TextStyle(
@@ -54,6 +77,26 @@ class _SendRecipePageState extends State<SendRecipePage> {
                 ),
               ),
             ),
+            actions: [
+              IconButton(
+                icon: Icon(
+                  Icons.photo_camera,
+                  color: primaryWhite,
+                ),
+                onPressed: () {
+                  _getImage(ImageSource.camera);
+                },
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.photo_library,
+                  color: primaryWhite,
+                ),
+                onPressed: () {
+                  _getImage(ImageSource.gallery);
+                },
+              ),
+            ],
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -99,10 +142,7 @@ class _SendRecipePageState extends State<SendRecipePage> {
                       },
                     ),
                     Spacing(value: 0.03),
-                    Text(
-                      "Materiais",
-                      style: TextStyle(color: primaryAmber),
-                    ),
+                   
                     SetMaterialsRecipe(
                       onMaterialAdded: (material) {
                         setState(() {
@@ -117,10 +157,7 @@ class _SendRecipePageState extends State<SendRecipePage> {
                       },
                     ),
                     Spacing(value: 0.02),
-                    Text(
-                      "Ingredientes",
-                      style: TextStyle(color: primaryAmber),
-                    ),
+                  
                     SetIngredientsRecipe(
                       onIngredientAdded: (ingredient) {
                         setState(() {

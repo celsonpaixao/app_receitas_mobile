@@ -233,11 +233,9 @@ class _DetalheRecipePageState extends State<DetalheRecipePage> {
                               fontSize: 18,
                             ),
                           ),
-                          SizedBox(
-                            height: 200,
-                              child: GetRatingsForRecipe(
+                          GetRatingsForRecipe(
                             recipeId: widget.recipe.id!,
-                          )),
+                          ),
                         ],
                       ),
                     ),

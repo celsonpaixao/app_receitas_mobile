@@ -1,15 +1,15 @@
+import 'package:flutter/material.dart';
 import 'package:app_receitas_mobile/src/view/components/globalinput.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
-import 'package:flutter/material.dart';
 
 class SetIngredientsRecipe extends StatefulWidget {
   final Function(String) onIngredientAdded;
-  final String? Function(String? value) validator; // Correção aqui
+  final String? Function(String? value)? validator;
 
   const SetIngredientsRecipe({
     Key? key,
     required this.onIngredientAdded,
-    required this.validator, // Correção aqui
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -18,27 +18,61 @@ class SetIngredientsRecipe extends StatefulWidget {
 
 class _SetIngredientsRecipeState extends State<SetIngredientsRecipe> {
   final TextEditingController _ingredientController = TextEditingController();
+  List<String> _ingredientList = [];
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Lista de ingredientes adicionados
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: _ingredientList.asMap().entries.map((entry) {
+            int index = entry.key;
+            String ingredient = entry.value;
+            return Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    ingredient,
+                    style: TextStyle(color: primaryAmber),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    setState(() {
+                      _ingredientList.removeAt(index);
+                    });
+                  },
+                ),
+              ],
+            );
+          }).toList(),
+        ),
+        SizedBox(height: 8), // Espaço adicional opcional
+        Divider(), // Linha divisória entre entrada de ingrediente e lista
+        SizedBox(height: 8), // Espaço adicional opcional
         Row(
           children: [
             Expanded(
               child: GlobalInput(
                 controller: _ingredientController,
-                validator: widget.validator, // Correção aqui
-                hintText: "Ingredientes",
+                hintText: "Adicionar Ingrediente",
                 ispassword: false,
+                validator: widget.validator,
               ),
             ),
             IconButton(
-              icon: Icon(Icons.add, color: primaryAmber,),
+              icon: Icon(Icons.add, color: primaryAmber),
               onPressed: () {
                 if (_ingredientController.text.isNotEmpty) {
                   widget.onIngredientAdded(_ingredientController.text);
-                  _ingredientController.clear();
+                  setState(() {
+                    _ingredientList.add(_ingredientController.text);
+                    _ingredientController.clear();
+                  });
                 }
               },
             ),

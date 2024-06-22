@@ -17,34 +17,45 @@ class RatingController extends ChangeNotifier {
 
   RatingController({required this.ratingRepository});
 
-  Future<void> getRatingByRecipe(int recipeId) async {
-    _isLoading = true;
+Future<void> getRatingByRecipe(int recipeId) async {
+  _isLoading = true;
+  notifyListeners();
+  try {
+    var response = await ratingRepository.getRatingByRecipe(recipeId);
+    _listRating = response;
+    print(_listRating.toString()); // Verifique se há avaliações aqui
+  } catch (e) {
+    print('Error fetching ratings: $e');
+  } finally {
+    _isLoading = false;
+    _isInitialized = true;
     notifyListeners();
+  }
+}
+
+
+  Future<void> deleteRating(int ratingId) async {
+    _setLoadingState(true);
     try {
-      var response = await ratingRepository.getRatingByRecipe(recipeId);
-      _listRating = response;
-      print(_listRating.toString());
+      await ratingRepository.deletRating(ratingId);
+      _listRating.removeWhere((rating) => rating.id == ratingId);
     } catch (e) {
-      print('Error fetching ratings: $e');
+      debugPrint('Error deleting rating: $e');
     } finally {
-      _isLoading = false;
-      _isInitialized = true;
+      _setLoadingState(false);
       notifyListeners();
     }
   }
 
-  Future<void> deleteRating(int ratingId) async {
-    _isLoading = true;
-    notifyListeners();
+  Future<void> updateRating(int ratingId, RatingModel rating) async {
+    _setLoadingState(true);
     try {
-      await ratingRepository.deletRating(ratingId);
-      _listRating.removeWhere((rating) => rating.id == ratingId);
-      notifyListeners();
+      await ratingRepository.updateRating(ratingId, rating);
+      await getRatingByRecipe(rating.id!); // Recarrega as avaliações da receita
     } catch (e) {
-      print('Error deleting rating: $e');
+      debugPrint('Error updating rating: $e');
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _setLoadingState(false);
     }
   }
 
@@ -54,13 +65,20 @@ class RatingController extends ChangeNotifier {
 
   Future<void> publishRating(
       int userId, int recipeId, RatingModel rating) async {
+    _setLoadingState(true);
     try {
       await ratingRepository.publicaRating(userId, recipeId, rating);
       _listRating.add(rating);
-      notifyListeners();
       await getRatingByRecipe(recipeId);
     } catch (e) {
-      print('Error publishing rating: $e');
+      debugPrint('Error publishing rating: $e');
+    } finally {
+      _setLoadingState(false);
     }
+  }
+
+  void _setLoadingState(bool isLoading) {
+    _isLoading = isLoading;
+    notifyListeners();
   }
 }

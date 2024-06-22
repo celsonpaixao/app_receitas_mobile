@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:app_receitas_mobile/src/controller/ratingController.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
+import 'package:app_receitas_mobile/src/view/components/globaldialog.dart';
 import 'package:app_receitas_mobile/src/view/components/globalrating.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:app_receitas_mobile/src/view/styles/texts.dart';
@@ -23,7 +24,7 @@ class _GetRatingsForRecipeState extends State<GetRatingsForRecipe> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       Provider.of<RatingController>(context, listen: false)
           .getRatingByRecipe(widget.recipeId);
     });
@@ -38,13 +39,13 @@ class _GetRatingsForRecipeState extends State<GetRatingsForRecipe> {
       future: _userFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text("Error: ${snapshot.error}");
         } else if (snapshot.hasData) {
           UserModel user = snapshot.data!;
           return ratings.isLoading
-              ? CircularProgressIndicator()
+              ? const CircularProgressIndicator()
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: List.generate(
@@ -59,7 +60,8 @@ class _GetRatingsForRecipeState extends State<GetRatingsForRecipe> {
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border(
-                                bottom: BorderSide(color: secundaryGrey)),
+                              bottom: BorderSide(color: secundaryGrey),
+                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,10 +94,22 @@ class _GetRatingsForRecipeState extends State<GetRatingsForRecipe> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     TextButton(
-                                      onPressed: () async {
-                                        await ratings.deleteRating(item.id!);
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return GlobalDialog(
+                                              text:
+                                                  "Você está tentando apagar esta avaliação",
+                                              onConfirm: () async {
+                                                await ratings
+                                                    .deleteRating(item.id!);
+                                              },
+                                            );
+                                          },
+                                        );
                                       },
-                                      child: Text(
+                                      child: const Text(
                                         "Deletar",
                                         style: TextStyle(
                                           color: Colors.red,
@@ -107,7 +121,7 @@ class _GetRatingsForRecipeState extends State<GetRatingsForRecipe> {
                                       onPressed: () {
                                         print("Editar avaliação");
                                       },
-                                      child: Text(
+                                      child: const Text(
                                         "Editar",
                                         style: TextStyle(
                                           color: Colors.blue,
@@ -125,7 +139,7 @@ class _GetRatingsForRecipeState extends State<GetRatingsForRecipe> {
                   ),
                 );
         } else {
-          return Text("Something went wrong");
+          return const Text("Something went wrong");
         }
       },
     );
