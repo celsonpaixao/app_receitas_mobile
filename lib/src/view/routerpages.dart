@@ -1,3 +1,4 @@
+import 'package:app_receitas_mobile/src/controller/recipeController.dart';
 import 'package:app_receitas_mobile/src/controller/userController.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
@@ -90,6 +91,8 @@ class _RouterPageState extends State<RouterPage> {
                       MaterialPageRoute(
                         builder: (context) => SendRecipePage(
                           user: user!,
+                          recipeController:
+                              Provider.of<RecipeController>(context),
                         ),
                       ));
                 },

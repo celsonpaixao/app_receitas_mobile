@@ -1,5 +1,8 @@
 import 'dart:io';
-import 'dart:typed_data';
+import 'package:app_receitas_mobile/src/DTO/DTOresponse.dart';
+import 'package:app_receitas_mobile/src/model/recipeModel.dart';
+import 'package:app_receitas_mobile/src/view/components/globalprogress.dart';
+import 'package:app_receitas_mobile/src/view/routerpages.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:app_receitas_mobile/src/controller/recipeController.dart';
@@ -17,14 +20,16 @@ import '../components/setmaterialrecipe.dart';
 
 class SendRecipePage extends StatefulWidget {
   final UserModel user;
-  const SendRecipePage({Key? key, required this.user}) : super(key: key);
+  final RecipeController recipeController;
+  const SendRecipePage(
+      {Key? key, required this.user, required this.recipeController})
+      : super(key: key);
 
   @override
   State<SendRecipePage> createState() => _SendRecipePageState();
 }
 
 class _SendRecipePageState extends State<SendRecipePage> {
-  late RecipeController _recipeController;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final List<String> _materials = [];
   final List<int> _Id_CategorysController = [];
@@ -35,19 +40,8 @@ class _SendRecipePageState extends State<SendRecipePage> {
   File? _image;
   bool _isLoading = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _recipeController = RecipeController(recipeRepository: RecipeRepository());
-  }
-
   Future<void> _getImage(ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: source,
-      maxWidth: 600,
-      imageQuality: 90,
-    );
-
+    final pickedFile = await ImagePicker().pickImage(source: source);
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
@@ -58,43 +52,58 @@ class _SendRecipePageState extends State<SendRecipePage> {
   Future<void> _publishRecipe() async {
     if (_formKey.currentState!.validate() && _image != null) {
       try {
-        setState(() {
-          _isLoading = true;
-        });
-
-        Uint8List bytes = await _image!.readAsBytes();
-
-        await _recipeController.publishRecipe(
-          title: _titleController.text,
-          description: _descriptionController.text,
-          instructions: _instructionsController.text,
-          userId: widget.user.id!,
-          categories: _Id_CategorysController,
-          ingredients: _ingredients,
-          materials: _materials,
-          bytes: bytes,
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return Center(
+              child: GlobalProgress(),
+            );
+          },
         );
 
-        // Limpar formulário após publicação com sucesso
-        _formKey.currentState!.reset();
-        setState(() {
-          _materials.clear();
-          _Id_CategorysController.clear();
-          _ingredients.clear();
-          _image = null;
-        });
+        RecipeModel newRecipe = RecipeModel(
+            title: _titleController.text,
+            description: _descriptionController.text,
+            instructions: _instructionsController.text,
+            ingredients: _ingredients,
+            materials: _materials,
+            idAdmin: widget.user.id);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Receita publicada com sucesso!')),
-        );
+        DTOresponse response = await widget.recipeController
+            .publishRecipe(newRecipe, _Id_CategorysController, _image!);
+
+        Navigator.of(context).pop();
+
+        if (response.success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.green,
+              content: Text(response.message),
+            ),
+          );
+          setState(() {});
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => RouterPage()),
+          );
+        }
+
+        // // Limpar formulário após publicação com sucesso
+        // _formKey.currentState!.reset();
+        // setState(() {
+        //   _materials.clear();
+        //   _Id_CategorysController.clear();
+        //   _ingredients.clear();
+        //   _image = null;
+        // });
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao publicar receita: $e')),
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('Erro ao atualizar usuário: $e'),
+          ),
         );
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
       }
     } else if (_image == null) {
       ScaffoldMessenger.of(context).showSnackBar(
