@@ -4,12 +4,10 @@ import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 
 class SetMaterialsRecipe extends StatefulWidget {
   final Function(String) onMaterialAdded;
-  final String? Function(String? value)? validator;
 
   const SetMaterialsRecipe({
     Key? key,
     required this.onMaterialAdded,
-    this.validator,
   }) : super(key: key);
 
   @override
@@ -61,7 +59,6 @@ class _SetMaterialsRecipeState extends State<SetMaterialsRecipe> {
                 controller: _materialController,
                 hintText: "Adicionar Material",
                 ispassword: false,
-                validator: widget.validator,
               ),
             ),
             IconButton(

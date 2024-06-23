@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:app_receitas_mobile/src/DTO/DTOresponse.dart';
 import 'package:app_receitas_mobile/src/model/recipeModel.dart';
 import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
@@ -9,57 +10,74 @@ import 'package:http/http.dart' as http;
 class RecipeRepository {
   static String baseurl = baseUrl;
 
-  Future<DTOresponse> createRecipe(
-      File image, RecipeModel recipe, int userId) async {
-    var url = Uri.parse("$baseurl/api/Recipe/create_recipe");
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    final String? token = sharedPreferences.getString("auth_token");
-
-    if (token == null) {
-      throw Exception('Token not found in SharedPreferences');
-    }
-
+    Future<dynamic> addRecipe({
+    required RecipeModel recipe,
+    required Uint8List bytes,
+    required List<int> categories,
+  }) async {
     try {
+      var url = Uri.parse('$baseurl/api/Recipe/create_recipe');
       var request = http.MultipartRequest('POST', url);
 
-      // Set headers
-      request.headers['Authorization'] = 'Bearer $token';
+      // Validação de campos obrigatórios
+      if (recipe.title == null || recipe.title!.isEmpty) {
+        throw Exception('O título da receita é obrigatório');
+      }
+      if (recipe.description == null || recipe.description!.isEmpty) {
+        throw Exception('A descrição da receita é obrigatória');
+      }
+      if (recipe.instructions == null || recipe.instructions!.isEmpty) {
+        throw Exception('As instruções da receita são obrigatórias');
+      }
+      if (recipe.idAdmin == null) {
+        throw Exception('O ID do administrador é obrigatório');
+      }
 
-      // Add fields to the request
-      request.fields['title'] = recipe.title!;
-      request.fields['description'] = recipe.description!;
-      request.fields['instructions'] = recipe.instructions!;
-      request.fields['UserId'] = userId.toString(); // Assuming userId is an int
+      // Adicionar campos de texto
+      request.fields['Title'] = recipe.title!;
+      request.fields['Description'] = recipe.description!;
+      request.fields['Instructions'] = recipe.instructions!;
+      request.fields['UserId'] = recipe.idAdmin.toString();
+      request.fields['Categorias'] = jsonEncode(categories);
+      request.fields['Ingredients'] = jsonEncode(recipe.ingredients);
+      request.fields['Materials'] = jsonEncode(recipe.materials);
 
-      // Convert list fields to strings
-      request.fields['Categorias'] = recipe.categorias!.join(', ');
-      request.fields['Ingredients'] = recipe.ingredients!.join(', ');
-      request.fields['Materials'] = recipe.materials!.join(', ');
-
-      // Add image file if needed (assuming 'image' parameter is used for this purpose)
-
-      // Add the image file as 'image' without specifying the filename
-      var multipartFile = http.MultipartFile.fromBytes(
+      var multipartFile = http.MultipartFile(
         'image',
-        await image.readAsBytes(),
+        http.ByteStream.fromBytes(bytes),
+        bytes.length,
+        filename: 'recipe_image.jpg', // Nome do arquivo padrão
       );
       request.files.add(multipartFile);
-          // Send the request
-      var streamedResponse = await request.send();
-      var response = await http.Response.fromStream(streamedResponse);
 
-      // Check status code and handle response
-      if (response.statusCode == 200) {
-        var responseData = json.decode(response.body);
-        return DTOresponse.fromJson(responseData);
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      final String? token = sharedPreferences.getString("auth_token");
+
+      if (token == null) {
+        throw Exception('Token not found in SharedPreferences');
+      }
+
+      // Adicionar cabeçalho de autorização com o token JWT
+      request.headers['Authorization'] = 'Bearer $token';
+
+      final response = await request.send();
+
+      if (response.statusCode == 201) {
+        var data = await response.stream.bytesToString();
+        return jsonDecode(data);
       } else {
-        throw Exception(
-            'Failed to create recipe. Status code: ${response.statusCode}');
+        var responseData = await response.stream.bytesToString();
+        print(
+            'Failed to add recipe: ${response.reasonPhrase}, Details: $responseData');
+        throw Exception('Failed to add recipe: ${response.reasonPhrase}');
       }
     } catch (e) {
-      throw Exception('Failed to create recipe: $e');
+      print('Exception during recipe addition: ${e.toString()}');
+      throw Exception('Failed to add recipe: ${e.toString()}');
     }
   }
+
 
   Future<List<RecipeModel>> getRecipes() async {
     var url = Uri.parse("$baseurl/api/Recipe/list_all_recipe");
@@ -88,7 +106,7 @@ class RecipeRepository {
     }
   }
 
-   Future<List<RecipeModel>> getbestRecipes() async {
+  Future<List<RecipeModel>> getbestRecipes() async {
     var url = Uri.parse("$baseurl/api/Recipe/list_best_recipe");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final String? token = sharedPreferences.getString("auth_token");
@@ -116,8 +134,8 @@ class RecipeRepository {
   }
 
   Future<List<RecipeModel>> getRecipeByCategory(int idCategory) async {
-    var url = Uri.parse(
-        "$baseurl/api/Recipe/list_by_recipe_category?id=$idCategory");
+    var url =
+        Uri.parse("$baseurl/api/Recipe/list_by_recipe_category?id=$idCategory");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final String? token = sharedPreferences.getString("auth_token");
 

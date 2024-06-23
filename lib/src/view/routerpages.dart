@@ -86,7 +86,9 @@ class _RouterPageState extends State<RouterPage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SendRecipePage(),
+                        builder: (context) => SendRecipePage(
+                          user: user!,
+                        ),
                       ));
                 },
                 child: Icon(
