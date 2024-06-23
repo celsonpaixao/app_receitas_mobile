@@ -38,7 +38,7 @@ class UserRepository {
         print('Token de autenticação recebido: $token');
         return DTOresponse(
           success: true,
-          message: message,
+          message: filterMessage(message),
           token: token,
         );
       } else {
@@ -51,7 +51,7 @@ class UserRepository {
       print('Erro ao autenticar usuário: $e');
       return DTOresponse(
         success: false,
-        message: parseErrorMessage(
+        message: filterMessage(
           e.toString(),
         ),
       );
@@ -92,6 +92,7 @@ class UserRepository {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
         String message = data['message'];
+        print(message);
         return DTOresponse(success: true, message: message);
       } else {
         final Map<String, dynamic> errorData = jsonDecode(response.body);
@@ -102,7 +103,7 @@ class UserRepository {
       print('Erro ao registrar usuário: $e');
       return DTOresponse(
         success: false,
-        message: parseErrorMessage(
+        message: filterMessage(
           e.toString(),
         ),
       );
@@ -167,7 +168,7 @@ class UserRepository {
         print('Atualização do usuário bem-sucedida: $message');
         return DTOresponse(
           success: true,
-          message: message,
+          message: filterMessage(message),
           token: newToken,
         );
       } else {
@@ -182,5 +183,36 @@ class UserRepository {
       print('Erro ao atualizar usuário: $e');
       return DTOresponse(success: false, message: "$e");
     }
+  }
+
+  Future<DTOresponse> deleteUser(int idUser) async {
+    late DTOresponse response;
+    var url = Uri.parse("$baseurl/api/User/delete_user?id_user=$idUser");
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final String? token = sharedPreferences.getString("auth_token");
+
+    if (token == null) {
+      throw Exception('Token not found in SharedPreferences');
+    }
+
+    try {
+      final request = await http.delete(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+
+      if (request.statusCode == 200) {
+        var message = jsonDecode(request.body)['message'];
+
+        response = DTOresponse(success: true, message: filterMessage(message));
+      }
+    } catch (e) {
+      response = DTOresponse(success: false, message: e.toString());
+    }
+
+    return response;
   }
 }
