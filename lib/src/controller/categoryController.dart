@@ -22,13 +22,8 @@ class CategoryController extends ChangeNotifier {
 
     var response = await repository.getCategories();
 
-    if (response != null) {
-      _listCategories = response;
-    } else {
-      print('Error fetching categories');
-      // Handle error state as needed (e.g., show error message)
-    }
-
+    _listCategories = response;
+  
     _isLoading = false;
     notifyListeners();
   }

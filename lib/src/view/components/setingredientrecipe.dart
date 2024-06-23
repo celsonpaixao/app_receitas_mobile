@@ -4,12 +4,10 @@ import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 
 class SetIngredientsRecipe extends StatefulWidget {
   final Function(String) onIngredientAdded;
-  final String? Function(String? value)? validator;
 
   const SetIngredientsRecipe({
     Key? key,
     required this.onIngredientAdded,
-    this.validator,
   }) : super(key: key);
 
   @override
@@ -61,7 +59,6 @@ class _SetIngredientsRecipeState extends State<SetIngredientsRecipe> {
                 controller: _ingredientController,
                 hintText: "Adicionar Ingrediente",
                 ispassword: false,
-                validator: widget.validator,
               ),
             ),
             IconButton(
