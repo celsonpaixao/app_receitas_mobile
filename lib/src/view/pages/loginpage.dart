@@ -11,10 +11,12 @@ import 'package:app_receitas_mobile/src/view/routerpages.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:app_receitas_mobile/src/view/styles/texts.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final UserController userController;
+  const LoginPage({super.key, required this.userController});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -25,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final UserController userController = UserController();
+
 
   Future<void> _authenticateAndStoreToken() async {
     if (_formKey.currentState!.validate()) {
@@ -40,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
         },
       );
 
-      DTOresponse response = await userController.LoginUser(
+      DTOresponse response = await widget.userController.loginUser(
         _emailController.text,
         _passwordController.text,
       );
@@ -135,7 +137,10 @@ class _LoginPageState extends State<LoginPage> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => JoinUsPage(),
+                            builder: (context) => JoinUsPage(
+                               userController:
+                                  Provider.of<UserController>(context),
+                            ),
                           ));
                     },
                     child: Text(

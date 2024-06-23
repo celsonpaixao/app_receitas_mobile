@@ -1,81 +1,81 @@
-import 'dart:async';
-import 'package:app_receitas_mobile/src/view/components/globaldialog.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:app_receitas_mobile/src/controller/recipeController.dart';
 import 'package:app_receitas_mobile/src/controller/ratingController.dart';
-import 'package:app_receitas_mobile/src/controller/userController.dart'; // Importe o controller de usuário
+import 'package:app_receitas_mobile/src/controller/recipeController.dart';
+import 'package:app_receitas_mobile/src/controller/userController.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
+import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
 import 'package:app_receitas_mobile/src/view/components/globalappbar.dart';
+import 'package:app_receitas_mobile/src/view/components/globaldialog.dart';
 import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
 import 'package:app_receitas_mobile/src/view/components/minicardrecipe.dart';
 import 'package:app_receitas_mobile/src/view/components/minicardshimmer.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
-import 'package:app_receitas_mobile/src/view/pages/loginpage.dart';
 import 'package:app_receitas_mobile/src/view/pages/updateuserpage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
-import 'package:app_receitas_mobile/src/view/styles/texts.dart';
-import '../../utils/api/apicontext.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 
 class ProfilePage extends StatefulWidget {
+  final UserController userController;
   final UserModel user;
-  const ProfilePage({super.key, required this.user});
+
+  const ProfilePage({
+    Key? key,
+    required this.user,
+    required this.userController,
+  }) : super(key: key);
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  UserModel? user;
-  late RecipeController recipe;
-
-  @override
-  void initState() {
-    super.initState();
-    recipe = Provider.of(context, listen: false);
-    _initialize();
-  }
-
-  Future<void> _initialize() async {
-    try {
-      final tokenController = Provider.of<TokenDecod>(context, listen: false);
-      final decodedUser = await tokenController.decodeUser();
-      setState(() {
-        user = decodedUser;
-      });
-      if (user?.id != null) {
-        await recipe.getRecipeByUser(user!.id!);
-      }
-    } catch (e) {
-      print('Error loading user: $e');
-    }
-  }
-
-  Future<void> logout() async {
-    var cond = await UserController().LogoutUser();
-    if (cond == true) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoginPage(),
-        ),
-      );
-    }
-  }
-
   void _confirmLogout() {
     showDialog<void>(
       context: context,
-      barrierDismissible: false, // Evita fechar o dialogo clicando fora
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return GlobalDialog(
-          onConfirm: logout,
-          text: "Você está tentado sair",
+          onConfirm: () async {
+            await widget.userController.logoutUser(context);
+          },
+          text: "Você está tentando sair",
         );
       },
     );
   }
+
+  void clickEditar() {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return GlobalDialog(
+          onConfirm: () {
+            // Feche o diálogo e navegue para a página de atualização do usuário
+            Navigator.of(context).pop();
+
+            // Use o Future.delayed para garantir que o diálogo seja fechado antes da navegação
+            Future.delayed(Duration(milliseconds: 100), () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UpdateUserPage(
+                    userdate: widget.user,
+                    userController: widget.userController,
+                  ),
+                ),
+              );
+            });
+          },
+          text: "Você quer editar as informações do usuário?",
+        );
+      },
+    );
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -85,18 +85,14 @@ class _ProfilePageState extends State<ProfilePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              user != null
-                  ? "${user!.firstName} ${user!.lastName}"
+              widget.user != null
+                  ? "${widget.user.firstName} ${widget.user.lastName}"
                   : "Carregando...!",
-              style: white_text_title,
+              style: TextStyle(color: Colors.white),
             ),
             IconButton(
-              onPressed:
-                  _confirmLogout, // Chama o método de confirmação de logout
-              icon: Icon(
-                Icons.logout,
-                color: primaryWhite,
-              ),
+              onPressed: _confirmLogout,
+              icon: Icon(Icons.logout, color: Colors.white),
             )
           ],
         ),
@@ -105,8 +101,8 @@ class _ProfilePageState extends State<ProfilePage> {
       body: Consumer<TokenDecod>(
         builder: (context, usercontroller, child) {
           final ratings = Provider.of<RatingController>(context, listen: false);
-          if (user == null) {
-            return const Center(child: CircularProgressIndicator());
+          if (widget.user == null) {
+            return Center(child: CircularProgressIndicator());
           }
           return LayoutPage(
             body: Center(
@@ -114,7 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Spacing(value: .04),
+                  Spacing(value: .04),
                   Container(
                     width: 120,
                     height: 120,
@@ -123,16 +119,16 @@ class _ProfilePageState extends State<ProfilePage> {
                       borderRadius: BorderRadius.circular(100),
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        image:
-                            user?.imageURL != null && user!.imageURL!.isNotEmpty
-                                ? NetworkImage("$baseUrl/${user!.imageURL!}")
-                                : const AssetImage(
-                                    "assets/images/Depositphotos_484354208_S.jpg",
-                                  ) as ImageProvider,
+                        image: widget.user.imageURL != null &&
+                                widget.user.imageURL!.isNotEmpty
+                            ? NetworkImage("$baseUrl/${widget.user.imageURL!}")
+                            : const AssetImage(
+                                "assets/images/Depositphotos_484354208_S.jpg",
+                              ) as ImageProvider,
                       ),
                     ),
                   ),
-                  const Spacing(value: .04),
+                  Spacing(value: .04),
                   MaterialButton(
                     minWidth: 100,
                     height: 45,
@@ -143,19 +139,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     child: Text(
                       "Editar",
-                      style: TextStyle(color: primaryWhite),
+                      style: TextStyle(color: Colors.white),
                     ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UpdateUserPage(userdate: user!),
-                        ),
-                      );
-                    },
+                    onPressed: clickEditar,
                   ),
-                  const Spacing(value: .04),
-                  const Text(
+                  Spacing(value: .04),
+                  Text(
                     "Suas receitas",
                     textAlign: TextAlign.start,
                     style: TextStyle(
@@ -169,26 +158,27 @@ class _ProfilePageState extends State<ProfilePage> {
                         if (recipecontroller.isLoadbyUser) {
                           return GridView.builder(
                             gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               crossAxisSpacing: 0,
                               mainAxisSpacing: 5,
                               childAspectRatio: .65,
                             ),
                             itemBuilder: (context, index) {
-                              return const MiniCardRecipeShimmer();
+                              return MiniCardRecipeShimmer();
                             },
                           );
                         } else if (recipecontroller.listRecipebyUser.isEmpty) {
-                          return const Center(
+                          return Center(
                             child: Text(
-                                "Você ainda não publicou nehuma receita..!!"),
+                              "Você ainda não publicou nenhuma receita!",
+                            ),
                           );
                         } else {
                           return GridView.builder(
                             itemCount: recipecontroller.listRecipebyUser.length,
                             gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               crossAxisSpacing: 0,
                               mainAxisSpacing: 5,
@@ -209,7 +199,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         }
                       },
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

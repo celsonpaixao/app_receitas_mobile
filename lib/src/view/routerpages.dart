@@ -1,3 +1,4 @@
+import 'package:app_receitas_mobile/src/controller/userController.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
 import 'package:app_receitas_mobile/src/view/pages/favoritespage.dart';
@@ -61,6 +62,7 @@ class _RouterPageState extends State<RouterPage> {
                   Container(), // Placeholder for the FAB
                   FavoritesPage(),
                   ProfilePage(
+                    userController: Provider.of<UserController>(context),
                     user: user!,
                   )
                 ],
