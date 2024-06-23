@@ -2,11 +2,14 @@ import 'dart:async';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/pages/loginpage.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:app_receitas_mobile/src/view/components/globalbutton.dart';
 import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
 import 'package:app_receitas_mobile/src/view/components/welcomecard.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
+
+import '../../controller/userController.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -78,62 +81,66 @@ class _WelcomePageState extends State<WelcomePage> {
       ),
       body: SafeArea(
         child: LayoutPage(
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const Spacing(value: .009),
-              SizedBox(
-                height: size.height * .7,
-                child: PageView.builder(
-                  controller: pageController,
-                  itemCount: scrollPages.length,
-                  itemBuilder: (context, index) {
-                    return scrollPages[index];
-                  },
+          body: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                const Spacing(value: .009),
+                SizedBox(
+                  height: size.height * .7,
+                  child: PageView.builder(
+                    controller: pageController,
+                    itemCount: scrollPages.length,
+                    itemBuilder: (context, index) {
+                      return scrollPages[index];
+                    },
+                  ),
                 ),
-              ),
-              SmoothPageIndicator(
-                controller: pageController,
-                count: scrollPages.length,
-                effect: ScaleEffect(
-                    dotWidth: size.width * 0.01,
-                    dotHeight: size.width * 0.02 / aspectRatio,
-                    activeDotColor: primaryWhite,
-                    dotColor: Colors.white38),
-              ),
-              const Spacing(value: .03),
-              GlobalButton(
-                textButton: "Seguinte",
-                onClick: () {
-                  int nextPage = pageController.page!.toInt() + 1;
-                  if (nextPage < scrollPages.length) {
-                    pageController.animateToPage(
-                      nextPage,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  } else {
-                    // Implementar a lógica para quando chegar na última página
-                  }
-                },
-                background: primaryWhite,
-                textColor: primaryAmber,
-              ),
-              const Spacing(value: .01),
-              GlobalButton(
-                textButton: "Pular",
-                onClick: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginPage(),
-                      ));
-                },
-                background: primaryAmber,
-                textColor: primaryWhite,
-              ),
-              const Spacing(value: .01),
-            ],
+                SmoothPageIndicator(
+                  controller: pageController,
+                  count: scrollPages.length,
+                  effect: ScaleEffect(
+                      dotWidth: size.width * 0.01,
+                      dotHeight: size.width * 0.02 / aspectRatio,
+                      activeDotColor: primaryWhite,
+                      dotColor: Colors.white38),
+                ),
+                const Spacing(value: .03),
+                GlobalButton(
+                  textButton: "Seguinte",
+                  onClick: () {
+                    int nextPage = pageController.page!.toInt() + 1;
+                    if (nextPage < scrollPages.length) {
+                      pageController.animateToPage(
+                        nextPage,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    } else {
+                      // Implementar a lógica para quando chegar na última página
+                    }
+                  },
+                  background: primaryWhite,
+                  textColor: primaryAmber,
+                ),
+                const Spacing(value: .01),
+                GlobalButton(
+                  textButton: "Pular",
+                  onClick: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>  LoginPage(
+                           userController: Provider.of<UserController>(context),
+                          ),
+                        ));
+                  },
+                  background: primaryAmber,
+                  textColor: primaryWhite,
+                ),
+                const Spacing(value: .01),
+              ],
+            ),
           ),
         ),
       ),

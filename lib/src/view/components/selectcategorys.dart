@@ -6,12 +6,10 @@ import '../styles/colores.dart';
 
 class SelectCategory extends StatefulWidget {
   final List<int> CategorysIds;
-  final String? Function(String? value)? validator; // Corrigido
 
   const SelectCategory({
     Key? key,
     required this.CategorysIds,
-    required this.validator,
   }) : super(key: key);
 
   @override
@@ -36,7 +34,8 @@ class _SelectCategoryState extends State<SelectCategory> {
                   item.name!,
                   style: TextStyle(
                     color: item.isSelected ? primaryWhite : primaryAmber,
-                    fontWeight: item.isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight:
+                        item.isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
                 selected: item.isSelected,

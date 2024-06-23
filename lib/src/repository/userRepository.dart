@@ -1,17 +1,19 @@
 import 'dart:async';
-import 'dart:convert';
+
 import 'package:app_receitas_mobile/src/DTO/DTOresponse.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
+import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/filters/messagefilter.dart';
 
-class UserRespository {
+class UserRepository {
   static String baseurl = baseUrl;
 
-  Future<DTOresponse> AuthUser(String email, String password) async {
+  Future<DTOresponse> authUser(String email, String password) async {
     var url = Uri.parse(
         "$baseurl/api/User/auth_user?email=$email&password=$password");
 
@@ -68,7 +70,7 @@ class UserRespository {
     }
   }
 
-  Future<DTOresponse> RegisterUser(
+  Future<DTOresponse> registerUser(
     UserModel user,
     String confirmPassword,
   ) async {
@@ -104,6 +106,81 @@ class UserRespository {
           e.toString(),
         ),
       );
+    }
+  }
+
+  Future<DTOresponse> updateUser({
+    required int userId,
+    required String confirmPassword,
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String password,
+    required File image,
+  }) async {
+    try {
+      var url = Uri.parse(
+          '$baseurl/api/User/update_user?id=$userId&confirmpassword=$confirmPassword');
+
+      var request = http.MultipartRequest('PUT', url);
+      request.fields['First_Name'] = firstName;
+      request.fields['Last_Name'] = lastName;
+      request.fields['Email'] = email;
+      request.fields['Password'] = password;
+
+      // Adicionar imagem como arquivo
+      String fileName = image.path.split('/').last;
+      request.files.add(await http.MultipartFile.fromPath(
+        'image',
+        image.path,
+        filename: fileName,
+      ));
+
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      final String? token = sharedPreferences.getString("auth_token");
+
+      if (token == null) {
+        throw Exception('Token not found in SharedPreferences');
+      }
+
+      // Adicionar header de autorização
+      request.headers['Authorization'] = 'Bearer $token';
+
+      // Enviar a requisição e aguardar a resposta
+      final response = await request.send();
+
+      print('Resposta recebida: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData =
+            jsonDecode(await response.stream.bytesToString());
+
+        final String newToken = responseData['response']['token'];
+        print("O novo token é : $newToken");
+        await sharedPreferences.setString("auth_token", newToken);
+
+        // Obter a mensagem de sucesso da resposta
+        String message =
+            responseData['message'] ?? 'User updated successfully!';
+
+        print('Atualização do usuário bem-sucedida: $message');
+        return DTOresponse(
+          success: true,
+          message: message,
+          token: newToken,
+        );
+      } else {
+        final Map<String, dynamic> errorData =
+            jsonDecode(await response.stream.bytesToString());
+        String errorMessage = errorData['message'] ?? 'Erro desconhecido';
+        print(
+            'Falha na atualização do usuário: ${response.statusCode}, $errorMessage');
+        return DTOresponse(success: false, message: errorMessage);
+      }
+    } catch (e) {
+      print('Erro ao atualizar usuário: $e');
+      return DTOresponse(success: false, message: "$e");
     }
   }
 }

@@ -14,7 +14,8 @@ import '../styles/colores.dart';
 import '../styles/texts.dart';
 
 class JoinUsPage extends StatefulWidget {
-  const JoinUsPage({super.key});
+  final UserController userController;
+  const JoinUsPage({super.key, required this.userController});
 
   @override
   State<JoinUsPage> createState() => _JoinUsPageState();
@@ -30,7 +31,6 @@ class _JoinUsPageState extends State<JoinUsPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
-  final UserController userController = UserController();
 
   Future<void> _registernewuser() async {
     UserModel user = UserModel(
@@ -51,8 +51,8 @@ class _JoinUsPageState extends State<JoinUsPage> {
         },
       );
 
-      DTOresponse response = await userController.JoinUsUser(
-          user, _confirmPasswordController.text);
+      DTOresponse response = await widget.userController
+          .joinUsUser(user, _confirmPasswordController.text);
 
       Navigator.of(context).pop();
 
@@ -63,7 +63,10 @@ class _JoinUsPageState extends State<JoinUsPage> {
         );
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
+          MaterialPageRoute(
+              builder: (context) => LoginPage(
+                    userController: widget.userController,
+                  )),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -169,7 +172,9 @@ class _JoinUsPageState extends State<JoinUsPage> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => LoginPage(),
+                            builder: (context) => LoginPage(
+                              userController: widget.userController,
+                            ),
                           ));
                     },
                     child: Text(

@@ -1,12 +1,13 @@
 import 'dart:collection';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:app_receitas_mobile/src/model/recipeModel.dart';
 import 'package:app_receitas_mobile/src/repository/recipeRepository.dart';
 
 class RecipeController extends ChangeNotifier {
-  final RecipeRepository recipeRepository;
-  final RecipeModel recipeModel;
+  final RecipeRepository? recipeRepository;
+  final RecipeModel? recipeModel;
 
   List<RecipeModel> _listAllRecipe = [];
   List<RecipeModel> _listRecipebyCategory = [];
@@ -32,15 +33,15 @@ class RecipeController extends ChangeNotifier {
   bool get isLoadbestRecipe => _isLoadbestRecipe;
 
   RecipeController({
-    required this.recipeRepository,
-    required this.recipeModel,
+    this.recipeRepository,
+    this.recipeModel,
   });
 
   Future<void> getRecipeAll() async {
     _isLoadAllList = true;
     notifyListeners();
 
-    var response = await recipeRepository.getRecipes();
+    var response = await recipeRepository!.getRecipes();
 
     _listAllRecipe = response;
 
@@ -52,7 +53,7 @@ class RecipeController extends ChangeNotifier {
     _isLoadbyCategory = true;
     notifyListeners();
 
-    var response = await recipeRepository.getRecipeByCategory(idCategory);
+    var response = await recipeRepository!.getRecipeByCategory(idCategory);
 
     _listRecipebyCategory = response;
 
@@ -64,7 +65,7 @@ class RecipeController extends ChangeNotifier {
     _isLoadbyUser = true;
     notifyListeners();
 
-    var response = await recipeRepository.getRecipeByUser(idUser);
+    var response = await recipeRepository!.getRecipeByUser(idUser);
 
     _listRecipebyUser = response;
 
@@ -75,7 +76,7 @@ class RecipeController extends ChangeNotifier {
   Future<void> filterBestReceipe() async {
     _isLoadbestRecipe = true;
     notifyListeners();
-    var response = await recipeRepository.getbestRecipes();
+    var response = await recipeRepository!.getbestRecipes();
 
     _listbestReceipe = response;
 
@@ -83,30 +84,42 @@ class RecipeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Método para publicar uma receita
-  Future<void> publicarReceita(
-    File image,
-    String title,
-    String description,
-    String instructions,
-    List<String> categorias,
-    List<String> ingredients,
-    List<String> materials,
-    int userId,
-  ) async {
-    RecipeModel recipe = RecipeModel(
-      title: title,
-      description: description,
-      instructions: instructions,
-      categorias: categorias,
-      ingredients: ingredients,
-      materials: materials,
-    );
-
+  Future<void> publishRecipe({
+    required String title,
+    required String description,
+    required String instructions,
+    required int userId,
+    required List<int> categories,
+    required List<String> ingredients,
+    required List<String> materials,
+    required Uint8List bytes,
+  }) async {
     try {
-      await recipeRepository.createRecipe(image, recipe, userId);
+      _isLoadAllList = true;
+      notifyListeners();
+
+      // Criar instância do modelo de receita
+      var newRecipe = RecipeModel(
+        title: title,
+        description: description,
+        instructions: instructions,
+        idAdmin: userId,
+        ingredients: ingredients,
+        materials: materials,
+      );
+
+      // Chamar o método de adicionar receita do repository
+      await recipeRepository!
+          .addRecipe(recipe: newRecipe, categories: categories, bytes: bytes);
+
+      // Recarregar a lista de todas as receitas após publicação
+      await getRecipeAll();
     } catch (e) {
-      throw Exception('Failed to publish recipe: $e');
+      print('Exception during recipe publication: ${e.toString()}');
+      throw Exception('Failed to publish recipe: ${e.toString()}');
+    } finally {
+      _isLoadAllList = false;
+      notifyListeners();
     }
   }
 }
