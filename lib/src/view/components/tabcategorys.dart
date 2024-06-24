@@ -1,4 +1,5 @@
 import 'package:app_receitas_mobile/src/model/userModel.dart';
+import 'package:app_receitas_mobile/src/view/components/globalshimmer.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
 import 'package:app_receitas_mobile/src/view/components/tab_view_best_recipes.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +73,23 @@ class _TabCategoryState extends State<TabCategory>
               Material(
                 color: primaryWhite,
                 child: categoryController.isLoading
-                    ? const GlobalProgress()
+                    ? SizedBox(
+                      height: 60,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 60,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GlobalShimmer(
+                                shimmerWidth: 100,
+                                shimmerHeight: 10,
+                                border: 5,
+                              ),
+                            );
+                          },
+                        ),
+                    )
                     : categoryController.listCategories.isNotEmpty
                         ? TabBar(
                             controller: _tabController,

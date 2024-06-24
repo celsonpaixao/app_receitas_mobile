@@ -4,6 +4,7 @@ import 'package:app_receitas_mobile/src/controller/userController.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
+import 'package:app_receitas_mobile/src/view/components/cardrecipeuser.dart';
 import 'package:app_receitas_mobile/src/view/components/globalappbar.dart';
 import 'package:app_receitas_mobile/src/view/components/globaldialog.dart';
 import 'package:app_receitas_mobile/src/view/components/globalprogress.dart';
@@ -19,12 +20,14 @@ import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
   final UserController userController;
+  final RecipeController recipeController;
   final UserModel user;
 
   const ProfilePage({
     Key? key,
     required this.user,
     required this.userController,
+    required this.recipeController,
   }) : super(key: key);
 
   @override
@@ -32,6 +35,18 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+     @override
+  void initState() {
+    super.initState();
+    _loadRecipe();
+  }
+
+  void _loadRecipe() async {
+    print("Loading recipes for user: ${widget.user.id}");
+    await widget.recipeController.getRecipeByUser(widget.user.id!);
+    print("Recipes loaded: ${widget.recipeController.listRecipebyUser.length}");
+  }
+
   void _confirmLogout() async {
     showDialog(
       context: context,
@@ -188,17 +203,19 @@ class _ProfilePageState extends State<ProfilePage> {
                               crossAxisCount: 2,
                               crossAxisSpacing: 0,
                               mainAxisSpacing: 5,
-                              childAspectRatio: .65,
+                              childAspectRatio: .80,
                             ),
                             itemBuilder: (context, index) {
                               var item =
                                   recipecontroller.listRecipebyUser[index];
 
                               ratings.getRatingByRecipe(item.id!);
-                              return MiniCardRecipe(
-                                user: widget.user,
-                                item: item,
-                                ratings: ratings.listRating,
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: CardRecipeUser(
+                                  recipe: item,
+                                  recipeController: widget.recipeController,
+                                ),
                               );
                             },
                           );

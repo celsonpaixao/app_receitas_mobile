@@ -51,9 +51,10 @@ class _GetRatingsForRecipeState extends State<GetRatingsForRecipe> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: List.generate(
-                    ratings.listRating.length,
+                    ratings.getRatingsForRecipe(widget.recipeId).length,
                     (index) {
-                      var item = ratings.listRating[index];
+                      var item =
+                          ratings.getRatingsForRecipe(widget.recipeId)[index];
                       final isAdmin =
                           ratings.checkInAdmin(item.user!.id!, user.id!);
 
@@ -104,8 +105,8 @@ class _GetRatingsForRecipeState extends State<GetRatingsForRecipe> {
                                               text:
                                                   "Você está tentando apagar esta avaliação",
                                               onConfirm: () async {
-                                                await ratings
-                                                    .deleteRating(item.id!);
+                                                await ratings.deleteRating(
+                                                    item.id!, widget.recipeId);
                                               },
                                             );
                                           },
@@ -125,6 +126,7 @@ class _GetRatingsForRecipeState extends State<GetRatingsForRecipe> {
                                           context: context,
                                           builder: (BuildContext context) {
                                             return GlobalDialogEditRating(
+                                              recipeId: user.id!,
                                               message: item.message!,
                                               setRating: item.value!,
                                               ratingController: ratings,

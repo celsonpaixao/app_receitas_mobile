@@ -11,13 +11,13 @@ import 'package:http/http.dart' as http;
 class RecipeRepository {
   static String baseurl = baseUrl;
 
-
 Future<DTOresponse> addRecipe({
     required RecipeModel recipe,
+    required List<String> ingredientes,
+    required List<String> materials,
     required List<int> categories,
     required File image,
   }) async {
-    DTOresponse response;
     try {
       var url = Uri.parse('$baseurl/api/Recipe/create_recipe');
       var request = http.MultipartRequest('POST', url);
@@ -33,9 +33,15 @@ Future<DTOresponse> addRecipe({
         request.fields['Categorias[$i]'] = categories[i].toString();
       }
 
-      // Adicionar ingredientes e materiais como listas de strings
-      request.fields['Ingredients'] = recipe.ingredients!.join(',');
-      request.fields['Materials'] = recipe.materials!.join(',');
+      // Adicionar ingredientes
+      for (var i = 0; i < ingredientes.length; i++) {
+        request.fields['Ingredients[$i]'] = ingredientes[i];
+      }
+
+      // Adicionar materiais
+      for (var i = 0; i < materials.length; i++) {
+        request.fields['Materials[$i]'] = materials[i];
+      }
 
       // Adicionar arquivo de imagem
       String fileName = image.path.split('/').last;
@@ -64,22 +70,91 @@ Future<DTOresponse> addRecipe({
       if (streamedResponse.statusCode == 200) {
         String message = parsedResponse['message'];
         print(message);
-        response = DTOresponse(success: true, message: message);
+        return DTOresponse(success: true, message: message);
       } else {
         String errorMessage = parsedResponse['message'] ?? 'Erro desconhecido';
         print(
             'Falha na publicação da receita: ${streamedResponse.statusCode}, $errorMessage');
-        response = DTOresponse(success: false, message: errorMessage);
+        return DTOresponse(success: false, message: errorMessage);
       }
     } catch (e) {
       print('Erro ao publicar receita: $e');
       return DTOresponse(success: false, message: "$e");
     }
-
-    return response;
   }
 
 
+  Future<DTOresponse> updateRecipe({
+    required RecipeModel recipe,
+    required List<String> ingredientes,
+    required List<String> materials,
+    required List<int> categories,
+    required File image,
+  }) async {
+    try {
+      var url = Uri.parse('$baseurl/api/Recipe/update_recipe/${recipe.id}');
+      var request = http.MultipartRequest('PUT', url);
+
+      // Adicionar campos de texto
+      request.fields['Title'] = recipe.title!;
+      request.fields['Description'] = recipe.description!;
+      request.fields['Instructions'] = recipe.instructions!;
+      request.fields['UserId'] = recipe.idAdmin.toString();
+
+      // Adicionar categorias como lista de strings
+      for (var i = 0; i < categories.length; i++) {
+        request.fields['Categories[$i]'] = categories[i].toString();
+      }
+
+      // Adicionar ingredientes
+      for (var i = 0; i < ingredientes.length; i++) {
+        request.fields['Ingredients[$i]'] = ingredientes[i];
+      }
+
+      // Adicionar materiais
+      for (var i = 0; i < materials.length; i++) {
+        request.fields['Materials[$i]'] = materials[i];
+      }
+
+      // Adicionar arquivo de imagem
+      String fileName = image.path.split('/').last;
+      request.files.add(await http.MultipartFile.fromPath(
+        'image',
+        image.path,
+        filename: fileName,
+      ));
+
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      final String? token = sharedPreferences.getString("auth_token");
+
+      if (token == null) {
+        throw Exception('Token not found in SharedPreferences');
+      }
+
+      // Adicionar cabeçalho de autorização com o token JWT
+      request.headers['Authorization'] = 'Bearer $token';
+
+      // Enviar a requisição e aguardar a resposta
+      final streamedResponse = await request.send();
+      final responseStream = await streamedResponse.stream.bytesToString();
+      final parsedResponse = jsonDecode(responseStream);
+
+      if (streamedResponse.statusCode == 200) {
+        String message = parsedResponse['message'];
+        print(message);
+        return DTOresponse(success: true, message: message);
+      } else {
+        String errorMessage = parsedResponse['message'] ?? 'Erro desconhecido';
+        print(
+            'Falha na atualização da receita: ${streamedResponse.statusCode}, $errorMessage');
+        return DTOresponse(success: false, message: errorMessage);
+      }
+    } catch (e) {
+      print('Erro ao atualizar receita: $e');
+      return DTOresponse(success: false, message: "$e");
+    }
+  }
 
 
   Future<List<RecipeModel>> getRecipes() async {
@@ -189,5 +264,36 @@ Future<DTOresponse> addRecipe({
     } else {
       throw Exception('Failed to load recipes');
     }
+  }
+
+  Future<DTOresponse> deleterecipe(int recipeId) async {
+    late DTOresponse response;
+    var url = Uri.parse("$baseurl/api/Recipe/delete_recipe?id=$recipeId");
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final String? token = sharedPreferences.getString("auth_token");
+
+    if (token == null) {
+      throw Exception('Token not found in SharedPreferences');
+    }
+
+    try {
+      final request = await http.delete(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+
+      if (request.statusCode == 200) {
+        var message = jsonDecode(request.body)['message'];
+
+        response = DTOresponse(success: true, message: filterMessage(message));
+      }
+    } catch (e) {
+      response = DTOresponse(success: false, message: e.toString());
+    }
+
+    return response;
   }
 }

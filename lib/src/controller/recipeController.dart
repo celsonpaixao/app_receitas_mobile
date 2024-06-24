@@ -39,7 +39,7 @@ class RecipeController extends ChangeNotifier {
     _isLoadAllList = true;
     notifyListeners();
 
-    var response = await recipeRepository!.getRecipes();
+    var response = await recipeRepository.getRecipes();
 
     _listAllRecipe = response;
 
@@ -84,6 +84,8 @@ class RecipeController extends ChangeNotifier {
 
   Future<DTOresponse> publishRecipe(
     RecipeModel recipe,
+    List<String> materials,
+    List<String> ingredients,
     List<int> categories,
     File image,
   ) async {
@@ -92,7 +94,12 @@ class RecipeController extends ChangeNotifier {
       notifyListeners();
 
       DTOresponse response = await recipeRepository.addRecipe(
-          categories: categories, image: image, recipe: recipe);
+        categories: categories,
+        image: image,
+        recipe: recipe,
+        materials: materials,
+        ingredientes: ingredients,
+      );
 
       // Recarregar a lista de todas as receitas após publicação
       await getRecipeAll();
@@ -101,6 +108,31 @@ class RecipeController extends ChangeNotifier {
       return response;
     } catch (e) {
       print('Exception during recipe publication: ${e.toString()}');
+      return DTOresponse(
+          success: false, message: 'Erro ao publicar receita: $e');
+    } finally {
+      _isLoadAllList = false;
+      notifyListeners();
+    }
+  }
+
+  Future<DTOresponse> deleteRecipe(RecipeModel recipe) async {
+    try {
+      _isLoadAllList = true;
+      notifyListeners();
+
+      DTOresponse response = await recipeRepository.deleterecipe(recipe.id!);
+
+      // Atualizar a lista de receitas após a exclusão
+      await getRecipeAll();
+      await filterBestReceipe();
+      _listAllRecipe.remove(recipe);
+      _listRecipebyCategory.remove(recipe);
+      _listRecipebyUser.remove(recipe);
+
+      return response;
+    } catch (e) {
+      print('Exception during recipe deletion: ${e.toString()}');
       return DTOresponse(success: false, message: e.toString());
     } finally {
       _isLoadAllList = false;

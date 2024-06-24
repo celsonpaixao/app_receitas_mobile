@@ -64,6 +64,7 @@ class _RouterPageState extends State<RouterPage> {
                   FavoritesPage(),
                   ProfilePage(
                     userController: Provider.of<UserController>(context),
+                    recipeController:  Provider.of<RecipeController>(context),
                     user: user!,
                   )
                 ],
@@ -91,8 +92,7 @@ class _RouterPageState extends State<RouterPage> {
                       MaterialPageRoute(
                         builder: (context) => SendRecipePage(
                           user: user!,
-                          recipeController:
-                              Provider.of<RecipeController>(context),
+                          recipeController: Provider.of<RecipeController>(context),
                         ),
                       ));
                 },

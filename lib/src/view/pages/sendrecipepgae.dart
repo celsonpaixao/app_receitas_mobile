@@ -1,13 +1,11 @@
 import 'dart:io';
 import 'package:app_receitas_mobile/src/DTO/DTOresponse.dart';
 import 'package:app_receitas_mobile/src/model/recipeModel.dart';
-import 'package:app_receitas_mobile/src/view/components/globalprogress.dart';
 import 'package:app_receitas_mobile/src/view/routerpages.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:app_receitas_mobile/src/controller/recipeController.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
-import 'package:app_receitas_mobile/src/repository/recipeRepository.dart';
 import 'package:app_receitas_mobile/src/view/components/globalbutton.dart';
 import 'package:app_receitas_mobile/src/view/components/globalinput.dart';
 import 'package:app_receitas_mobile/src/view/components/globalmulttextinpu.dart';
@@ -21,9 +19,12 @@ import '../components/setmaterialrecipe.dart';
 class SendRecipePage extends StatefulWidget {
   final UserModel user;
   final RecipeController recipeController;
-  const SendRecipePage(
-      {Key? key, required this.user, required this.recipeController})
-      : super(key: key);
+
+  const SendRecipePage({
+    Key? key,
+    required this.user,
+    required this.recipeController,
+  }) : super(key: key);
 
   @override
   State<SendRecipePage> createState() => _SendRecipePageState();
@@ -52,64 +53,68 @@ class _SendRecipePageState extends State<SendRecipePage> {
   Future<void> _publishRecipe() async {
     if (_formKey.currentState!.validate() && _image != null) {
       try {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return Center(
-              child: GlobalProgress(),
-            );
-          },
-        );
+        setState(() {
+          _isLoading = true;
+        });
 
         RecipeModel newRecipe = RecipeModel(
-            title: _titleController.text,
-            description: _descriptionController.text,
-            instructions: _instructionsController.text,
-            ingredients: _ingredients,
-            materials: _materials,
-            idAdmin: widget.user.id);
+          title: _titleController.text,
+          description: _descriptionController.text,
+          instructions: _instructionsController.text,
+          idAdmin: widget.user.id,
+        );
 
-        DTOresponse response = await widget.recipeController
-            .publishRecipe(newRecipe, _Id_CategorysController, _image!);
+        DTOresponse response = await widget.recipeController.publishRecipe(
+          newRecipe,
+          _materials,
+          _ingredients,
+          _Id_CategorysController,
+          _image!,
+        );
 
-        Navigator.of(context).pop();
+        setState(() {
+          _isLoading = false;
+        });
 
-        if (response.success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.green,
-              content: Text(response.message),
-            ),
-          );
-          setState(() {});
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => RouterPage()),
-          );
-        }
-
-        // // Limpar formulário após publicação com sucesso
-        // _formKey.currentState!.reset();
-        // setState(() {
-        //   _materials.clear();
-        //   _Id_CategorysController.clear();
-        //   _ingredients.clear();
-        //   _image = null;
-        // });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            content: Text("Receita Publicada como sucesso..!"),
+          ),
+        );
+        _resetForm();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => RouterPage()),
+        );
       } catch (e) {
+        setState(() {
+          _isLoading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: Colors.red,
-            content: Text('Erro ao atualizar usuário: $e'),
+            content: Text('Erro ao publicar receita: $e'),
           ),
         );
       }
     } else if (_image == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Por favor, selecione uma imagem.')),
+        SnackBar(
+          content: Text('Por favor, selecione uma imagem.'),
+        ),
       );
     }
+  }
+
+  void _resetForm() {
+    _formKey.currentState!.reset();
+    setState(() {
+      _materials.clear();
+      _Id_CategorysController.clear();
+      _ingredients.clear();
+      _image = null;
+    });
   }
 
   @override
