@@ -5,10 +5,7 @@ import 'package:app_receitas_mobile/src/repository/ratingRepository.dart';
 
 class RatingController extends ChangeNotifier {
   final RatingRepository ratingRepository;
-  List<RatingModel> _listRating = [];
-  UnmodifiableListView<RatingModel> get listRating =>
-      UnmodifiableListView(_listRating);
-
+  final Map<int, List<RatingModel>> _ratingsByRecipe = {};
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -17,26 +14,30 @@ class RatingController extends ChangeNotifier {
 
   RatingController({required this.ratingRepository});
 
+  UnmodifiableListView<RatingModel> getRatingsForRecipe(int recipeId) {
+    return UnmodifiableListView(_ratingsByRecipe[recipeId] ?? []);
+  }
+
   Future<void> getRatingByRecipe(int recipeId) async {
-    _isLoading = true;
-    notifyListeners();
+    _setLoadingState(true);
     try {
       var response = await ratingRepository.getRatingByRecipe(recipeId);
-      _listRating = response;
+      _ratingsByRecipe[recipeId] = response;
     } catch (e) {
       print('Error fetching ratings: $e');
     } finally {
-      _isLoading = false;
+      _setLoadingState(false);
       _isInitialized = true;
       notifyListeners();
     }
   }
 
-  Future<void> deleteRating(int ratingId) async {
+  Future<void> deleteRating(int ratingId, int recipeId) async {
     _setLoadingState(true);
     try {
       await ratingRepository.deletRating(ratingId);
-      _listRating.removeWhere((rating) => rating.id == ratingId);
+      _ratingsByRecipe[recipeId]
+          ?.removeWhere((rating) => rating.id == ratingId);
     } catch (e) {
       debugPrint('Error deleting rating: $e');
     } finally {
@@ -45,22 +46,24 @@ class RatingController extends ChangeNotifier {
     }
   }
 
-Future<void> updateRating(int ratingId, RatingModel rating) async {
+  Future<void> updateRating(
+      int ratingId, RatingModel rating, int recipeId) async {
     _setLoadingState(true);
     try {
       await ratingRepository.updateRating(ratingId, rating);
-      var index = _listRating.indexWhere((r) => r.id == ratingId);
-      if (index != -1) {
-        _listRating[index] = rating; // Atualiza a avaliação na lista local
+      var index =
+          _ratingsByRecipe[recipeId]?.indexWhere((r) => r.id == ratingId);
+      if (index != null && index != -1) {
+        _ratingsByRecipe[recipeId]?[index] =
+            rating; // Atualiza a avaliação na lista local
       }
     } catch (e) {
       debugPrint('Error updating rating: $e');
     } finally {
       _setLoadingState(false);
-      notifyListeners(); // Mova notifyListeners para o final, após atualizar o estado
+      notifyListeners();
     }
   }
-
 
   bool checkInAdmin(int admId, int userId) {
     return admId == userId;
@@ -71,12 +74,13 @@ Future<void> updateRating(int ratingId, RatingModel rating) async {
     _setLoadingState(true);
     try {
       await ratingRepository.publicaRating(userId, recipeId, rating);
-      _listRating.add(rating);
-      await getRatingByRecipe(recipeId);
+      _ratingsByRecipe[recipeId]?.add(rating);
+      await getRatingByRecipe(recipeId); // Refresh the list for the recipe
     } catch (e) {
       debugPrint('Error publishing rating: $e');
     } finally {
       _setLoadingState(false);
+      notifyListeners();
     }
   }
 

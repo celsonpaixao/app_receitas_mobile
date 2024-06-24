@@ -1,18 +1,21 @@
 import 'dart:collection';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:app_receitas_mobile/src/DTO/DTOresponse.dart';
 import 'package:flutter/material.dart';
 import 'package:app_receitas_mobile/src/model/recipeModel.dart';
 import 'package:app_receitas_mobile/src/repository/recipeRepository.dart';
 
 class RecipeController extends ChangeNotifier {
-  final RecipeRepository? recipeRepository;
+  final RecipeRepository recipeRepository;
   final RecipeModel? recipeModel;
 
   List<RecipeModel> _listAllRecipe = [];
   List<RecipeModel> _listRecipebyCategory = [];
   List<RecipeModel> _listRecipebyUser = [];
   List<RecipeModel> _listbestReceipe = [];
+
+  RecipeController({required this.recipeRepository, required this.recipeModel});
 
   UnmodifiableListView<RecipeModel> get listAllRecipe =>
       UnmodifiableListView(_listAllRecipe);
@@ -32,16 +35,11 @@ class RecipeController extends ChangeNotifier {
   bool _isLoadbestRecipe = false;
   bool get isLoadbestRecipe => _isLoadbestRecipe;
 
-  RecipeController({
-    this.recipeRepository,
-    this.recipeModel,
-  });
-
   Future<void> getRecipeAll() async {
     _isLoadAllList = true;
     notifyListeners();
 
-    var response = await recipeRepository!.getRecipes();
+    var response = await recipeRepository.getRecipes();
 
     _listAllRecipe = response;
 
@@ -53,7 +51,7 @@ class RecipeController extends ChangeNotifier {
     _isLoadbyCategory = true;
     notifyListeners();
 
-    var response = await recipeRepository!.getRecipeByCategory(idCategory);
+    var response = await recipeRepository.getRecipeByCategory(idCategory);
 
     _listRecipebyCategory = response;
 
@@ -65,7 +63,7 @@ class RecipeController extends ChangeNotifier {
     _isLoadbyUser = true;
     notifyListeners();
 
-    var response = await recipeRepository!.getRecipeByUser(idUser);
+    var response = await recipeRepository.getRecipeByUser(idUser);
 
     _listRecipebyUser = response;
 
@@ -76,7 +74,7 @@ class RecipeController extends ChangeNotifier {
   Future<void> filterBestReceipe() async {
     _isLoadbestRecipe = true;
     notifyListeners();
-    var response = await recipeRepository!.getbestRecipes();
+    var response = await recipeRepository.getbestRecipes();
 
     _listbestReceipe = response;
 
@@ -84,39 +82,58 @@ class RecipeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> publishRecipe({
-    required String title,
-    required String description,
-    required String instructions,
-    required int userId,
-    required List<int> categories,
-    required List<String> ingredients,
-    required List<String> materials,
-    required Uint8List bytes,
-  }) async {
+  Future<DTOresponse> publishRecipe(
+    RecipeModel recipe,
+    List<String> materials,
+    List<String> ingredients,
+    List<int> categories,
+    File image,
+  ) async {
     try {
       _isLoadAllList = true;
       notifyListeners();
 
-      // Criar instância do modelo de receita
-      var newRecipe = RecipeModel(
-        title: title,
-        description: description,
-        instructions: instructions,
-        idAdmin: userId,
-        ingredients: ingredients,
+      DTOresponse response = await recipeRepository.addRecipe(
+        categories: categories,
+        image: image,
+        recipe: recipe,
         materials: materials,
+        ingredientes: ingredients,
       );
-
-      // Chamar o método de adicionar receita do repository
-      await recipeRepository!
-          .addRecipe(recipe: newRecipe, categories: categories, bytes: bytes);
 
       // Recarregar a lista de todas as receitas após publicação
       await getRecipeAll();
+      await getRecipeByUser(recipe.id!);
+
+      return response;
     } catch (e) {
       print('Exception during recipe publication: ${e.toString()}');
-      throw Exception('Failed to publish recipe: ${e.toString()}');
+      return DTOresponse(
+          success: false, message: 'Erro ao publicar receita: $e');
+    } finally {
+      _isLoadAllList = false;
+      notifyListeners();
+    }
+  }
+
+  Future<DTOresponse> deleteRecipe(RecipeModel recipe) async {
+    try {
+      _isLoadAllList = true;
+      notifyListeners();
+
+      DTOresponse response = await recipeRepository.deleterecipe(recipe.id!);
+
+      // Atualizar a lista de receitas após a exclusão
+      await getRecipeAll();
+      await filterBestReceipe();
+      _listAllRecipe.remove(recipe);
+      _listRecipebyCategory.remove(recipe);
+      _listRecipebyUser.remove(recipe);
+
+      return response;
+    } catch (e) {
+      print('Exception during recipe deletion: ${e.toString()}');
+      return DTOresponse(success: false, message: e.toString());
     } finally {
       _isLoadAllList = false;
       notifyListeners();

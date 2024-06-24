@@ -4,51 +4,52 @@ import 'dart:typed_data';
 import 'package:app_receitas_mobile/src/DTO/DTOresponse.dart';
 import 'package:app_receitas_mobile/src/model/recipeModel.dart';
 import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
+import 'package:app_receitas_mobile/src/utils/filters/messagefilter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class RecipeRepository {
   static String baseurl = baseUrl;
 
-    Future<dynamic> addRecipe({
+Future<DTOresponse> addRecipe({
     required RecipeModel recipe,
-    required Uint8List bytes,
+    required List<String> ingredientes,
+    required List<String> materials,
     required List<int> categories,
+    required File image,
   }) async {
     try {
       var url = Uri.parse('$baseurl/api/Recipe/create_recipe');
       var request = http.MultipartRequest('POST', url);
-
-      // Validação de campos obrigatórios
-      if (recipe.title == null || recipe.title!.isEmpty) {
-        throw Exception('O título da receita é obrigatório');
-      }
-      if (recipe.description == null || recipe.description!.isEmpty) {
-        throw Exception('A descrição da receita é obrigatória');
-      }
-      if (recipe.instructions == null || recipe.instructions!.isEmpty) {
-        throw Exception('As instruções da receita são obrigatórias');
-      }
-      if (recipe.idAdmin == null) {
-        throw Exception('O ID do administrador é obrigatório');
-      }
 
       // Adicionar campos de texto
       request.fields['Title'] = recipe.title!;
       request.fields['Description'] = recipe.description!;
       request.fields['Instructions'] = recipe.instructions!;
       request.fields['UserId'] = recipe.idAdmin.toString();
-      request.fields['Categorias'] = jsonEncode(categories);
-      request.fields['Ingredients'] = jsonEncode(recipe.ingredients);
-      request.fields['Materials'] = jsonEncode(recipe.materials);
 
-      var multipartFile = http.MultipartFile(
+      // Adicionar categorias como lista de strings
+      for (var i = 0; i < categories.length; i++) {
+        request.fields['Categorias[$i]'] = categories[i].toString();
+      }
+
+      // Adicionar ingredientes
+      for (var i = 0; i < ingredientes.length; i++) {
+        request.fields['Ingredients[$i]'] = ingredientes[i];
+      }
+
+      // Adicionar materiais
+      for (var i = 0; i < materials.length; i++) {
+        request.fields['Materials[$i]'] = materials[i];
+      }
+
+      // Adicionar arquivo de imagem
+      String fileName = image.path.split('/').last;
+      request.files.add(await http.MultipartFile.fromPath(
         'image',
-        http.ByteStream.fromBytes(bytes),
-        bytes.length,
-        filename: 'recipe_image.jpg', // Nome do arquivo padrão
-      );
-      request.files.add(multipartFile);
+        image.path,
+        filename: fileName,
+      ));
 
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
@@ -61,20 +62,97 @@ class RecipeRepository {
       // Adicionar cabeçalho de autorização com o token JWT
       request.headers['Authorization'] = 'Bearer $token';
 
-      final response = await request.send();
+      // Enviar a requisição e aguardar a resposta
+      final streamedResponse = await request.send();
+      final responseStream = await streamedResponse.stream.bytesToString();
+      final parsedResponse = jsonDecode(responseStream);
 
-      if (response.statusCode == 201) {
-        var data = await response.stream.bytesToString();
-        return jsonDecode(data);
+      if (streamedResponse.statusCode == 200) {
+        String message = parsedResponse['message'];
+        print(message);
+        return DTOresponse(success: true, message: message);
       } else {
-        var responseData = await response.stream.bytesToString();
+        String errorMessage = parsedResponse['message'] ?? 'Erro desconhecido';
         print(
-            'Failed to add recipe: ${response.reasonPhrase}, Details: $responseData');
-        throw Exception('Failed to add recipe: ${response.reasonPhrase}');
+            'Falha na publicação da receita: ${streamedResponse.statusCode}, $errorMessage');
+        return DTOresponse(success: false, message: errorMessage);
       }
     } catch (e) {
-      print('Exception during recipe addition: ${e.toString()}');
-      throw Exception('Failed to add recipe: ${e.toString()}');
+      print('Erro ao publicar receita: $e');
+      return DTOresponse(success: false, message: "$e");
+    }
+  }
+
+
+  Future<DTOresponse> updateRecipe({
+    required RecipeModel recipe,
+    required List<String> ingredientes,
+    required List<String> materials,
+    required List<int> categories,
+    required File image,
+  }) async {
+    try {
+      var url = Uri.parse('$baseurl/api/Recipe/update_recipe/${recipe.id}');
+      var request = http.MultipartRequest('PUT', url);
+
+      // Adicionar campos de texto
+      request.fields['Title'] = recipe.title!;
+      request.fields['Description'] = recipe.description!;
+      request.fields['Instructions'] = recipe.instructions!;
+      request.fields['UserId'] = recipe.idAdmin.toString();
+
+      // Adicionar categorias como lista de strings
+      for (var i = 0; i < categories.length; i++) {
+        request.fields['Categories[$i]'] = categories[i].toString();
+      }
+
+      // Adicionar ingredientes
+      for (var i = 0; i < ingredientes.length; i++) {
+        request.fields['Ingredients[$i]'] = ingredientes[i];
+      }
+
+      // Adicionar materiais
+      for (var i = 0; i < materials.length; i++) {
+        request.fields['Materials[$i]'] = materials[i];
+      }
+
+      // Adicionar arquivo de imagem
+      String fileName = image.path.split('/').last;
+      request.files.add(await http.MultipartFile.fromPath(
+        'image',
+        image.path,
+        filename: fileName,
+      ));
+
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      final String? token = sharedPreferences.getString("auth_token");
+
+      if (token == null) {
+        throw Exception('Token not found in SharedPreferences');
+      }
+
+      // Adicionar cabeçalho de autorização com o token JWT
+      request.headers['Authorization'] = 'Bearer $token';
+
+      // Enviar a requisição e aguardar a resposta
+      final streamedResponse = await request.send();
+      final responseStream = await streamedResponse.stream.bytesToString();
+      final parsedResponse = jsonDecode(responseStream);
+
+      if (streamedResponse.statusCode == 200) {
+        String message = parsedResponse['message'];
+        print(message);
+        return DTOresponse(success: true, message: message);
+      } else {
+        String errorMessage = parsedResponse['message'] ?? 'Erro desconhecido';
+        print(
+            'Falha na atualização da receita: ${streamedResponse.statusCode}, $errorMessage');
+        return DTOresponse(success: false, message: errorMessage);
+      }
+    } catch (e) {
+      print('Erro ao atualizar receita: $e');
+      return DTOresponse(success: false, message: "$e");
     }
   }
 
@@ -186,5 +264,36 @@ class RecipeRepository {
     } else {
       throw Exception('Failed to load recipes');
     }
+  }
+
+  Future<DTOresponse> deleterecipe(int recipeId) async {
+    late DTOresponse response;
+    var url = Uri.parse("$baseurl/api/Recipe/delete_recipe?id=$recipeId");
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final String? token = sharedPreferences.getString("auth_token");
+
+    if (token == null) {
+      throw Exception('Token not found in SharedPreferences');
+    }
+
+    try {
+      final request = await http.delete(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+
+      if (request.statusCode == 200) {
+        var message = jsonDecode(request.body)['message'];
+
+        response = DTOresponse(success: true, message: filterMessage(message));
+      }
+    } catch (e) {
+      response = DTOresponse(success: false, message: e.toString());
+    }
+
+    return response;
   }
 }
