@@ -125,17 +125,17 @@ class _TabViewBestRecipeState extends State<TabViewBestRecipe> {
                           },
                         ),
                       ),
-                     const Spacing(value: .01),
-                     SmoothPageIndicator(
-                           controller: pageController,
-                           count: recipeController.listbestReceipe.length,
-                           effect: WormEffect(
-                             dotWidth: 10,
-                             dotHeight: 10,
-                             activeDotColor: primaryAmber,
-                             dotColor: secundaryGrey,
-                           ),
-                         )
+                      const Spacing(value: .01),
+                      SmoothPageIndicator(
+                        controller: pageController,
+                        count: recipeController.listbestReceipe.length,
+                        effect: WormEffect(
+                          dotWidth: 10,
+                          dotHeight: 10,
+                          activeDotColor: primaryAmber,
+                          dotColor: secundaryGrey,
+                        ),
+                      )
                     ],
                   );
       },

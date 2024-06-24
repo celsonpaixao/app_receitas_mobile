@@ -7,6 +7,7 @@ import '../../controller/ratingController.dart';
 
 class GlobalDialogEditRating extends StatefulWidget {
   final String message;
+  final int recipeId;
   double setRating;
   final int ratingId;
   final RatingController ratingController;
@@ -16,7 +17,7 @@ class GlobalDialogEditRating extends StatefulWidget {
     required this.message,
     required this.setRating,
     required this.ratingId,
-    required this.ratingController,
+    required this.ratingController, required this.recipeId,
   }) : super(key: key);
 
   @override
@@ -115,6 +116,7 @@ class _GlobalDialogEditRatingState extends State<GlobalDialogEditRating> {
               await widget.ratingController.updateRating(
                 widget.ratingId,
                 updatedRating,
+                widget.recipeId
               );
 
               // Fecha o diálogo após a atualização bem-sucedida

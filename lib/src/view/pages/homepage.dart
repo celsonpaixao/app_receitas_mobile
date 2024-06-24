@@ -91,7 +91,9 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: TabCategory(user: widget.user,),
+      body: TabCategory(
+        user: widget.user,
+      ),
     );
   }
 }

@@ -4,9 +4,11 @@ import 'package:app_receitas_mobile/src/controller/userController.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
 import 'package:app_receitas_mobile/src/view/components/globalprogress.dart';
+import 'package:app_receitas_mobile/src/view/pages/welcomepage.dart';
 import 'package:app_receitas_mobile/src/view/routerpages.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../components/globalappbar.dart';
 import '../components/globalbutton.dart';
@@ -55,6 +57,43 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
       setState(() {
         _image = File(pickedFile.path);
       });
+    }
+  }
+
+  Future<void> _deleteUser() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: GlobalProgress(),
+        );
+      },
+    );
+    DTOresponse response =
+        await widget.userController.deletUser(widget.userdate.id!);
+
+    Navigator.of(context).pop();
+
+    if (response.success) {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      final String? token = sharedPreferences.getString("auth_token");
+      await sharedPreferences.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            backgroundColor: Colors.green, content: Text(response.message)),
+      );
+
+      // Navegar para a página inicial após o login bem-sucedido
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => WelcomePage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(backgroundColor: Colors.red, content: Text(response.message)),
+      );
     }
   }
 
@@ -117,9 +156,34 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: GlobalAppBar(
-        title: Text(
-          "Atualizar dados do Usuário",
-          style: white_text_title,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            MaterialButton(
+              minWidth: 40,
+              height: 40,
+              child: Icon(
+                Icons.arrow_back_ios,
+                color: primaryWhite,
+              ),
+              onPressed: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RouterPage(),
+                    ));
+              },
+            ),
+            Text(
+              "Configurações",
+              style: white_text_title,
+            ),
+            MaterialButton(
+              minWidth: 40,
+              height: 40,
+              onPressed: () {},
+            ),
+          ],
         ),
         titlecenter: true,
       ),
@@ -131,7 +195,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-               Center(
+                Center(
                   child: GestureDetector(
                     onTap: () => _showImagePickerOptions(),
                     child: AnimatedContainer(
@@ -175,7 +239,6 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                     ),
                   ),
                 ),
-
                 Spacing(value: .01),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -199,7 +262,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                     ),
                   ],
                 ),
-                Spacing(value: .01),
+                Spacing(value: .03),
                 GlobalInput(
                   hintText: "Atualizar Primeiro Nome",
                   ispassword: false,
@@ -266,7 +329,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                     return null;
                   },
                 ),
-                Spacing(value: .01),
+                Spacing(value: .02),
                 GlobalButton(
                   textButton: "Atualizar",
                   onClick: () {
@@ -282,6 +345,13 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                   background: primaryAmber,
                   textColor: primaryWhite,
                 ),
+                Spacing(value: .01),
+                GlobalButton(
+                  textButton: "Apagar Conta",
+                  onClick: _deleteUser,
+                  background: Colors.red,
+                  textColor: primaryWhite,
+                )
               ],
             ),
           ),

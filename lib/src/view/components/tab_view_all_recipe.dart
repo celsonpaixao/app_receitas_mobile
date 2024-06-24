@@ -63,7 +63,7 @@ class _TabViewAllRecipeState extends State<TabViewAllRecipe>
                           child: MiniCardRecipe(
                             user: widget.user,
                             item: item,
-                            ratings: ratings.listRating,
+                            ratings: ratings.getRatingsForRecipe(widget.user.id!),
                           ),
                         );
                       },

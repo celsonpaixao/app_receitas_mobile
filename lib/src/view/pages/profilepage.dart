@@ -4,26 +4,30 @@ import 'package:app_receitas_mobile/src/controller/userController.dart';
 import 'package:app_receitas_mobile/src/model/userModel.dart';
 import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
 import 'package:app_receitas_mobile/src/utils/auth/tokendecod.dart';
+import 'package:app_receitas_mobile/src/view/components/cardrecipeuser.dart';
 import 'package:app_receitas_mobile/src/view/components/globalappbar.dart';
 import 'package:app_receitas_mobile/src/view/components/globaldialog.dart';
+import 'package:app_receitas_mobile/src/view/components/globalprogress.dart';
 import 'package:app_receitas_mobile/src/view/components/layoutpage.dart';
 import 'package:app_receitas_mobile/src/view/components/minicardrecipe.dart';
 import 'package:app_receitas_mobile/src/view/components/minicardshimmer.dart';
 import 'package:app_receitas_mobile/src/view/components/spacing.dart';
+import 'package:app_receitas_mobile/src/view/pages/loginpage.dart';
 import 'package:app_receitas_mobile/src/view/pages/updateuserpage.dart';
 import 'package:app_receitas_mobile/src/view/styles/colores.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 class ProfilePage extends StatefulWidget {
   final UserController userController;
+  final RecipeController recipeController;
   final UserModel user;
 
   const ProfilePage({
     Key? key,
     required this.user,
     required this.userController,
+    required this.recipeController,
   }) : super(key: key);
 
   @override
@@ -31,18 +35,37 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  void _confirmLogout() {
-    showDialog<void>(
+     @override
+  void initState() {
+    super.initState();
+    _loadRecipe();
+  }
+
+  void _loadRecipe() async {
+    print("Loading recipes for user: ${widget.user.id}");
+    await widget.recipeController.getRecipeByUser(widget.user.id!);
+    print("Recipes loaded: ${widget.recipeController.listRecipebyUser.length}");
+  }
+
+  void _confirmLogout() async {
+    showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return GlobalDialog(
-          onConfirm: () async {
-            await widget.userController.logoutUser(context);
-          },
-          text: "Você está tentando sair",
+        return Center(
+          child: GlobalProgress(),
         );
       },
+    );
+
+    await widget.userController.logoutUser();
+    Navigator.of(context).pop();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (context) => LoginPage(
+                userController: widget.userController,
+              )),
     );
   }
 
@@ -69,13 +92,11 @@ class _ProfilePageState extends State<ProfilePage> {
               );
             });
           },
-          text: "Você quer editar as informações do usuário?",
+          text: "Você está acessando as informações do usuário.",
         );
       },
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -135,10 +156,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     color: primaryAmber,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      "Editar",
+                      "Configurações",
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: clickEditar,
@@ -182,17 +203,19 @@ class _ProfilePageState extends State<ProfilePage> {
                               crossAxisCount: 2,
                               crossAxisSpacing: 0,
                               mainAxisSpacing: 5,
-                              childAspectRatio: .65,
+                              childAspectRatio: .80,
                             ),
                             itemBuilder: (context, index) {
                               var item =
                                   recipecontroller.listRecipebyUser[index];
 
                               ratings.getRatingByRecipe(item.id!);
-                              return MiniCardRecipe(
-                                user: widget.user,
-                                item: item,
-                                ratings: ratings.listRating,
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: CardRecipeUser(
+                                  recipe: item,
+                                  recipeController: widget.recipeController,
+                                ),
                               );
                             },
                           );

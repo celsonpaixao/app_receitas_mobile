@@ -9,11 +9,15 @@ import 'package:app_receitas_mobile/src/view/components/globlafavoritebutton.dar
 import 'package:app_receitas_mobile/src/utils/api/apicontext.dart';
 
 class MiniCardRecipe extends StatefulWidget {
-    final UserModel user;
+  final UserModel user;
   final RecipeModel item;
   final List<RatingModel> ratings;
-  const MiniCardRecipe({super.key, required this.item, required this.ratings, required this.user});
-
+  const MiniCardRecipe({
+    super.key,
+    required this.item,
+    required this.ratings,
+    required this.user,
+  });
 
   @override
   State<MiniCardRecipe> createState() => _MiniCardRecipeState();
