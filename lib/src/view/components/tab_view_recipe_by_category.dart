@@ -16,7 +16,8 @@ class TabViewRecipeByCategory extends StatefulWidget {
   const TabViewRecipeByCategory({
     Key? key,
     required this.idCategory,
-    required this.name, required this.user,
+    required this.name,
+    required this.user,
   }) : super(key: key);
 
   @override
@@ -90,7 +91,8 @@ class _TabViewRecipeByCategoryState extends State<TabViewRecipeByCategory> {
                           child: MiniCardRecipe(
                             user: widget.user,
                             item: item,
-                            ratings: ratings.listRating,
+                           ratings:
+                                ratings.getRatingsForRecipe(widget.user.id!),
                           ),
                         );
                       },
